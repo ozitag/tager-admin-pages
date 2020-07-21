@@ -1,0 +1,99 @@
+<template>
+  <page
+    title="Pages"
+    :header-buttons="[
+      { text: 'Create page', href: getPageFormUrl({ pageId: 'create' }) },
+    ]"
+  >
+    <base-table
+      :column-defs="columnDefs"
+      :row-data="rowData"
+      :loading="isRowDataLoading"
+      :error-message="errorMessage"
+    >
+      <template v-slot:cell(actions)="{ row }">
+        <base-button
+          variant="icon"
+          title="Edit"
+          :disabled="isEntityDeleting(row.id) || isRowDataLoading"
+          :href="getPageFormUrl({ pageId: row.id })"
+        >
+          <svg-icon name="edit"></svg-icon>
+        </base-button>
+        <base-button
+          variant="icon"
+          title="Delete"
+          :disabled="isEntityDeleting(row.id) || isRowDataLoading"
+          @click="handleEntityDelete(row.id)"
+        >
+          <svg-icon name="delete"></svg-icon>
+        </base-button>
+      </template>
+    </base-table>
+  </page>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent, onMounted } from '@vue/composition-api';
+import { ColumnDefinition } from '@tager/admin-ui';
+import { FETCH_STATUSES } from '@tager/admin-services';
+
+import { PageShort, TemplateShort } from '../typings/model';
+import { getPageFormUrl } from '../utils/paths';
+import { deletePage, getPageList } from '../services/requests';
+import useEntityDelete from '../hooks/useEntityDelete';
+import useResource from '../hooks/useResource';
+
+const COLUMN_DEFS: Array<ColumnDefinition<TemplateShort>> = [
+  {
+    id: 1,
+    name: 'ID',
+    field: 'id',
+    style: { width: '50px', textAlign: 'center' },
+    headStyle: { width: '50px', textAlign: 'center' },
+  },
+  { id: 2, name: 'Image', field: 'image', type: 'image' },
+  { id: 3, name: 'Title', field: 'title' },
+  { id: 4, name: 'Path', field: 'path' },
+  {
+    id: 5,
+    name: 'Actions',
+    field: 'actions',
+    style: { width: '120px', textAlign: 'center', whiteSpace: 'nowrap' },
+    headStyle: { width: '120px', textAlign: 'center' },
+  },
+];
+
+export default defineComponent({
+  name: 'PageList',
+  setup(props, context) {
+    const { data, status, error, refresh } = useResource<Array<PageShort>>({
+      fetchResource: getPageList,
+      initialValue: [],
+    });
+
+    onMounted(() => {
+      refresh();
+    });
+
+    const isLoading = computed(() => status.value === FETCH_STATUSES.LOADING);
+
+    const { handleEntityDelete, isDeleting } = useEntityDelete({
+      deleteEntity: deletePage,
+      entityName: 'Page',
+      onSuccess: refresh,
+      context,
+    });
+
+    return {
+      columnDefs: COLUMN_DEFS,
+      getPageFormUrl,
+      rowData: data,
+      isRowDataLoading: isLoading,
+      errorMessage: error,
+      isEntityDeleting: isDeleting,
+      handleEntityDelete,
+    };
+  },
+});
+</script>
