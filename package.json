@@ -1,10 +1,10 @@
 {
-  "name": "@tager/admin-banners",
-  "version": "0.1.5",
+  "name": "@tager/admin-pages",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "dist/index.umd.js",
   "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/main.d.ts",
   "files": [
     "dist",
     "typings",

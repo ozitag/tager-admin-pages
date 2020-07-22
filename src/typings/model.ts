@@ -49,8 +49,7 @@ interface FileField extends CommonTemplateField {
 }
 
 export type TemplateFieldType = Readonly<
-  StringField | TextField | HtmlField
-  // | ImageField
+  StringField | TextField | HtmlField | ImageField
   // | FileField
   // | DateField
   // | DateTimeField
