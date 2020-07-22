@@ -64,7 +64,7 @@ export function updatePage(
   pageId: number | string,
   payload: PageUpdatePayload
 ): Promise<ResponseBody<PageFull>> {
-  return request.post({ path: `/pages/${pageId}`, body: payload });
+  return request.put({ path: `/pages/${pageId}`, body: payload });
 }
 
 export function deletePage(

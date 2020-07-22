@@ -1,7 +1,7 @@
 import { CustomRouteConfig } from '@tager/admin-layout';
 
 import PageList from '../views/PageList.vue';
-import PageForm from '../views/PageForm.vue';
+import PageForm from '../views/PageForm/index.vue';
 
 import { PAGES_ROUTE_PATHS } from './paths';
 

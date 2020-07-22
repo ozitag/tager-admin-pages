@@ -7,8 +7,10 @@ export type TemplateShort = Readonly<{
 
 interface CommonTemplateField {
   name: string;
+  label: string;
   type: string;
   value: any;
+  meta: Record<string, any>;
 }
 
 interface StringField extends CommonTemplateField {
@@ -37,11 +39,7 @@ export type TemplateFieldType = Readonly<
 
 export type TemplateFull = Readonly<
   TemplateShort & {
-    fields: Array<{
-      name: TemplateFieldType['name'];
-      type: TemplateFieldType['type'];
-      label: string;
-    }>;
+    fields: Array<Omit<TemplateFieldType, 'value'>>;
   }
 >;
 
@@ -67,6 +65,6 @@ export type PageFull = Readonly<
 
     /** Template */
     template: TemplateShort['id'];
-    templateValues: Array<TemplateFieldType>;
+    templateValues: Array<Omit<TemplateFieldType, 'label'>>;
   }
 >;
