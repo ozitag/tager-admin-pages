@@ -18,6 +18,16 @@ interface StringField extends CommonTemplateField {
   value: string;
 }
 
+interface DateField extends CommonTemplateField {
+  type: 'DATE';
+  value: string;
+}
+
+interface DateTimeField extends CommonTemplateField {
+  type: 'DATETIME';
+  value: string;
+}
+
 interface TextField extends CommonTemplateField {
   type: 'TEXT';
   value: string;
@@ -33,8 +43,17 @@ interface ImageField extends CommonTemplateField {
   value: Nullable<FileType>;
 }
 
+interface FileField extends CommonTemplateField {
+  type: 'FILE';
+  value: Nullable<FileType>;
+}
+
 export type TemplateFieldType = Readonly<
-  StringField | TextField | HtmlField | ImageField
+  StringField | TextField | HtmlField
+  // | ImageField
+  // | FileField
+  // | DateField
+  // | DateTimeField
 >;
 
 export type TemplateFull = Readonly<
