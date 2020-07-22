@@ -34,9 +34,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from '@vue/composition-api';
+import { defineComponent, onMounted } from '@vue/composition-api';
 import { ColumnDefinition } from '@tager/admin-ui';
-import { FETCH_STATUSES } from '@tager/admin-services';
 
 import { PageShort, TemplateShort } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
@@ -67,21 +66,21 @@ const COLUMN_DEFS: Array<ColumnDefinition<TemplateShort>> = [
 export default defineComponent({
   name: 'PageList',
   setup(props, context) {
-    const { data, status, error, refresh } = useResource<Array<PageShort>>({
+    const [fetchPageList, { data, loading, error }] = useResource<
+      Array<PageShort>
+    >({
       fetchResource: getPageList,
       initialValue: [],
     });
 
     onMounted(() => {
-      refresh();
+      fetchPageList();
     });
-
-    const isLoading = computed(() => status.value === FETCH_STATUSES.LOADING);
 
     const { handleEntityDelete, isDeleting } = useEntityDelete({
       deleteEntity: deletePage,
       entityName: 'Page',
-      onSuccess: refresh,
+      onSuccess: fetchPageList,
       context,
     });
 
@@ -89,7 +88,7 @@ export default defineComponent({
       columnDefs: COLUMN_DEFS,
       getPageFormUrl,
       rowData: data,
-      isRowDataLoading: isLoading,
+      isRowDataLoading: loading,
       errorMessage: error,
       isEntityDeleting: isDeleting,
       handleEntityDelete,

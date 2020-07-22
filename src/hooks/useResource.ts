@@ -1,4 +1,4 @@
-import { Ref, ref } from '@vue/composition-api';
+import { computed, Ref, ref } from '@vue/composition-api';
 import {
   FETCH_STATUSES,
   FetchStatus,
@@ -13,6 +13,8 @@ function useResource<T>(params: {
   const data = ref<T>(params.initialValue);
   const status = ref<FetchStatus>(FETCH_STATUSES.IDLE);
   const error = ref<string | null>(null);
+
+  const loading = computed(() => status.value === FETCH_STATUSES.LOADING);
 
   function refreshEntityList(): Promise<void> {
     status.value = FETCH_STATUSES.LOADING;
@@ -32,7 +34,7 @@ function useResource<T>(params: {
       });
   }
 
-  return { data, status, error, refresh: refreshEntityList };
+  return [refreshEntityList, { data, loading, error, status }] as const;
 }
 
 export default useResource;

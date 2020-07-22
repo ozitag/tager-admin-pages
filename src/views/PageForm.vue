@@ -84,7 +84,7 @@
         file-type="image"
       />
 
-      <form-field-multi-select
+      <form-field-select
         v-model="values.template"
         name="template"
         :error="errors.template"
@@ -99,14 +99,16 @@
 import Vue from 'vue';
 import {
   convertRequestErrorToMap,
-  FETCH_STATUSES,
   FileType,
   Nullable,
 } from '@tager/admin-services';
+import { OptionType } from '@tager/admin-ui';
+
 import {
   PageFull,
   PageShort,
-  TemplateField,
+  TemplateFieldType,
+  TemplateFull,
   TemplateShort,
 } from '../typings/model';
 import { computed, onMounted, ref, watch } from '@vue/composition-api';
@@ -114,13 +116,13 @@ import useResource from '../hooks/useResource';
 import {
   createPage,
   getPageById,
+  getTemplateById,
   getTemplateList,
   PageCreatePayload,
   PageUpdatePayload,
   updatePage,
 } from '../services/requests';
 import { getPageListUrl } from '../utils/paths';
-import { OptionType } from '@tager/admin-ui';
 
 type FormValues = {
   title: string;
@@ -136,8 +138,8 @@ type FormValues = {
   openGraphDescription: Nullable<string>;
   openGraphImage: Nullable<FileType>;
 
-  template: Nullable<TemplateShort['id']>;
-  templateFields: Array<{ field: string; value: TemplateField['value'] }>;
+  template: Nullable<OptionType<TemplateShort['id']>>;
+  templateFields: Array<Pick<TemplateFieldType, 'name' | 'value'>>;
 };
 
 export default Vue.extend({
@@ -149,35 +151,49 @@ export default Vue.extend({
     const pageId = computed(() => context.root.$route.params.pageId);
     const isCreation = computed(() => pageId.value === 'create');
 
-    const { data: templateList, refresh: refreshTemplateList } = useResource({
+    const [fetchTemplateList, { data: shortTemplateList }] = useResource({
       fetchResource: getTemplateList,
       initialValue: [],
     });
 
     const templateOptions = computed(() =>
-      templateList.value.map<OptionType>((template) => ({
+      shortTemplateList.value.map<OptionType>((template) => ({
         value: template.id,
         label: template.label,
       }))
     );
 
-    const { data: page, status, refresh: refreshPage } = useResource({
+    const [fetchPage, { data: page, loading }] = useResource({
       fetchResource: () => getPageById(pageId.value),
       initialValue: null,
     });
 
-    const isLoading = computed(() => status.value === FETCH_STATUSES.LOADING);
-
     onMounted(() => {
-      refreshTemplateList();
+      fetchTemplateList();
 
       if (isCreation.value) return;
 
-      refreshPage();
+      fetchPage();
     });
 
     watch(pageId, () => {
-      refreshPage();
+      fetchPage();
+    });
+
+    const fullTemplateList = ref<Array<TemplateFull>>([]);
+
+    watch(shortTemplateList, (currentTemplateList) => {
+      if (currentTemplateList.length === 0) return;
+
+      Promise.all(
+        currentTemplateList.map((shortTemplate) =>
+          getTemplateById(shortTemplate.id).then((response) => response.data)
+        )
+      )
+        .then((list) => {
+          fullTemplateList.value = list;
+        })
+        .catch(console.error);
     });
 
     function convertPageToFormValues(pageData: Nullable<PageFull>): FormValues {
@@ -211,7 +227,10 @@ export default Vue.extend({
         openGraphTitle: pageData.openGraphTitle,
         openGraphDescription: pageData.openGraphDescription,
         openGraphImage: pageData.openGraphImage,
-        template: pageData.template,
+        template:
+          templateOptions.value.find(
+            (option) => option.value === pageData.template
+          ) ?? null,
         templateFields: pageData.templateValues,
       };
     }
@@ -229,6 +248,7 @@ export default Vue.extend({
         ...values.value,
         image: values.value.image?.id ?? null,
         openGraphImage: values.value.openGraphImage?.id ?? null,
+        template: values.value.template?.value ?? null,
       };
 
       const updatePayload: PageUpdatePayload = {
@@ -273,7 +293,7 @@ export default Vue.extend({
       isSubmitting,
       isCreation,
       getPageListUrl,
-      isLoading,
+      isLoading: loading,
       values,
       errors,
       templateOptions,

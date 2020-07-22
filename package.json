@@ -22,11 +22,11 @@
     "path-to-regexp": "^6.1.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@tager/admin-layout": "^0.2.17",
     "@tager/admin-services": "^0.1.6",
-    "@tager/admin-ui": "^0.4.27",
+    "@tager/admin-ui": "^0.5.0",
     "@types/node": "12.x",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
@@ -35,7 +35,7 @@
     "@vue/cli-plugin-router": "~4.4.6",
     "@vue/cli-plugin-typescript": "~4.4.6",
     "@vue/cli-service": "~4.4.6",
-    "@vue/composition-api": "^1.0.0-beta.5",
+    "@vue/composition-api": "^1.0.0-beta.6",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "babel-eslint": "^10.1.0",
@@ -44,7 +44,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
     "prettier": "^2.0.5",
-    "rollup": "^2.21.0",
+    "rollup": "^2.22.2",
     "rollup-plugin-typescript2": "^0.27.1",
     "rollup-plugin-vue": "^5.1.9",
     "sass-loader": "^9.0.2",
@@ -56,8 +56,8 @@
   "peerDependencies": {
     "@tager/admin-layout": ">=0.2.17",
     "@tager/admin-services": ">=0.1.6",
-    "@tager/admin-ui": ">=0.4.27",
-    "@vue/composition-api": ">=1.0.0-beta.5",
+    "@tager/admin-ui": ">=0.5.0",
+    "@vue/composition-api": ">=1.0.0-beta.6",
     "vue": "2.6.x"
   },
   "resolutions": {

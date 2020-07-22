@@ -6,7 +6,7 @@ export type TemplateShort = Readonly<{
 }>;
 
 interface CommonTemplateField {
-  field: string;
+  name: string;
   type: string;
   value: any;
 }
@@ -31,15 +31,15 @@ interface ImageField extends CommonTemplateField {
   value: Nullable<FileType>;
 }
 
-export type TemplateField = Readonly<
+export type TemplateFieldType = Readonly<
   StringField | TextField | HtmlField | ImageField
 >;
 
 export type TemplateFull = Readonly<
   TemplateShort & {
     fields: Array<{
-      field: TemplateField['field'];
-      type: TemplateField['type'];
+      name: TemplateFieldType['name'];
+      type: TemplateFieldType['type'];
       label: string;
     }>;
   }
@@ -67,6 +67,6 @@ export type PageFull = Readonly<
 
     /** Template */
     template: TemplateShort['id'];
-    templateValues: Array<TemplateField>;
+    templateValues: Array<TemplateFieldType>;
   }
 >;
