@@ -46,6 +46,25 @@
 
       <div class="divider" />
 
+      <h4 class="section-title">Template</h4>
+
+      <form-field-select
+        v-model="values.template"
+        name="template"
+        :error="errors.template"
+        label="Template"
+        :options="templateOptions"
+      />
+
+      <template-field
+        v-for="field of templateValues"
+        :key="field.name"
+        :field="field"
+        @update="handleTemplateFieldUpdate"
+      />
+
+      <div class="divider" />
+
       <h4 class="section-title">SEO</h4>
 
       <form-field
@@ -86,25 +105,6 @@
         :error="errors.openGraphImage"
         label="Open Graph Image"
         file-type="image"
-      />
-
-      <div class="divider" />
-
-      <h4 class="section-title">Template</h4>
-
-      <form-field-select
-        v-model="values.template"
-        name="template"
-        :error="errors.template"
-        label="Template"
-        :options="templateOptions"
-      />
-
-      <template-field
-        v-for="field of templateValues"
-        :key="field.name"
-        :field="field"
-        @update="handleTemplateFieldUpdate"
       />
     </form>
   </page>
