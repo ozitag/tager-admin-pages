@@ -74,6 +74,22 @@ export function getPageFormValues(
   };
 }
 
+function getTemplateFieldValue(field: TemplateFieldType) {
+  switch (field.type) {
+    case 'HTML':
+    case 'TEXT':
+    case 'STRING':
+      return field.value;
+
+    case 'IMAGE':
+    case 'FILE':
+      return field.value?.id ?? null;
+
+    default:
+      return field.value;
+  }
+}
+
 export function convertPageFormValuesToCreationPayload(
   values: FormValues,
   templateValues: Record<string, TemplateFieldType>
@@ -85,7 +101,7 @@ export function convertPageFormValuesToCreationPayload(
     template: values.template?.value ?? null,
     templateFields: Object.values(templateValues).map((templateField) => ({
       name: templateField.name,
-      value: templateField.value,
+      value: getTemplateFieldValue(templateField),
     })),
   };
 }

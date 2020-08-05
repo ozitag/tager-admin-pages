@@ -47,7 +47,7 @@ export type PageCreatePayload = {
   openGraphImage: Nullable<FileType['id']>;
 
   template: Nullable<TemplateShort['id']>;
-  templateFields: Array<Pick<TemplateFieldType, 'name' | 'value'>>;
+  templateFields: Array<{ name: string; value: string | null | number }>;
 };
 
 export function createPage(

@@ -1,6 +1,10 @@
 <script lang="ts">
 import Vue, { RenderContext } from 'vue';
-import { FormField, FormFieldRichTextInput } from '@tager/admin-ui';
+import {
+  FormField,
+  FormFieldFileInput,
+  FormFieldRichTextInput,
+} from '@tager/admin-ui';
 
 import { TemplateFieldType } from '../typings/model';
 
@@ -28,13 +32,17 @@ export default Vue.extend({
       }
     }
 
+    const commonProps = {
+      label: context.props.field.label,
+      name: context.props.field.name,
+      value: context.props.field.value,
+    };
+
     switch (context.props.field.type) {
       case 'STRING':
         return h(FormField, {
           props: {
-            label: context.props.field.label,
-            name: context.props.field.name,
-            value: context.props.field.value,
+            ...commonProps,
           },
           on: {
             ...context.listeners,
@@ -44,9 +52,7 @@ export default Vue.extend({
       case 'TEXT':
         return h(FormField, {
           props: {
-            label: context.props.field.label,
-            name: context.props.field.name,
-            value: context.props.field.value,
+            ...commonProps,
             type: 'textarea',
             rows: 4,
           },
@@ -58,13 +64,34 @@ export default Vue.extend({
       case 'HTML':
         return h(FormFieldRichTextInput, {
           props: {
-            label: context.props.field.label,
-            name: context.props.field.name,
-            value: context.props.field.value,
+            ...commonProps,
           },
           on: {
             ...context.listeners,
             input: emitUpdateEvent,
+          },
+        });
+      case 'IMAGE':
+        return h(FormFieldFileInput, {
+          props: {
+            ...commonProps,
+          },
+          attrs: {
+            fileType: 'image',
+          },
+          on: {
+            ...context.listeners,
+            change: emitUpdateEvent,
+          },
+        });
+      case 'FILE':
+        return h(FormFieldFileInput, {
+          props: {
+            ...commonProps,
+          },
+          on: {
+            ...context.listeners,
+            change: emitUpdateEvent,
           },
         });
       default:
