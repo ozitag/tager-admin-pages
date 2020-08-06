@@ -37,13 +37,13 @@
 import { defineComponent, onMounted } from '@vue/composition-api';
 import { ColumnDefinition } from '@tager/admin-ui';
 
-import { PageShort, TemplateShort } from '../typings/model';
+import { PageShort } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
 import { deletePage, getPageList } from '../services/requests';
 import useEntityDelete from '../hooks/useEntityDelete';
 import useResource from '../hooks/useResource';
 
-const COLUMN_DEFS: Array<ColumnDefinition<TemplateShort>> = [
+const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
   {
     id: 1,
     name: 'ID',
@@ -51,9 +51,20 @@ const COLUMN_DEFS: Array<ColumnDefinition<TemplateShort>> = [
     style: { width: '50px', textAlign: 'center' },
     headStyle: { width: '50px', textAlign: 'center' },
   },
-  { id: 2, name: 'Image', field: 'image', type: 'image' },
   { id: 3, name: 'Title', field: 'title' },
-  { id: 4, name: 'Path', field: 'path' },
+  {
+    id: 4,
+    name: 'Path',
+    field: 'path',
+    type: 'link',
+    format: ({ row }) => ({
+      href: process.env.VUE_APP_WEBSITE_URL + row.path,
+      label: row.path,
+    }),
+    options: {
+      shouldOpenNewTab: true,
+    },
+  },
   {
     id: 5,
     name: 'Actions',
