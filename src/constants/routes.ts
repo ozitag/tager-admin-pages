@@ -5,7 +5,7 @@ import PageForm from '../views/PageForm/index.vue';
 
 import { PAGES_ROUTE_PATHS } from './paths';
 
-const HOME_BREADCRUMB = { path: '/', label: 'Home' };
+const HOME_BREADCRUMB = { url: '/', text: 'Home' };
 
 export const PAGE_LIST_ROUTE: CustomRouteConfig = {
   path: PAGES_ROUTE_PATHS.PAGE_LIST,
@@ -14,7 +14,7 @@ export const PAGE_LIST_ROUTE: CustomRouteConfig = {
   meta: {
     getBreadcrumbs: (route) => [
       HOME_BREADCRUMB,
-      { path: route.path, label: route.name },
+      { url: route.path, text: route.name ?? '' },
     ],
   },
 };
@@ -26,7 +26,7 @@ export const PAGE_FORM_ROUTE: CustomRouteConfig = {
   meta: {
     getBreadcrumbs: (route) => [
       HOME_BREADCRUMB,
-      { path: route.path, label: route.name },
+      { url: route.path, text: route.name ?? '' },
     ],
   },
 };

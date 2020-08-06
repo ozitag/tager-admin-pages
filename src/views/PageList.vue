@@ -58,8 +58,8 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
     field: 'path',
     type: 'link',
     format: ({ row }) => ({
-      href: process.env.VUE_APP_WEBSITE_URL + row.path,
-      label: row.path,
+      url: process.env.VUE_APP_WEBSITE_URL + row.path,
+      text: row.path,
     }),
     options: {
       shouldOpenNewTab: true,

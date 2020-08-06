@@ -3,11 +3,10 @@ import { getPageFormUrl, getPageListUrl } from '../utils/paths';
 
 export const PAGES_MENU_ITEM: MenuItemType = {
   id: 'pages',
-  name: 'Pages',
-  path: '',
+  text: 'Pages',
   icon: 'viewList',
   children: [
-    { name: 'Pages', path: getPageListUrl() },
-    { name: 'Create page', path: getPageFormUrl({ pageId: 'create' }) },
+    { text: 'Pages', url: getPageListUrl() },
+    { text: 'Create page', url: getPageFormUrl({ pageId: 'create' }) },
   ],
 };
