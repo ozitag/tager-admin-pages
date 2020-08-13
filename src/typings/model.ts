@@ -1,59 +1,135 @@
 import { FileType, Nullable } from '@tager/admin-services';
 
-export type TemplateShort = Readonly<{
-  id: string;
-  label: string;
-}>;
+/** Template fields */
 
-interface CommonTemplateField {
+/** Common */
+interface CommonTemplateFieldDefinition {
   name: string;
   label: string;
   type: string;
-  value: any;
   meta: Record<string, any>;
-  fields?: Array<CommonTemplateField>;
+  fields?: Array<CommonTemplateFieldDefinition>;
 }
 
-interface StringField extends CommonTemplateField {
+interface CommonTemplateFieldDefinition2 {
+  name: string;
+  type: string;
+  value: any;
+}
+
+type CommonTemplateFieldPayload<Value> = {
+  name: string;
+  value: Value;
+};
+
+/** STRING */
+
+interface StringFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'STRING';
+}
+
+interface StringField extends StringFieldDefinition {
   value: string;
 }
 
-interface DateField extends CommonTemplateField {
+type StringFieldPayload = CommonTemplateFieldPayload<string>;
+
+/** DATE */
+
+interface DateFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'DATE';
+}
+
+interface DateField extends DateFieldDefinition {
   value: string;
 }
 
-interface DateTimeField extends CommonTemplateField {
+type DateFieldPayload = CommonTemplateFieldPayload<string>;
+
+/** DATETIME */
+
+interface DateTimeFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'DATETIME';
+}
+
+interface DateTimeField extends DateFieldDefinition {
   value: string;
 }
 
-interface TextField extends CommonTemplateField {
+type DateTimeFieldPayload = CommonTemplateFieldPayload<string>;
+
+/** TEXT */
+
+interface TextFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'TEXT';
+}
+
+interface TextField extends TextFieldDefinition {
   value: string;
 }
 
-interface HtmlField extends CommonTemplateField {
+type TextFieldPayload = CommonTemplateFieldPayload<string>;
+
+/** HTML */
+
+interface HtmlFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'HTML';
+}
+
+interface HtmlField extends HtmlFieldDefinition {
   value: string;
 }
 
-interface ImageField extends CommonTemplateField {
+type HtmlFieldPayload = CommonTemplateFieldPayload<string>;
+
+/** IMAGE */
+
+interface ImageFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'IMAGE';
+}
+
+interface ImageField extends ImageFieldDefinition {
   value: Nullable<FileType>;
 }
 
-interface FileField extends CommonTemplateField {
+type ImageFieldPayload = CommonTemplateFieldPayload<Nullable<number>>;
+
+/** FILE */
+
+interface FileFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'FILE';
+}
+
+interface FileField extends FileFieldDefinition {
   value: Nullable<FileType>;
 }
 
-interface RepeatedField extends CommonTemplateField {
+type FileFieldPayload = CommonTemplateFieldPayload<Nullable<number>>;
+
+/** REPEATER */
+
+interface RepeatedFieldDefinition extends CommonTemplateFieldDefinition {
   type: 'REPEATER';
-  value: Nullable<FileType>;
-  fields: Array<TemplateFieldType>;
+  fields: Array<TemplateFieldDefinitionType>;
 }
+
+interface RepeatedField extends RepeatedFieldDefinition {
+  value: Array<Array<TemplateFieldType>>;
+}
+
+type RepeatedFieldPayload = CommonTemplateFieldPayload<
+  Array<Array<TemplateFieldPayloadType>>
+>;
+
+/** All */
+export type TemplateFieldDefinitionType =
+  | StringFieldDefinition
+  | TextFieldDefinition
+  | HtmlFieldDefinition
+  | ImageFieldDefinition
+  | FileFieldDefinition
+  | DateFieldDefinition
+  | RepeatedFieldDefinition;
 
 export type TemplateFieldType = Readonly<
   | StringField
@@ -63,16 +139,33 @@ export type TemplateFieldType = Readonly<
   | FileField
   | DateField
   | RepeatedField
-  // | FileField
-  // | DateField
-  // | DateTimeField
 >;
+
+export type TemplateFieldPayloadType =
+  | StringFieldPayload
+  | TextFieldPayload
+  | HtmlFieldPayload
+  | ImageFieldPayload
+  | FileFieldPayload
+  | DateFieldPayload
+  | RepeatedFieldPayload;
+
+/** Template */
+
+export type TemplateShort = Readonly<{
+  id: string;
+  label: string;
+}>;
 
 export type TemplateFull = Readonly<
   TemplateShort & {
-    fields: Array<Omit<TemplateFieldType, 'value'>>;
+    fields: Array<TemplateFieldDefinitionType>;
   }
 >;
+
+type PageTemplateValueType<
+  T extends TemplateFieldType
+> = T extends TemplateFieldType ? Pick<T, 'name' | 'type' | 'value'> : never;
 
 export type PageShort = {
   readonly id: number;
@@ -102,5 +195,5 @@ export type PageFull = {
 
   /** Template */
   readonly template: TemplateShort['id'];
-  readonly templateValues: Array<Omit<TemplateFieldType, 'label'>>;
+  readonly templateValues: Array<PageTemplateValueType<TemplateFieldType>>;
 };

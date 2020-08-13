@@ -3,6 +3,8 @@ import { OptionType } from '@tager/admin-ui';
 
 import {
   PageFull,
+  PageShort,
+  TemplateFieldPayloadType,
   TemplateFieldType,
   TemplateShort,
 } from '../../typings/model';
@@ -99,6 +101,28 @@ function getTemplateFieldValue(field: TemplateFieldType) {
   }
 }
 
+function convertFieldToPayload(
+  field: TemplateFieldType
+): TemplateFieldPayloadType {
+  switch (field.type) {
+    case 'HTML':
+    case 'TEXT':
+    case 'STRING':
+      return { name: field.name, value: field.value };
+
+    case 'IMAGE':
+    case 'FILE':
+      return { name: field.name, value: field.value?.id ?? null };
+
+    default:
+      /** TODO FIXME */
+      return {
+        name: field.name,
+        value: field.value,
+      } as TemplateFieldPayloadType;
+  }
+}
+
 export function convertPageFormValuesToCreationPayload(
   values: FormValues,
   templateValues: Record<string, TemplateFieldType>
@@ -109,10 +133,7 @@ export function convertPageFormValuesToCreationPayload(
     image: values.image?.id ?? null,
     openGraphImage: values.openGraphImage?.id ?? null,
     template: values.template?.value ?? null,
-    templateFields: Object.values(templateValues).map((templateField) => ({
-      name: templateField.name,
-      value: getTemplateFieldValue(templateField),
-    })),
+    templateFields: Object.values(templateValues).map(convertFieldToPayload),
   };
 }
 
