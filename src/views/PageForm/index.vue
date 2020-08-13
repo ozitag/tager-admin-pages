@@ -53,6 +53,7 @@
         name="template"
         :error="errors.template"
         label="Template"
+        no-options-message="No Template"
         :options="templateOptions"
       />
 
