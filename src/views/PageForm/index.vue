@@ -15,34 +15,37 @@
         :error="errors.title"
         label="Title"
       />
-      <form-field
-        v-if="!isCreation"
-        v-model="values.path"
-        name="path"
-        :error="errors.path"
-        label="Path"
-      />
-      <form-field-file-input
-        v-model="values.image"
-        name="image"
-        :error="errors.image"
-        label="Image"
-        file-type="image"
-      />
-      <form-field
-        v-model="values.excerpt"
-        name="excerpt"
-        :error="errors.excerpt"
-        label="Excerpt"
-        type="textarea"
-        rows="4"
-      />
-      <form-field-rich-text-input
-        v-model="values.body"
-        name="body"
-        :error="errors.body"
-        label="Body"
-      />
+
+      <template v-if="!isCreation">
+        <form-field
+          v-if="!isCreation"
+          v-model="values.path"
+          name="path"
+          :error="errors.path"
+          label="Path"
+        />
+        <form-field-file-input
+          v-model="values.image"
+          name="image"
+          :error="errors.image"
+          label="Image"
+          file-type="image"
+        />
+        <form-field
+          v-model="values.excerpt"
+          name="excerpt"
+          :error="errors.excerpt"
+          label="Excerpt"
+          type="textarea"
+          rows="4"
+        />
+        <form-field-rich-text-input
+          v-model="values.body"
+          name="body"
+          :error="errors.body"
+          label="Body"
+        />
+      </template>
 
       <div class="divider" />
 
@@ -64,60 +67,62 @@
         @update="handleTemplateFieldUpdate"
       />
 
-      <div class="divider" />
+      <template v-if="!isCreation">
+        <div class="divider" />
 
-      <h4 class="section-title">SEO</h4>
+        <h4 class="section-title">SEO</h4>
 
-      <form-field
-        v-model="values.pageTitle"
-        name="pageTitle"
-        :error="errors.pageTitle"
-        label="Page title"
-      />
+        <form-field
+          v-model="values.pageTitle"
+          name="pageTitle"
+          :error="errors.pageTitle"
+          label="Page title"
+        />
 
-      <form-field
-        v-model="values.pageDescription"
-        name="pageDescription"
-        :error="errors.pageDescription"
-        label="Page description"
-        type="textarea"
-        rows="4"
-      />
+        <form-field
+          v-model="values.pageDescription"
+          name="pageDescription"
+          :error="errors.pageDescription"
+          label="Page description"
+          type="textarea"
+          rows="4"
+        />
 
-      <form-field
-        v-model="values.openGraphTitle"
-        name="openGraphTitle"
-        :error="errors.openGraphTitle"
-        label="Open Graph Title"
-      />
+        <form-field
+          v-model="values.openGraphTitle"
+          name="openGraphTitle"
+          :error="errors.openGraphTitle"
+          label="Open Graph Title"
+        />
 
-      <form-field
-        v-model="values.openGraphDescription"
-        name="openGraphDescription"
-        :error="errors.openGraphDescription"
-        label="Open Graph Description"
-        type="textarea"
-        rows="4"
-      />
+        <form-field
+          v-model="values.openGraphDescription"
+          name="openGraphDescription"
+          :error="errors.openGraphDescription"
+          label="Open Graph Description"
+          type="textarea"
+          rows="4"
+        />
 
-      <form-field-file-input
-        v-model="values.openGraphImage"
-        name="openGraphImage"
-        :error="errors.openGraphImage"
-        label="Open Graph Image"
-        file-type="image"
-      />
+        <form-field-file-input
+          v-model="values.openGraphImage"
+          name="openGraphImage"
+          :error="errors.openGraphImage"
+          label="Open Graph Image"
+          file-type="image"
+        />
+      </template>
     </form>
   </page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { computed, onMounted, ref, watch } from '@vue/composition-api';
 import { convertRequestErrorToMap } from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
 
 import { TemplateFieldType, TemplateFull } from '../../typings/model';
-import { computed, onMounted, ref, watch } from '@vue/composition-api';
 import useResource from '../../hooks/useResource';
 import {
   createPage,
@@ -126,7 +131,7 @@ import {
   getTemplateList,
   updatePage,
 } from '../../services/requests';
-import { getPageListUrl } from '../../utils/paths';
+import { getPageFormUrl, getPageListUrl } from '../../utils/paths';
 import TemplateField from '../../components/TemplateField.vue';
 import {
   convertPageFormValuesToCreationPayload,
@@ -262,9 +267,15 @@ export default Vue.extend({
         : updatePage(pageId.value, updatePayload);
 
       requestPromise
-        .then(() => {
+        .then((response) => {
           errors.value = {};
-          context.root.$router.push(getPageListUrl());
+
+          if (isCreation.value) {
+            context.root.$router.push(
+              getPageFormUrl({ pageId: response.data.id })
+            );
+          }
+
           context.root.$toast({
             variant: 'success',
             title: 'Success',
