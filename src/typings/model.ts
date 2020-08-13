@@ -11,6 +11,7 @@ interface CommonTemplateField {
   type: string;
   value: any;
   meta: Record<string, any>;
+  fields?: Array<CommonTemplateField>;
 }
 
 interface StringField extends CommonTemplateField {
@@ -48,8 +49,20 @@ interface FileField extends CommonTemplateField {
   value: Nullable<FileType>;
 }
 
+interface RepeatedField extends CommonTemplateField {
+  type: 'REPEATER';
+  value: Nullable<FileType>;
+  fields: Array<TemplateFieldType>;
+}
+
 export type TemplateFieldType = Readonly<
-  StringField | TextField | HtmlField | ImageField | FileField | DateField
+  | StringField
+  | TextField
+  | HtmlField
+  | ImageField
+  | FileField
+  | DateField
+  | RepeatedField
   // | FileField
   // | DateField
   // | DateTimeField

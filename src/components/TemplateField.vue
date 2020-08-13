@@ -12,7 +12,7 @@ type Props = Readonly<{
   field: TemplateFieldType;
 }>;
 
-export default Vue.extend({
+const TemplateField = Vue.extend({
   name: 'TemplateField',
   functional: true,
   props: ['field'],
@@ -94,11 +94,15 @@ export default Vue.extend({
             change: emitUpdateEvent,
           },
         });
+      case 'REPEATER':
+        return h('div', [h('h2')]);
       default:
         return h('div', `Unknown field with type: ${context.props.field.type}`);
     }
   },
 });
+
+export default TemplateField;
 </script>
 
 <style scoped></style>
