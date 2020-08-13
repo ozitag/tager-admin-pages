@@ -8,7 +8,6 @@ import {
 import {
   PageFull,
   PageShort,
-  TemplateFieldType,
   TemplateFull,
   TemplateShort,
 } from '../typings/model';

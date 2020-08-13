@@ -1,6 +1,8 @@
 import { ref, SetupContext } from '@vue/composition-api';
 
-function useEntityDelete<EntityId>(params: {
+type EntityId = string | number;
+
+function useEntityDelete(params: {
   deleteEntity: (entityId: EntityId) => Promise<{ success: boolean }>;
   entityName: string;
   onSuccess?: () => void;

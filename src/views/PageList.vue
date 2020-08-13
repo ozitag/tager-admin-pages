@@ -57,10 +57,13 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
     name: 'Path',
     field: 'path',
     type: 'link',
-    format: ({ row }) => ({
-      url: process.env.VUE_APP_WEBSITE_URL + row.path,
-      text: row.path,
-    }),
+    format: ({ row }) => {
+      const origin = process.env.VUE_APP_WEBSITE_URL || window.location.origin;
+      return {
+        url: origin + row.path,
+        text: row.path,
+      };
+    },
     options: {
       shouldOpenNewTab: true,
     },
