@@ -9,108 +9,126 @@
     }"
   >
     <form novalidate @submit.prevent>
-      <form-field
-        v-model="values.title"
-        name="title"
-        :error="errors.title"
-        label="Title"
-      />
+      <template v-if="isCreation">
+        <form-field
+          v-model="values.title"
+          name="title"
+          :error="errors.title"
+          label="Title"
+        />
 
-      <template v-if="!isCreation">
-        <form-field
-          v-if="!isCreation"
-          v-model="values.path"
-          name="path"
-          :error="errors.path"
-          label="Path"
-        />
-        <form-field-file-input
-          v-model="values.image"
-          name="image"
-          :error="errors.image"
-          label="Image"
-          file-type="image"
-        />
-        <form-field
-          v-model="values.excerpt"
-          name="excerpt"
-          :error="errors.excerpt"
-          label="Excerpt"
-          type="textarea"
-          rows="4"
-        />
-        <form-field-rich-text-input
-          v-model="values.body"
-          name="body"
-          :error="errors.body"
-          label="Body"
+        <form-field-select
+          v-model="values.template"
+          name="template"
+          :error="errors.template"
+          label="Template"
+          no-options-message="No Template"
+          :options="templateOptions"
         />
       </template>
-
-      <div class="divider" />
-
-      <h4 class="section-title">Template</h4>
-
-      <form-field-select
-        v-model="values.template"
-        name="template"
-        :error="errors.template"
-        label="Template"
-        no-options-message="No Template"
-        :options="templateOptions"
-      />
-
-      <template-field
-        v-for="field of templateValues"
-        :key="field.name"
-        :field="field"
-        @update="handleTemplateFieldUpdate"
-      />
-
-      <template v-if="!isCreation">
-        <div class="divider" />
-
-        <h4 class="section-title">SEO</h4>
-
-        <form-field
-          v-model="values.pageTitle"
-          name="pageTitle"
-          :error="errors.pageTitle"
-          label="Page title"
+      <template v-else>
+        <tab-list
+          :tab-list="tabList"
+          :selected-tab-id="selectedTabId"
+          @tab:update="selectedTabId = $event.tabId"
         />
 
-        <form-field
-          v-model="values.pageDescription"
-          name="pageDescription"
-          :error="errors.pageDescription"
-          label="Page description"
-          type="textarea"
-          rows="4"
-        />
+        <template v-if="selectedTabId === 'common'">
+          <form-field
+            v-model="values.title"
+            name="title"
+            :error="errors.title"
+            label="Title"
+          />
 
-        <form-field
-          v-model="values.openGraphTitle"
-          name="openGraphTitle"
-          :error="errors.openGraphTitle"
-          label="Open Graph Title"
-        />
+          <form-field-select
+            v-model="values.template"
+            name="template"
+            :error="errors.template"
+            label="Template"
+            no-options-message="No Template"
+            :options="templateOptions"
+          />
 
-        <form-field
-          v-model="values.openGraphDescription"
-          name="openGraphDescription"
-          :error="errors.openGraphDescription"
-          label="Open Graph Description"
-          type="textarea"
-          rows="4"
-        />
+          <form-field
+            v-model="values.path"
+            name="path"
+            :error="errors.path"
+            label="Path"
+          />
+          <form-field-file-input
+            v-model="values.image"
+            name="image"
+            :error="errors.image"
+            label="Image"
+            file-type="image"
+          />
+          <form-field
+            v-model="values.excerpt"
+            name="excerpt"
+            :error="errors.excerpt"
+            label="Excerpt"
+            type="textarea"
+            rows="4"
+          />
+          <form-field-rich-text-input
+            v-model="values.body"
+            name="body"
+            :error="errors.body"
+            label="Body"
+          />
+        </template>
 
-        <form-field-file-input
-          v-model="values.openGraphImage"
-          name="openGraphImage"
-          :error="errors.openGraphImage"
-          label="Open Graph Image"
-          file-type="image"
-        />
+        <template v-if="selectedTabId === 'template'">
+          <template-field
+            v-for="field of templateValues"
+            :key="field.name"
+            :field="field"
+            @update="handleTemplateFieldUpdate"
+          />
+        </template>
+
+        <template v-if="selectedTabId === 'seo'">
+          <form-field
+            v-model="values.pageTitle"
+            name="pageTitle"
+            :error="errors.pageTitle"
+            label="Page title"
+          />
+
+          <form-field
+            v-model="values.pageDescription"
+            name="pageDescription"
+            :error="errors.pageDescription"
+            label="Page description"
+            type="textarea"
+            rows="4"
+          />
+
+          <form-field
+            v-model="values.openGraphTitle"
+            name="openGraphTitle"
+            :error="errors.openGraphTitle"
+            label="Open Graph Title"
+          />
+
+          <form-field
+            v-model="values.openGraphDescription"
+            name="openGraphDescription"
+            :error="errors.openGraphDescription"
+            label="Open Graph Description"
+            type="textarea"
+            rows="4"
+          />
+
+          <form-field-file-input
+            v-model="values.openGraphImage"
+            name="openGraphImage"
+            :error="errors.openGraphImage"
+            label="Open Graph Image"
+            file-type="image"
+          />
+        </template>
       </template>
     </form>
   </page>
@@ -119,7 +137,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { computed, onMounted, ref, watch } from '@vue/composition-api';
-import { convertRequestErrorToMap } from '@tager/admin-services';
+import { convertRequestErrorToMap, notEmpty } from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
 
 import { TemplateFieldType, TemplateFull } from '../../typings/model';
@@ -139,13 +157,31 @@ import {
   FormValues,
   getPageFormValues,
 } from './PageForm.helpers';
+import TabList, { TabType } from './components/TabList';
 
 export default Vue.extend({
   name: 'PageForm',
-  components: { TemplateField },
+  components: { TemplateField, TabList },
   setup(props, context) {
     const pageId = computed(() => context.root.$route.params.pageId);
     const isCreation = computed(() => pageId.value === 'create');
+
+    /** Page fetching */
+
+    const [fetchPage, { data: page, loading }] = useResource({
+      fetchResource: () => getPageById(pageId.value),
+      initialValue: null,
+    });
+
+    onMounted(() => {
+      if (isCreation.value) return;
+
+      fetchPage();
+    });
+
+    watch(pageId, fetchPage);
+
+    /** Short template list */
 
     const [fetchTemplateList, { data: shortTemplateList }] = useResource({
       fetchResource: getTemplateList,
@@ -159,20 +195,11 @@ export default Vue.extend({
       }))
     );
 
-    const [fetchPage, { data: page, loading }] = useResource({
-      fetchResource: () => getPageById(pageId.value),
-      initialValue: null,
-    });
-
     onMounted(() => {
       fetchTemplateList();
-
-      if (isCreation.value) return;
-
-      fetchPage();
     });
 
-    watch(pageId, fetchPage);
+    /** Full template list */
 
     const fullTemplateList = ref<Array<TemplateFull>>([]);
 
@@ -189,6 +216,8 @@ export default Vue.extend({
         })
         .catch(console.error);
     });
+
+    /** Form state */
 
     const errors = ref<Record<string, string>>({});
     const values = ref<FormValues>(
@@ -300,6 +329,17 @@ export default Vue.extend({
         });
     }
 
+    /** Tabs */
+
+    const tabList = computed<Array<TabType>>(() =>
+      [
+        { id: 'common', label: 'Common' },
+        values.value.template ? { id: 'template', label: 'Template' } : null,
+        { id: 'seo', label: 'SEO' },
+      ].filter(notEmpty)
+    );
+    const selectedTabId = ref<string>(tabList.value[0].id);
+
     return {
       submitForm,
       isSubmitting,
@@ -311,6 +351,8 @@ export default Vue.extend({
       templateOptions,
       templateValues,
       handleTemplateFieldUpdate,
+      tabList,
+      selectedTabId,
     };
   },
 });
