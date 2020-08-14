@@ -3,7 +3,6 @@ import { OptionType } from '@tager/admin-ui';
 
 import {
   PageFull,
-  PageShort,
   TemplateFieldType,
   TemplateShort,
 } from '../../typings/model';
@@ -12,7 +11,7 @@ import { PageCreatePayload, PageUpdatePayload } from '../../services/requests';
 export type FormValues = {
   title: string;
   path: string;
-  parent: Nullable<PageShort['id']>;
+  parent: Nullable<OptionType<number>>;
   image: Nullable<FileType>;
   excerpt: string;
   body: string;
@@ -45,7 +44,8 @@ const INITIAL_VALUES: FormValues = {
 
 export function getPageFormValues(
   page: Nullable<PageFull>,
-  templateList: Array<TemplateShort>
+  templateList: Array<TemplateShort>,
+  parentPageOptions: Array<OptionType<number>>
 ): FormValues {
   if (!page) {
     return { ...INITIAL_VALUES };
@@ -55,10 +55,14 @@ export function getPageFormValues(
     (template) => template.id === page.template
   );
 
+  const foundParentOption = parentPageOptions.find(
+    (option) => option.value === page.parent?.id
+  );
+
   return {
     title: page.title,
     path: page.path,
-    parent: page.parent,
+    parent: foundParentOption ?? null,
     image: page.image,
     excerpt: page.excerpt ?? '',
     body: page.body ?? '',
@@ -96,6 +100,7 @@ export function convertPageFormValuesToCreationPayload(
 ): PageCreatePayload {
   return {
     ...values,
+    parent: values.parent?.value ?? null,
     image: values.image?.id ?? null,
     openGraphImage: values.openGraphImage?.id ?? null,
     template: values.template?.value ?? null,

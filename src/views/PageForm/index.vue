@@ -18,6 +18,15 @@
         />
 
         <form-field-select
+          v-model="values.parent"
+          name="parent"
+          :error="errors.parent"
+          label="Parent page"
+          no-options-message="No Parents"
+          :options="parentPageOptions"
+        />
+
+        <form-field-select
           v-model="values.template"
           name="template"
           :error="errors.template"
@@ -39,6 +48,15 @@
             name="title"
             :error="errors.title"
             label="Title"
+          />
+
+          <form-field-select
+            v-model="values.parent"
+            name="parent"
+            :error="errors.parent"
+            label="Parent page"
+            no-options-message="No Parents"
+            :options="parentPageOptions"
           />
 
           <form-field-select
@@ -145,6 +163,7 @@ import useResource from '../../hooks/useResource';
 import {
   createPage,
   getPageById,
+  getPageList,
   getTemplateById,
   getTemplateList,
   updatePage,
@@ -180,6 +199,29 @@ export default Vue.extend({
     });
 
     watch(pageId, fetchPage);
+
+    /** Page list fetching */
+
+    const [fetchPageList, { data: pageList }] = useResource({
+      fetchResource: () => getPageList(),
+      initialValue: [],
+    });
+
+    onMounted(() => {
+      fetchPageList();
+    });
+
+    watch(pageId, fetchPageList);
+
+    const parentPageOptions = computed<Array<OptionType<number>>>(() =>
+      pageList.value
+        /** Page cannot be parent for herself */
+        .filter((shortPage) => shortPage.id !== page.value?.id)
+        .map((shortPage) => ({
+          value: shortPage.id,
+          label: shortPage.title,
+        }))
+    );
 
     /** Short template list */
 
@@ -221,7 +263,11 @@ export default Vue.extend({
 
     const errors = ref<Record<string, string>>({});
     const values = ref<FormValues>(
-      getPageFormValues(page.value, shortTemplateList.value)
+      getPageFormValues(
+        page.value,
+        shortTemplateList.value,
+        parentPageOptions.value
+      )
     );
     const isSubmitting = ref<boolean>(false);
     const templateValues = ref<Record<string, TemplateFieldType>>({});
@@ -258,7 +304,11 @@ export default Vue.extend({
     }
 
     function updateFormValues() {
-      values.value = getPageFormValues(page.value, shortTemplateList.value);
+      values.value = getPageFormValues(
+        page.value,
+        shortTemplateList.value,
+        parentPageOptions.value
+      );
     }
 
     onMounted(() => {
@@ -266,7 +316,7 @@ export default Vue.extend({
       updateTemplateValues();
     });
 
-    watch([page, shortTemplateList], () => {
+    watch([page, shortTemplateList, parentPageOptions], () => {
       updateFormValues();
     });
 
@@ -353,6 +403,7 @@ export default Vue.extend({
       handleTemplateFieldUpdate,
       tabList,
       selectedTabId,
+      parentPageOptions,
     };
   },
 });

@@ -70,7 +70,7 @@ export type PageShort = Readonly<{
 
 export type PageFull = Readonly<
   PageShort & {
-    parent: Nullable<PageShort['id']>;
+    parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
     excerpt: Nullable<string>;
     body: Nullable<string>;
 
