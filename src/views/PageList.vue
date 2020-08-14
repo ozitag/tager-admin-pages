@@ -31,7 +31,9 @@
         <base-button
           variant="icon"
           title="Delete"
-          :disabled="isEntityDeleting(row.id) || isRowDataLoading"
+          :disabled="
+            hasChild(row.id) || isEntityDeleting(row.id) || isRowDataLoading
+          "
           @click="handleEntityDelete(row.id)"
         >
           <svg-icon name="delete"></svg-icon>
@@ -50,6 +52,7 @@ import { getPageFormUrl } from '../utils/paths';
 import { deletePage, getPageList } from '../services/requests';
 import useEntityDelete from '../hooks/useEntityDelete';
 import useResource from '../hooks/useResource';
+import { generateNumberArray } from '../utils/common';
 
 const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
   {
@@ -59,7 +62,17 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
     style: { width: '50px', textAlign: 'center' },
     headStyle: { width: '50px', textAlign: 'center' },
   },
-  { id: 3, name: 'Title', field: 'title' },
+  {
+    id: 3,
+    name: 'Title',
+    field: 'title',
+    format: ({ row }) =>
+      generateNumberArray(row.depth)
+        .map(() => '—')
+        .join(' ') +
+      ' ' +
+      row.title,
+  },
   {
     id: 4,
     name: 'Path',
@@ -88,7 +101,7 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
 export default defineComponent({
   name: 'PageList',
   setup(props, context) {
-    const [fetchPageList, { data, loading, error }] = useResource<
+    const [fetchPageList, { data: pageList, loading, error }] = useResource<
       Array<PageShort>
     >({
       fetchResource: getPageList,
@@ -117,15 +130,20 @@ export default defineComponent({
       return path + searchString;
     }
 
+    function hasChild(parentId: number): boolean {
+      return pageList.value.some((page) => page.parent?.id === parentId);
+    }
+
     return {
       columnDefs: COLUMN_DEFS,
       getPageFormUrl,
       getChildPageCreationFormUrl,
-      rowData: data,
+      rowData: pageList,
       isRowDataLoading: loading,
       errorMessage: error,
       isEntityDeleting: isDeleting,
       handleEntityDelete,
+      hasChild,
     };
   },
 });

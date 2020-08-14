@@ -61,28 +61,33 @@ export type TemplateFull = Readonly<
   }
 >;
 
-export type PageShort = Readonly<{
-  id: number;
-  title: string;
-  image: Nullable<FileType>;
-  path: string;
-}>;
+export type PageShort = {
+  readonly id: number;
+  readonly title: string;
+  readonly image: Nullable<FileType>;
+  readonly path: string;
+  readonly parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
+  readonly depth: number;
+};
 
-export type PageFull = Readonly<
-  PageShort & {
-    parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
-    excerpt: Nullable<string>;
-    body: Nullable<string>;
+export type PageFull = {
+  readonly id: number;
+  readonly title: string;
+  readonly image: Nullable<FileType>;
+  readonly path: string;
+  readonly parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
 
-    /** SEO */
-    pageTitle: Nullable<string>;
-    pageDescription: Nullable<string>;
-    openGraphTitle: Nullable<string>;
-    openGraphDescription: Nullable<string>;
-    openGraphImage: Nullable<FileType>;
+  readonly excerpt: Nullable<string>;
+  readonly body: Nullable<string>;
 
-    /** Template */
-    template: TemplateShort['id'];
-    templateValues: Array<Omit<TemplateFieldType, 'label'>>;
-  }
->;
+  /** SEO */
+  readonly pageTitle: Nullable<string>;
+  readonly pageDescription: Nullable<string>;
+  readonly openGraphTitle: Nullable<string>;
+  readonly openGraphDescription: Nullable<string>;
+  readonly openGraphImage: Nullable<FileType>;
+
+  /** Template */
+  readonly template: TemplateShort['id'];
+  readonly templateValues: Array<Omit<TemplateFieldType, 'label'>>;
+};
