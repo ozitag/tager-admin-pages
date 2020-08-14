@@ -8,7 +8,7 @@ import {
 import {
   PageFull,
   PageShort,
-  TemplateFieldPayloadType,
+  TemplateFieldToSave,
   TemplateFull,
   TemplateShort,
 } from '../typings/model';
@@ -47,7 +47,7 @@ export type PageCreatePayload = {
   openGraphImage: Nullable<FileType['id']>;
 
   template: Nullable<TemplateShort['id']>;
-  templateFields: Array<TemplateFieldPayloadType>;
+  templateFields: Array<TemplateFieldToSave>;
 };
 
 export function createPage(

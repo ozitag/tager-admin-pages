@@ -3,11 +3,11 @@ import { OptionType } from '@tager/admin-ui';
 
 import {
   PageFull,
-  PageShort,
-  PageTemplateValueType,
   RepeatedField,
+  RepeatedFieldFromRequest,
   TemplateFieldDefinitionType,
-  TemplateFieldPayloadType,
+  TemplateFieldFromRequest,
+  TemplateFieldToSave,
   TemplateFieldType,
   TemplateShort,
 } from '../../typings/model';
@@ -104,9 +104,7 @@ function getTemplateFieldValue(field: TemplateFieldType) {
   }
 }
 
-function convertFieldToPayload(
-  field: TemplateFieldType
-): TemplateFieldPayloadType {
+function convertFieldToPayload(field: TemplateFieldType): TemplateFieldToSave {
   switch (field.type) {
     case 'HTML':
     case 'TEXT':
@@ -122,13 +120,13 @@ function convertFieldToPayload(
       return {
         name: field.name,
         value: field.value,
-      } as TemplateFieldPayloadType;
+      } as TemplateFieldToSave;
   }
 }
 
 export function convertPageFormValuesToCreationPayload(
   values: FormValues,
-  templateValues: Record<string, TemplateFieldType>
+  templateValues: Array<TemplateFieldType>
 ): PageCreatePayload {
   return {
     ...values,
@@ -136,13 +134,13 @@ export function convertPageFormValuesToCreationPayload(
     image: values.image?.id ?? null,
     openGraphImage: values.openGraphImage?.id ?? null,
     template: values.template?.value ?? null,
-    templateFields: Object.values(templateValues).map(convertFieldToPayload),
+    templateFields: templateValues.map(convertFieldToPayload),
   };
 }
 
 export function convertPageFormValuesToUpdatePayload(
   values: FormValues,
-  templateValues: Record<string, TemplateFieldType>
+  templateValues: Array<TemplateFieldType>
 ): PageUpdatePayload {
   return {
     ...convertPageFormValuesToCreationPayload(values, templateValues),
@@ -152,7 +150,7 @@ export function convertPageFormValuesToUpdatePayload(
 
 // export function mergeValuesIntoDefinitions(
 //   definitions: Array<TemplateFieldDefinitionType>,
-//   values: Array<PageTemplateValueType<TemplateFieldType>>
+//   values: Array<FieldFromRequestType<TemplateFieldType>>
 // ): Record<string, TemplateFieldType> {
 //   const newTemplateValues: Record<string, TemplateFieldType> = {};
 //
@@ -176,25 +174,36 @@ export function convertPageFormValuesToUpdatePayload(
 
 function merge(
   definitions: Array<TemplateFieldDefinitionType>,
-  shortFields: Array<PageTemplateValueType<TemplateFieldType>>
+  shortFields: Array<TemplateFieldFromRequest>
 ): Array<TemplateFieldType> {
   const fields: Array<TemplateFieldType> = [];
 
   for (let i = 0; i < definitions.length; i++) {
     const definition = definitions[i];
-    const foundFieldValue = shortFields.find(
+    const foundShortField = shortFields.find(
       (field) => field.name === definition.name
     );
 
-    let valueToMerge = null;
+    let valueToMerge: TemplateFieldType['value'] = null;
 
     if (definition.type === 'REPEATER') {
-      const repeatedFieldValue = (foundFieldValue as unknown) as Array<
-        PageTemplateValueType<TemplateFieldType>
-      >;
-      valueToMerge = merge(definition.fields, repeatedFieldValue);
+      type RepeatedTemplateFieldValue = RepeatedFieldFromRequest['value'];
+
+      const repeatedFieldValue = foundShortField
+        ? (foundShortField.value as RepeatedTemplateFieldValue)
+        : [];
+
+      valueToMerge = repeatedFieldValue.map((nestedFieldValues) =>
+        merge(definition.fields, nestedFieldValues)
+      );
     } else {
-      valueToMerge = foundFieldValue?.value ?? null;
+      type NotRepeatedTemplateFieldValue = Exclude<
+        TemplateFieldType,
+        RepeatedField
+      >['value'];
+
+      valueToMerge = (foundShortField?.value ??
+        null) as NotRepeatedTemplateFieldValue;
     }
 
     const mergedDefinition = {
@@ -210,7 +219,7 @@ function merge(
 
 export function mergeValuesIntoDefinitions(
   definitions: Array<TemplateFieldDefinitionType>,
-  shortFields: Array<PageTemplateValueType<TemplateFieldType>>
+  shortFields: Array<TemplateFieldFromRequest>
 ): Array<TemplateFieldType> {
   return merge(definitions, shortFields);
 }

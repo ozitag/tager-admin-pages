@@ -102,7 +102,6 @@
             v-for="field of templateValues"
             :key="field.name"
             :field="field"
-            @update="handleTemplateFieldUpdate"
           />
         </template>
 
@@ -296,8 +295,6 @@ export default Vue.extend({
         selectedTemplate.value?.fields ?? [],
         page.value?.templateValues ?? []
       );
-
-      console.log('templateValues.value', templateValues.value);
     }
 
     function updateFormValues() {
@@ -321,10 +318,6 @@ export default Vue.extend({
     watch([page, selectedTemplate], () => {
       updateTemplateValues();
     });
-
-    function handleTemplateFieldUpdate(updatedField: TemplateFieldType) {
-      templateValues.value[updatedField.name] = updatedField;
-    }
 
     function submitForm() {
       isSubmitting.value = true;
@@ -398,7 +391,6 @@ export default Vue.extend({
       errors,
       templateOptions,
       templateValues,
-      handleTemplateFieldUpdate,
       tabList,
       selectedTabId,
       parentPageOptions,

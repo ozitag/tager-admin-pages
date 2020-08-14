@@ -1,26 +1,42 @@
 import { FileType, Nullable } from '@tager/admin-services';
 
-/** Template fields */
-
-/** Common */
-interface CommonTemplateFieldDefinition {
-  name: string;
-  label: string;
-  type: string;
-  meta: Record<string, any>;
-  fields?: Array<CommonTemplateFieldDefinition>;
-}
-
-interface CommonTemplateFieldDefinition2 {
-  name: string;
-  type: string;
-  value: any;
-}
-
-type CommonTemplateFieldPayload<Value> = {
+export type FieldShortType<Value> = {
   name: string;
   value: Value;
 };
+
+/** Common */
+interface CommonTemplateFieldDefinition {
+  readonly name: string;
+  readonly label: string;
+  readonly type: string;
+  readonly meta: Record<string, any>;
+  readonly fields?: Array<CommonTemplateFieldDefinition>;
+}
+
+/**
+ * Explanation:
+ *
+ * FieldDefinition - description of field from template
+ *
+ * interface StringFieldDefinition extends CommonTemplateFieldDefinition {
+ *   type: 'STRING';
+ * }
+ *
+ * Field - field definition with value, that is used in form state
+ *
+ * interface StringField extends StringFieldDefinition {
+ *   value: string;
+ * }
+ *
+ * FieldFromRequest - field description (name, value), which is coming from PageFull request
+ *
+ * type StringFieldFromRequest = FieldShortType<string>;
+ *
+ * FieldToSave - field description (name, value), which is sent to backend when we update template values
+ *
+ * type StringFieldToSave = FieldShortType<string>;
+ */
 
 /** STRING */
 
@@ -32,7 +48,8 @@ interface StringField extends StringFieldDefinition {
   value: string;
 }
 
-type StringFieldPayload = CommonTemplateFieldPayload<string>;
+type StringFieldFromRequest = FieldShortType<string>;
+type StringFieldToSave = FieldShortType<string>;
 
 /** DATE */
 
@@ -44,7 +61,8 @@ interface DateField extends DateFieldDefinition {
   value: string;
 }
 
-type DateFieldPayload = CommonTemplateFieldPayload<string>;
+type DateFieldFromRequest = FieldShortType<string>;
+type DateFieldToSave = FieldShortType<string>;
 
 /** DATETIME */
 
@@ -56,7 +74,8 @@ interface DateTimeField extends DateFieldDefinition {
   value: string;
 }
 
-type DateTimeFieldPayload = CommonTemplateFieldPayload<string>;
+type DateTimeFieldFromRequest = FieldShortType<string>;
+type DateTimeFieldToSave = FieldShortType<string>;
 
 /** TEXT */
 
@@ -68,7 +87,8 @@ interface TextField extends TextFieldDefinition {
   value: string;
 }
 
-type TextFieldPayload = CommonTemplateFieldPayload<string>;
+type TextFieldFromRequest = FieldShortType<string>;
+type TextFieldToSave = FieldShortType<string>;
 
 /** HTML */
 
@@ -80,7 +100,8 @@ interface HtmlField extends HtmlFieldDefinition {
   value: string;
 }
 
-type HtmlFieldPayload = CommonTemplateFieldPayload<string>;
+type HtmlFieldFromRequest = FieldShortType<string>;
+type HtmlFieldToSave = FieldShortType<string>;
 
 /** IMAGE */
 
@@ -92,7 +113,21 @@ interface ImageField extends ImageFieldDefinition {
   value: Nullable<FileType>;
 }
 
-type ImageFieldPayload = CommonTemplateFieldPayload<Nullable<number>>;
+type ImageFieldFromRequest = FieldShortType<Nullable<FileType>>;
+type ImageFieldToSave = FieldShortType<Nullable<number>>;
+
+/** GALLERY */
+
+interface GalleryFieldDefinition extends CommonTemplateFieldDefinition {
+  type: 'GALLERY';
+}
+
+interface GalleryField extends GalleryFieldDefinition {
+  value: Array<FileType>;
+}
+
+type GalleryFieldFromRequest = FieldShortType<Array<FileType>>;
+type GalleryFieldToSave = FieldShortType<Array<number>>;
 
 /** FILE */
 
@@ -104,7 +139,8 @@ interface FileField extends FileFieldDefinition {
   value: Nullable<FileType>;
 }
 
-type FileFieldPayload = CommonTemplateFieldPayload<Nullable<number>>;
+type FileFieldFromRequest = FieldShortType<Nullable<FileType>>;
+type FileFieldToSave = FieldShortType<Nullable<number>>;
 
 /** REPEATER */
 
@@ -117,9 +153,10 @@ export interface RepeatedField extends RepeatedFieldDefinition {
   value: Array<Array<TemplateFieldType>>;
 }
 
-type RepeatedFieldPayload = CommonTemplateFieldPayload<
-  Array<Array<TemplateFieldPayloadType>>
+export type RepeatedFieldFromRequest = FieldShortType<
+  Array<Array<TemplateFieldFromRequest>>
 >;
+type RepeatedFieldToSave = FieldShortType<Array<Array<TemplateFieldToSave>>>;
 
 /** All */
 export type TemplateFieldDefinitionType =
@@ -127,28 +164,40 @@ export type TemplateFieldDefinitionType =
   | TextFieldDefinition
   | HtmlFieldDefinition
   | ImageFieldDefinition
+  | GalleryFieldDefinition
   | FileFieldDefinition
   | DateFieldDefinition
   | RepeatedFieldDefinition;
 
-export type TemplateFieldType = Readonly<
+export type TemplateFieldType =
   | StringField
   | TextField
   | HtmlField
   | ImageField
+  | GalleryField
   | FileField
   | DateField
-  | RepeatedField
->;
+  | RepeatedField;
 
-export type TemplateFieldPayloadType =
-  | StringFieldPayload
-  | TextFieldPayload
-  | HtmlFieldPayload
-  | ImageFieldPayload
-  | FileFieldPayload
-  | DateFieldPayload
-  | RepeatedFieldPayload;
+export type TemplateFieldToSave =
+  | StringFieldToSave
+  | TextFieldToSave
+  | HtmlFieldToSave
+  | ImageFieldToSave
+  | GalleryFieldToSave
+  | FileFieldToSave
+  | DateFieldToSave
+  | RepeatedFieldToSave;
+
+export type TemplateFieldFromRequest =
+  | StringFieldFromRequest
+  | TextFieldFromRequest
+  | HtmlFieldFromRequest
+  | ImageFieldFromRequest
+  | GalleryFieldFromRequest
+  | FileFieldFromRequest
+  | DateFieldFromRequest
+  | RepeatedFieldFromRequest;
 
 /** Template */
 
@@ -162,10 +211,6 @@ export type TemplateFull = Readonly<
     fields: Array<TemplateFieldDefinitionType>;
   }
 >;
-
-export type PageTemplateValueType<
-  T extends TemplateFieldType
-> = T extends TemplateFieldType ? Pick<T, 'name' | 'value'> : never;
 
 export type PageShort = {
   readonly id: number;
@@ -195,5 +240,5 @@ export type PageFull = {
 
   /** Template */
   template: TemplateShort['id'];
-  templateValues: Array<PageTemplateValueType<TemplateFieldType>>;
+  templateValues: Array<TemplateFieldFromRequest>;
 };
