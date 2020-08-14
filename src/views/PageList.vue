@@ -22,6 +22,14 @@
         </base-button>
         <base-button
           variant="icon"
+          title="Add child page"
+          :disabled="isEntityDeleting(row.id) || isRowDataLoading"
+          :href="getChildPageCreationFormUrl({ parentId: row.id })"
+        >
+          <svg-icon name="addCircle"></svg-icon>
+        </base-button>
+        <base-button
+          variant="icon"
           title="Delete"
           :disabled="isEntityDeleting(row.id) || isRowDataLoading"
           @click="handleEntityDelete(row.id)"
@@ -98,9 +106,21 @@ export default defineComponent({
       context,
     });
 
+    function getChildPageCreationFormUrl(params: { parentId: number }) {
+      const searchParams = new URLSearchParams({
+        parentId: String(params.parentId),
+      });
+      const searchString = '?' + searchParams.toString();
+
+      const path = getPageFormUrl({ pageId: 'create' });
+
+      return path + searchString;
+    }
+
     return {
       columnDefs: COLUMN_DEFS,
       getPageFormUrl,
+      getChildPageCreationFormUrl,
       rowData: data,
       isRowDataLoading: loading,
       errorMessage: error,

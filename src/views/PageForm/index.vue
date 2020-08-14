@@ -183,7 +183,18 @@ export default Vue.extend({
   components: { TemplateField, TabList },
   setup(props, context) {
     const pageId = computed(() => context.root.$route.params.pageId);
+
     const isCreation = computed(() => pageId.value === 'create');
+
+    const initialParentId = computed<string | null>(() => {
+      if (!isCreation) return null;
+
+      const parentIdQueryParam = context.root.$route.query.parentId;
+
+      return Array.isArray(parentIdQueryParam)
+        ? parentIdQueryParam[0]
+        : parentIdQueryParam;
+    });
 
     /** Page fetching */
 
@@ -266,7 +277,8 @@ export default Vue.extend({
       getPageFormValues(
         page.value,
         shortTemplateList.value,
-        parentPageOptions.value
+        parentPageOptions.value,
+        initialParentId.value
       )
     );
     const isSubmitting = ref<boolean>(false);
@@ -307,7 +319,8 @@ export default Vue.extend({
       values.value = getPageFormValues(
         page.value,
         shortTemplateList.value,
-        parentPageOptions.value
+        parentPageOptions.value,
+        initialParentId.value
       );
     }
 

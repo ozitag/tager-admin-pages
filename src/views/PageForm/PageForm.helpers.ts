@@ -45,18 +45,23 @@ const INITIAL_VALUES: FormValues = {
 export function getPageFormValues(
   page: Nullable<PageFull>,
   templateList: Array<TemplateShort>,
-  parentPageOptions: Array<OptionType<number>>
+  parentPageOptions: Array<OptionType<number>>,
+  initialParentId: Nullable<string>
 ): FormValues {
   if (!page) {
-    return { ...INITIAL_VALUES };
-  }
+    const initialParentOption = parentPageOptions.find(
+      (option) => String(option.value) === String(initialParentId)
+    );
 
-  const foundTemplate = templateList.find(
-    (template) => template.id === page.template
-  );
+    return { ...INITIAL_VALUES, parent: initialParentOption ?? null };
+  }
 
   const foundParentOption = parentPageOptions.find(
     (option) => option.value === page.parent?.id
+  );
+
+  const foundTemplate = templateList.find(
+    (template) => template.id === page.template
   );
 
   return {
