@@ -5,6 +5,7 @@ import {
   PageFull,
   PageShort,
   PageTemplateValueType,
+  RepeatedField,
   TemplateFieldDefinitionType,
   TemplateFieldPayloadType,
   TemplateFieldType,
@@ -181,18 +182,27 @@ function merge(
 
   for (let i = 0; i < definitions.length; i++) {
     const definition = definitions[i];
-    const shortField = shortFields[i];
+    const foundFieldValue = shortFields.find(
+      (field) => field.name === definition.name
+    );
 
-    if (definition.fields) {
-      // definition.
+    let valueToMerge = null;
+
+    if (definition.type === 'REPEATER') {
+      const repeatedFieldValue = (foundFieldValue as unknown) as Array<
+        PageTemplateValueType<TemplateFieldType>
+      >;
+      valueToMerge = merge(definition.fields, repeatedFieldValue);
     } else {
-      const mergedDefinition = {
-        ...definition,
-        value: shortField.value ?? null,
-      } as TemplateFieldType;
-
-      fields.push(mergedDefinition);
+      valueToMerge = foundFieldValue?.value ?? null;
     }
+
+    const mergedDefinition = {
+      ...definition,
+      value: valueToMerge,
+    } as TemplateFieldType;
+
+    fields.push(mergedDefinition);
   }
 
   return fields;
@@ -201,4 +211,6 @@ function merge(
 export function mergeValuesIntoDefinitions(
   definitions: Array<TemplateFieldDefinitionType>,
   shortFields: Array<PageTemplateValueType<TemplateFieldType>>
-): Record<string, TemplateFieldType> {}
+): Array<TemplateFieldType> {
+  return merge(definitions, shortFields);
+}

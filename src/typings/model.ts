@@ -113,7 +113,7 @@ interface RepeatedFieldDefinition extends CommonTemplateFieldDefinition {
   fields: Array<TemplateFieldDefinitionType>;
 }
 
-interface RepeatedField extends RepeatedFieldDefinition {
+export interface RepeatedField extends RepeatedFieldDefinition {
   value: Array<Array<TemplateFieldType>>;
 }
 
@@ -163,9 +163,9 @@ export type TemplateFull = Readonly<
   }
 >;
 
-type PageTemplateValueType<
+export type PageTemplateValueType<
   T extends TemplateFieldType
-> = T extends TemplateFieldType ? Pick<T, 'name' | 'type' | 'value'> : never;
+> = T extends TemplateFieldType ? Pick<T, 'name' | 'value'> : never;
 
 export type PageShort = {
   readonly id: number;
@@ -194,6 +194,6 @@ export type PageFull = {
   readonly openGraphImage: Nullable<FileType>;
 
   /** Template */
-  readonly template: TemplateShort['id'];
-  readonly templateValues: Array<PageTemplateValueType<TemplateFieldType>>;
+  template: TemplateShort['id'];
+  templateValues: Array<PageTemplateValueType<TemplateFieldType>>;
 };

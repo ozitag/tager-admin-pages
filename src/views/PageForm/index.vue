@@ -283,7 +283,7 @@ export default Vue.extend({
       )
     );
     const isSubmitting = ref<boolean>(false);
-    const templateValues = ref<Record<string, TemplateFieldType>>({});
+    const templateValues = ref<Array<TemplateFieldType>>([]);
 
     const selectedTemplate = computed(() =>
       fullTemplateList.value.find(
@@ -296,6 +296,8 @@ export default Vue.extend({
         selectedTemplate.value?.fields ?? [],
         page.value?.templateValues ?? []
       );
+
+      console.log('templateValues.value', templateValues.value);
     }
 
     function updateFormValues() {
