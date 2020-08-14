@@ -175,6 +175,7 @@ import {
   convertPageFormValuesToUpdatePayload,
   FormValues,
   getPageFormValues,
+  mergeValuesIntoDefinitions,
 } from './PageForm.helpers';
 import TabList, { TabType } from './components/TabList';
 
@@ -291,28 +292,10 @@ export default Vue.extend({
     );
 
     function updateTemplateValues() {
-      const newTemplateValues: Record<string, TemplateFieldType> = {};
-
-      if (selectedTemplate.value) {
-        selectedTemplate.value.fields.forEach((fieldDefinition) => {
-          function getFieldValue() {
-            if (!page.value) return null;
-
-            const foundField = page.value.templateValues.find(
-              (templateField) => templateField.name === fieldDefinition.name
-            );
-
-            return foundField ? foundField.value : null;
-          }
-
-          newTemplateValues[fieldDefinition.name] = {
-            ...fieldDefinition,
-            value: getFieldValue(),
-          } as TemplateFieldType;
-        });
-      }
-
-      templateValues.value = newTemplateValues;
+      templateValues.value = mergeValuesIntoDefinitions(
+        selectedTemplate.value?.fields ?? [],
+        page.value?.templateValues ?? []
+      );
     }
 
     function updateFormValues() {

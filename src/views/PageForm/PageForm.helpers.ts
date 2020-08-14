@@ -4,6 +4,8 @@ import { OptionType } from '@tager/admin-ui';
 import {
   PageFull,
   PageShort,
+  PageTemplateValueType,
+  TemplateFieldDefinitionType,
   TemplateFieldPayloadType,
   TemplateFieldType,
   TemplateShort,
@@ -146,3 +148,57 @@ export function convertPageFormValuesToUpdatePayload(
     path: values.path,
   };
 }
+
+// export function mergeValuesIntoDefinitions(
+//   definitions: Array<TemplateFieldDefinitionType>,
+//   values: Array<PageTemplateValueType<TemplateFieldType>>
+// ): Record<string, TemplateFieldType> {
+//   const newTemplateValues: Record<string, TemplateFieldType> = {};
+//
+//   definitions.forEach((fieldDefinition) => {
+//     function getFieldValue() {
+//       const foundField = values.find(
+//         (templateField) => templateField.name === fieldDefinition.name
+//       );
+//
+//       return foundField ? foundField.value : null;
+//     }
+//
+//     newTemplateValues[fieldDefinition.name] = {
+//       ...fieldDefinition,
+//       value: getFieldValue(),
+//     } as TemplateFieldType;
+//   });
+//
+//   return newTemplateValues;
+// }
+
+function merge(
+  definitions: Array<TemplateFieldDefinitionType>,
+  shortFields: Array<PageTemplateValueType<TemplateFieldType>>
+): Array<TemplateFieldType> {
+  const fields: Array<TemplateFieldType> = [];
+
+  for (let i = 0; i < definitions.length; i++) {
+    const definition = definitions[i];
+    const shortField = shortFields[i];
+
+    if (definition.fields) {
+      // definition.
+    } else {
+      const mergedDefinition = {
+        ...definition,
+        value: shortField.value ?? null,
+      } as TemplateFieldType;
+
+      fields.push(mergedDefinition);
+    }
+  }
+
+  return fields;
+}
+
+export function mergeValuesIntoDefinitions(
+  definitions: Array<TemplateFieldDefinitionType>,
+  shortFields: Array<PageTemplateValueType<TemplateFieldType>>
+): Record<string, TemplateFieldType> {}

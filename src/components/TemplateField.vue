@@ -1,5 +1,5 @@
 <script lang="ts">
-import Vue, { RenderContext } from 'vue';
+import Vue from 'vue';
 import {
   FormField,
   FormFieldFileInput,
@@ -12,11 +12,16 @@ type Props = Readonly<{
   field: TemplateFieldType;
 }>;
 
-const TemplateField = Vue.extend({
+const TemplateField = Vue.extend<Props>({
   name: 'TemplateField',
   functional: true,
-  props: ['field'],
-  render(h, context: RenderContext<Props>) {
+  props: {
+    field: {
+      type: Object,
+      required: true,
+    },
+  },
+  render(h, context) {
     function emitUpdateEvent(event: TemplateFieldType['value']) {
       const listeners = context.listeners.update;
 
