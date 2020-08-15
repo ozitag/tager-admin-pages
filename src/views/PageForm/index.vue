@@ -379,7 +379,7 @@ export default Vue.extend({
         { id: 'seo', label: 'SEO' },
       ].filter(notEmpty)
     );
-    const selectedTabId = ref<string>(tabList.value[0].id);
+    const selectedTabId = ref<string>('template');
 
     return {
       submitForm,

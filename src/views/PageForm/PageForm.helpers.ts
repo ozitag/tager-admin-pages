@@ -1,9 +1,11 @@
 import { FileType, Nullable } from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
+import { v4 as uuid } from 'uuid';
 
 import {
   PageFull,
   RepeatedField,
+  RepeatedFieldFromRequest,
   TemplateFieldDefinitionType,
   TemplateFieldFromRequest,
   TemplateFieldToSave,
@@ -128,7 +130,7 @@ function convertFieldToPayload(field: TemplateFieldType): TemplateFieldToSave {
       return {
         name: field.name,
         value: field.value.map((nestedValue) =>
-          nestedValue.map(convertFieldToPayload)
+          nestedValue.value.map(convertFieldToPayload)
         ),
       };
 
@@ -180,13 +182,20 @@ function merge(
     let valueToMerge: TemplateFieldType['value'] = null;
 
     if (definition.type === 'REPEATER') {
-      const repeatedFieldValue = foundShortField
+      const repeatedFieldValue = (foundShortField
         ? foundShortField.value
-        : getDefaultFieldValueByType(definition.type);
+        : getDefaultFieldValueByType(
+            definition.type
+          )) as RepeatedFieldFromRequest['value'];
 
-      valueToMerge = (repeatedFieldValue as RepeatedField['value']).map(
-        (nestedFieldValues) => merge(definition.fields, nestedFieldValues)
+      const repeatedFieldNestedValue = repeatedFieldValue.map(
+        (nestedFieldValues) => ({
+          id: uuid(),
+          value: merge(definition.fields, nestedFieldValues),
+        })
       );
+
+      valueToMerge = repeatedFieldNestedValue as RepeatedField['value'];
     } else {
       type NotRepeatedTemplateFieldValue = Exclude<
         TemplateFieldType,
@@ -202,6 +211,7 @@ function merge(
     const mergedDefinition = {
       ...definition,
       value: valueToMerge,
+      id: uuid(),
     } as TemplateFieldType;
 
     fields.push(mergedDefinition);

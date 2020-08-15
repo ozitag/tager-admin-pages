@@ -1,14 +1,20 @@
 <template>
   <div class="repeated-field">
-    <h3>{{ field.label }}</h3>
+    <div class="title-row">
+      <span class="title">{{ field.label }}</span>
+      <base-button variant="icon" title="Add item" @click="addElement">
+        <svg-icon name="addCircle" />
+      </base-button>
+    </div>
+
     <ul class="nested-element-list">
       <li
         v-for="(nestedElement, index) of field.value"
-        :key="index"
+        :key="nestedElement.id"
         class="nested-element-container"
       >
         <repeated-item
-          :field-list="nestedElement"
+          :item="nestedElement"
           :index="index"
           :parent-field="field"
           :index-path="[]"
@@ -20,16 +26,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from '@vue/composition-api';
+import { v4 as uuid } from 'uuid';
 
 import { RepeatedField } from '../../../typings/model';
+import { mergeValuesIntoDefinitions } from '../PageForm.helpers';
 import RepeatedItem from './RepeatedItem.vue';
 
 type Props = Readonly<{
   field: RepeatedField;
 }>;
 
-export default Vue.extend<object, object, object, Props>({
+export default defineComponent<Props>({
   name: 'RepeatedItemTree',
   components: { RepeatedItem },
   props: {
@@ -38,13 +46,30 @@ export default Vue.extend<object, object, object, Props>({
       required: true,
     },
   },
+  setup(props, context) {
+    function addElement() {
+      const newElement = mergeValuesIntoDefinitions(props.field.fields, []);
+      const newNestedField = { id: uuid(), value: newElement };
+
+      props.field.value.unshift(newNestedField);
+    }
+
+    return { addElement };
+  },
 });
 </script>
 
 <style scoped lang="scss">
 .repeated-field {
-  h3 {
+  .title-row {
+    display: flex;
+    align-items: center;
     margin-bottom: 1rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
   }
 }
 

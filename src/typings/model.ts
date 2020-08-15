@@ -45,6 +45,7 @@ interface StringFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface StringField extends StringFieldDefinition {
+  id: string;
   value: string;
 }
 
@@ -58,6 +59,7 @@ interface DateFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface DateField extends DateFieldDefinition {
+  id: string;
   value: string;
 }
 
@@ -71,6 +73,7 @@ interface DateTimeFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface DateTimeField extends DateFieldDefinition {
+  id: string;
   value: string;
 }
 
@@ -84,6 +87,7 @@ interface TextFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface TextField extends TextFieldDefinition {
+  id: string;
   value: string;
 }
 
@@ -97,6 +101,7 @@ interface HtmlFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface HtmlField extends HtmlFieldDefinition {
+  id: string;
   value: string;
 }
 
@@ -110,6 +115,7 @@ interface ImageFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface ImageField extends ImageFieldDefinition {
+  id: string;
   value: Nullable<FileType>;
 }
 
@@ -123,6 +129,7 @@ interface GalleryFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface GalleryField extends GalleryFieldDefinition {
+  id: string;
   value: Array<FileType>;
 }
 
@@ -136,6 +143,7 @@ interface FileFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 interface FileField extends FileFieldDefinition {
+  id: string;
   value: Nullable<FileType>;
 }
 
@@ -150,7 +158,8 @@ interface RepeatedFieldDefinition extends CommonTemplateFieldDefinition {
 }
 
 export interface RepeatedField extends RepeatedFieldDefinition {
-  value: Array<Array<TemplateFieldType>>;
+  id: string;
+  value: Array<{ id: string; value: Array<TemplateFieldType> }>;
 }
 
 export type RepeatedFieldFromRequest = FieldShortType<
