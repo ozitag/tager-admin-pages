@@ -4,7 +4,6 @@ import { OptionType } from '@tager/admin-ui';
 import {
   PageFull,
   RepeatedField,
-  RepeatedFieldFromRequest,
   TemplateFieldDefinitionType,
   TemplateFieldFromRequest,
   TemplateFieldToSave,
@@ -88,19 +87,26 @@ export function getPageFormValues(
   };
 }
 
-function getTemplateFieldValue(field: TemplateFieldType) {
-  switch (field.type) {
-    case 'HTML':
-    case 'TEXT':
+function getDefaultFieldValueByType(
+  fieldType: TemplateFieldType['type']
+): TemplateFieldType['value'] {
+  switch (fieldType) {
     case 'STRING':
-      return field.value;
+    case 'TEXT':
+    case 'HTML':
+      return '';
 
+    case 'DATE':
     case 'IMAGE':
     case 'FILE':
-      return field.value?.id ?? null;
+      return null;
+
+    case 'GALLERY':
+    case 'REPEATER':
+      return [];
 
     default:
-      return field.value;
+      return null;
   }
 }
 
@@ -114,6 +120,17 @@ function convertFieldToPayload(field: TemplateFieldType): TemplateFieldToSave {
     case 'IMAGE':
     case 'FILE':
       return { name: field.name, value: field.value?.id ?? null };
+
+    case 'GALLERY':
+      return { name: field.name, value: field.value.map((file) => file.id) };
+
+    case 'REPEATER':
+      return {
+        name: field.name,
+        value: field.value.map((nestedValue) =>
+          nestedValue.map(convertFieldToPayload)
+        ),
+      };
 
     default:
       /** TODO FIXME */
@@ -148,30 +165,6 @@ export function convertPageFormValuesToUpdatePayload(
   };
 }
 
-// export function mergeValuesIntoDefinitions(
-//   definitions: Array<TemplateFieldDefinitionType>,
-//   values: Array<FieldFromRequestType<TemplateFieldType>>
-// ): Record<string, TemplateFieldType> {
-//   const newTemplateValues: Record<string, TemplateFieldType> = {};
-//
-//   definitions.forEach((fieldDefinition) => {
-//     function getFieldValue() {
-//       const foundField = values.find(
-//         (templateField) => templateField.name === fieldDefinition.name
-//       );
-//
-//       return foundField ? foundField.value : null;
-//     }
-//
-//     newTemplateValues[fieldDefinition.name] = {
-//       ...fieldDefinition,
-//       value: getFieldValue(),
-//     } as TemplateFieldType;
-//   });
-//
-//   return newTemplateValues;
-// }
-
 function merge(
   definitions: Array<TemplateFieldDefinitionType>,
   shortFields: Array<TemplateFieldFromRequest>
@@ -187,14 +180,12 @@ function merge(
     let valueToMerge: TemplateFieldType['value'] = null;
 
     if (definition.type === 'REPEATER') {
-      type RepeatedTemplateFieldValue = RepeatedFieldFromRequest['value'];
-
       const repeatedFieldValue = foundShortField
-        ? (foundShortField.value as RepeatedTemplateFieldValue)
-        : [];
+        ? foundShortField.value
+        : getDefaultFieldValueByType(definition.type);
 
-      valueToMerge = repeatedFieldValue.map((nestedFieldValues) =>
-        merge(definition.fields, nestedFieldValues)
+      valueToMerge = (repeatedFieldValue as RepeatedField['value']).map(
+        (nestedFieldValues) => merge(definition.fields, nestedFieldValues)
       );
     } else {
       type NotRepeatedTemplateFieldValue = Exclude<
@@ -203,7 +194,9 @@ function merge(
       >['value'];
 
       valueToMerge = (foundShortField?.value ??
-        null) as NotRepeatedTemplateFieldValue;
+        getDefaultFieldValueByType(
+          definition.type
+        )) as NotRepeatedTemplateFieldValue;
     }
 
     const mergedDefinition = {

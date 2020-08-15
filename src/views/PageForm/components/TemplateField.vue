@@ -6,13 +6,14 @@ import {
   FormFieldRichTextInput,
 } from '@tager/admin-ui';
 
-import { TemplateFieldType } from '../typings/model';
+import { TemplateFieldType } from '../../../typings/model';
+import RepeatedItemTree from './RepeatedItemTree.vue';
 
 type Props = Readonly<{
   field: TemplateFieldType;
 }>;
 
-const TemplateField = Vue.extend<Props>({
+export default Vue.extend<Props>({
   name: 'TemplateField',
   functional: true,
   props: {
@@ -28,8 +29,6 @@ const TemplateField = Vue.extend<Props>({
         name: field.name,
         value: field.value,
       };
-
-      console.log('render field', field);
 
       function handleChange(event: TemplateFieldType['value']) {
         field.value = event;
@@ -86,7 +85,7 @@ const TemplateField = Vue.extend<Props>({
             props: {
               label: field.label,
               name: field.name,
-              value: field.value ?? [],
+              value: field.value,
             },
             attrs: {
               fileType: 'image',
@@ -107,26 +106,9 @@ const TemplateField = Vue.extend<Props>({
               change: handleChange,
             },
           });
-        case 'REPEATER': {
-          const repeaterProps = {
-            label: field.label,
-            name: field.name,
-            value: field.value,
-          };
+        case 'REPEATER':
+          return h(RepeatedItemTree, { props: { field } });
 
-          return h('div', [
-            h('h3', repeaterProps.label),
-            ...repeaterProps.value.map((value, index) => {
-              return h(
-                'ul',
-                { key: index },
-                value.map((repeatedField, fieldIndex) =>
-                  h('li', { key: fieldIndex }, [renderField(repeatedField)])
-                )
-              );
-            }),
-          ]);
-        }
         default:
           return h('div', `Unknown field with type: ${field.type}`);
       }
@@ -135,8 +117,6 @@ const TemplateField = Vue.extend<Props>({
     return renderField(context.props.field);
   },
 });
-
-export default TemplateField;
 </script>
 
 <style scoped></style>

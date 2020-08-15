@@ -168,7 +168,7 @@ import {
   updatePage,
 } from '../../services/requests';
 import { getPageFormUrl, getPageListUrl } from '../../utils/paths';
-import TemplateField from '../../components/TemplateField.vue';
+import TemplateField from './components/TemplateField.vue';
 import {
   convertPageFormValuesToCreationPayload,
   convertPageFormValuesToUpdatePayload,
