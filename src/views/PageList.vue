@@ -52,7 +52,7 @@ import { getPageFormUrl } from '../utils/paths';
 import { deletePage, getPageList } from '../services/requests';
 import useEntityDelete from '../hooks/useEntityDelete';
 import useResource from '../hooks/useResource';
-import { generateNumberArray } from '../utils/common';
+import { getNameWithDepth } from '../utils/common';
 
 const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
   {
@@ -66,12 +66,7 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
     id: 3,
     name: 'Title',
     field: 'title',
-    format: ({ row }) =>
-      generateNumberArray(row.depth)
-        .map(() => '—')
-        .join(' ') +
-      ' ' +
-      row.title,
+    format: ({ row }) => getNameWithDepth(row.title, row.depth),
   },
   {
     id: 4,

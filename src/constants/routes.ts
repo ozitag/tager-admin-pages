@@ -26,6 +26,7 @@ export const PAGE_FORM_ROUTE: CustomRouteConfig = {
   meta: {
     getBreadcrumbs: (route) => [
       HOME_BREADCRUMB,
+      { url: PAGE_LIST_ROUTE.path, text: 'Page List' },
       { url: route.path, text: route.name ?? '' },
     ],
   },

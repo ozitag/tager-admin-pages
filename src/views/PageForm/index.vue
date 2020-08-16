@@ -177,6 +177,7 @@ import {
   mergeValuesIntoDefinitions,
 } from './PageForm.helpers';
 import TabList, { TabType } from './components/TabList';
+import { getNameWithDepth } from '../../utils/common';
 
 export default Vue.extend({
   name: 'PageForm',
@@ -230,7 +231,7 @@ export default Vue.extend({
         .filter((shortPage) => shortPage.id !== page.value?.id)
         .map((shortPage) => ({
           value: shortPage.id,
-          label: shortPage.title,
+          label: getNameWithDepth(shortPage.title, shortPage.depth),
         }))
     );
 
@@ -344,6 +345,8 @@ export default Vue.extend({
             context.root.$router.push(
               getPageFormUrl({ pageId: response.data.id })
             );
+          } else {
+            context.root.$router.push(getPageListUrl());
           }
 
           context.root.$toast({
@@ -379,7 +382,7 @@ export default Vue.extend({
         { id: 'seo', label: 'SEO' },
       ].filter(notEmpty)
     );
-    const selectedTabId = ref<string>('template');
+    const selectedTabId = ref<string>(tabList.value[0].id);
 
     return {
       submitForm,

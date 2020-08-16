@@ -182,11 +182,10 @@ function merge(
     let valueToMerge: TemplateFieldType['value'] = null;
 
     if (definition.type === 'REPEATER') {
-      const repeatedFieldValue = (foundShortField
-        ? foundShortField.value
-        : getDefaultFieldValueByType(
-            definition.type
-          )) as RepeatedFieldFromRequest['value'];
+      const repeatedFieldValue = (foundShortField?.value ??
+        getDefaultFieldValueByType(
+          definition.type
+        )) as RepeatedFieldFromRequest['value'];
 
       const repeatedFieldNestedValue = repeatedFieldValue.map(
         (nestedFieldValues) => ({

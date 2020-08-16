@@ -2,7 +2,7 @@
   <div class="menu-item">
     <div class="inner">
       <div class="left">
-        <h4>#{{ index + 1 }}</h4>
+        <h4>{{ parentField.label }} - #{{ index + 1 }}</h4>
       </div>
 
       <div>
