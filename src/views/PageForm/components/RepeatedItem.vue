@@ -1,11 +1,15 @@
 <template>
   <div class="menu-item">
-    <div class="inner">
-      <div class="left">
+    <div class="top">
+      <button class="title-button" @click="toggleItem">
         <h4>{{ parentField.label }} - #{{ index + 1 }}</h4>
-      </div>
+      </button>
 
       <div>
+        <base-button variant="icon" title="Move up" @click="toggleItem">
+          <svg-icon :name="isOpen ? 'expandLess' : 'expandMore'" />
+        </base-button>
+
         <base-button
           variant="icon"
           title="Move up"
@@ -29,7 +33,7 @@
         </base-button>
       </div>
     </div>
-    <div class="item-form">
+    <div v-show="isOpen" class="item-form">
       <fieldset>
         <component
           :is="components.TemplateField"
@@ -43,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 
 import { RepeatedField } from '../../../typings/model';
 import TemplateField from './TemplateField.vue';
@@ -89,6 +93,12 @@ export default defineComponent<Props>({
     },
   },
   setup(props, context) {
+    const isOpen = ref<boolean>(false);
+
+    function toggleItem() {
+      isOpen.value = !isOpen.value;
+    }
+
     function handleItemRemove() {
       props.parentField.value.splice(props.index, 1);
     }
@@ -114,7 +124,7 @@ export default defineComponent<Props>({
       );
     }
 
-    return { handleItemRemove, handleItemMove };
+    return { handleItemRemove, handleItemMove, isOpen, toggleItem };
   },
 });
 </script>
@@ -128,16 +138,20 @@ export default defineComponent<Props>({
     margin-bottom: 0.7rem;
   }
 
-  .inner {
+  .top {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
     background-color: #eee;
 
-    .left {
+    .title-button {
       display: flex;
       flex-direction: column;
       justify-content: center;
+
+      &:hover {
+        color: #777;
+      }
     }
   }
 
