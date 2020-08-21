@@ -34,7 +34,7 @@
           :disabled="
             hasChild(row.id) || isEntityDeleting(row.id) || isRowDataLoading
           "
-          @click="handleEntityDelete(row.id)"
+          @click="handleResourceDelete(row.id)"
         >
           <svg-icon name="delete"></svg-icon>
         </base-button>
@@ -46,12 +46,11 @@
 <script lang="ts">
 import { defineComponent, onMounted } from '@vue/composition-api';
 import { ColumnDefinition } from '@tager/admin-ui';
+import { useResource, useResourceDelete } from '@tager/admin-services';
 
 import { PageShort } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
 import { deletePage, getPageList } from '../services/requests';
-import useEntityDelete from '../hooks/useEntityDelete';
-import useResource from '../hooks/useResource';
 import { getNameWithDepth } from '../utils/common';
 
 const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
@@ -101,15 +100,17 @@ export default defineComponent({
     >({
       fetchResource: getPageList,
       initialValue: [],
+      context,
+      resourceName: 'Page list',
     });
 
     onMounted(() => {
       fetchPageList();
     });
 
-    const { handleEntityDelete, isDeleting } = useEntityDelete({
-      deleteEntity: deletePage,
-      entityName: 'Page',
+    const { handleResourceDelete, isDeleting } = useResourceDelete({
+      deleteResource: deletePage,
+      resourceName: 'Page',
       onSuccess: fetchPageList,
       context,
     });
@@ -137,7 +138,7 @@ export default defineComponent({
       isRowDataLoading: loading,
       errorMessage: error,
       isEntityDeleting: isDeleting,
-      handleEntityDelete,
+      handleResourceDelete,
       hasChild,
     };
   },

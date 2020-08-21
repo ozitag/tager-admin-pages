@@ -154,17 +154,20 @@
 <script lang="ts">
 import Vue from 'vue';
 import { computed, onMounted, ref, watch } from '@vue/composition-api';
-import { convertRequestErrorToMap, notEmpty } from '@tager/admin-services';
+import {
+  convertRequestErrorToMap,
+  notEmpty,
+  useResource,
+} from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
 
 import { TemplateFieldType, TemplateFull } from '../../typings/model';
-import useResource from '../../hooks/useResource';
 import {
   createPage,
   getPageById,
   getPageList,
-  getTemplateById,
-  getTemplateList,
+  getPageTemplateById,
+  getPageTemplateList,
   updatePage,
 } from '../../services/requests';
 import { getPageFormUrl, getPageListUrl } from '../../utils/paths';
@@ -202,6 +205,8 @@ export default Vue.extend({
     const [fetchPage, { data: page, loading }] = useResource({
       fetchResource: () => getPageById(pageId.value),
       initialValue: null,
+      context,
+      resourceName: 'Page',
     });
 
     onMounted(() => {
@@ -217,6 +222,8 @@ export default Vue.extend({
     const [fetchPageList, { data: pageList }] = useResource({
       fetchResource: () => getPageList(),
       initialValue: [],
+      context,
+      resourceName: 'Page list',
     });
 
     onMounted(() => {
@@ -238,8 +245,10 @@ export default Vue.extend({
     /** Short template list */
 
     const [fetchTemplateList, { data: shortTemplateList }] = useResource({
-      fetchResource: getTemplateList,
+      fetchResource: getPageTemplateList,
       initialValue: [],
+      context,
+      resourceName: 'Template list',
     });
 
     const templateOptions = computed(() =>
@@ -262,7 +271,9 @@ export default Vue.extend({
 
       Promise.all(
         currentTemplateList.map((shortTemplate) =>
-          getTemplateById(shortTemplate.id).then((response) => response.data)
+          getPageTemplateById(shortTemplate.id).then(
+            (response) => response.data
+          )
         )
       )
         .then((list) => {

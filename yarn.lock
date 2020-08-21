@@ -945,24 +945,24 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@tager/admin-layout@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@tager/admin-layout/-/admin-layout-0.4.0.tgz#2cf83cef5a3fb2ef9a7bcbc287e54f5b04c5b280"
-  integrity sha512-i67eYwLGcGHKKYVJszquE1f8pPha92N5/QEMMQv1s8sM2Wm1Wld5lugWFeFZk8ibO9BKTqsF6FSW366M8eADqA==
+"@tager/admin-layout@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@tager/admin-layout/-/admin-layout-0.4.2.tgz#d5c033a3d693cf947d7fabfc4513ad511d83bb02"
+  integrity sha512-n4ZvEo6HP5CglIq7zrfn1rkgrrio53LyWu/oTBK5t6IgYn3vR/r3zMv1SZbNdQTrGiLZMIBvd24DWUw6kjDjYg==
   dependencies:
     "@babel/runtime" "^7.10.4"
 
-"@tager/admin-services@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@tager/admin-services/-/admin-services-0.2.2.tgz#33a02bd80f25aee4e828b960dea58988a4fed4c5"
-  integrity sha512-St8f9U4YrBP0dpysGGuJxz08BAabUTNmzQl8qWBYOLJSwCsnZ9aQIXp6UDswqz5TLSfe8wr3caWMdGZVy+ZByg==
+"@tager/admin-services@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@tager/admin-services/-/admin-services-0.2.4.tgz#bb6d54272bf282e98a073f0d62b9a27c651856a7"
+  integrity sha512-YHTeYZkvh1Hx1xGhb2Xs7ZPDJ4gve4M316xmH2zBJrd5S+GwemGpuJymy9vhsCsQ1ImJnG3cKIqlXq13kUNaAA==
   dependencies:
     i18next "^19.6.3"
 
-"@tager/admin-ui@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-0.6.4.tgz#25ead9544245c2daf0f092fd7fedf50b2f0fcb66"
-  integrity sha512-KxBVkRMaJse44bC1mWeorH47IJryC17O3Ehzdmp26Y0OEsKw9F+JnwR6Pkh8eFZ5k7CGVtt90lrOYXGeMQZvfg==
+"@tager/admin-ui@^0.6.9":
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-0.6.9.tgz#a13e200cc796c93dc9f979421c414feb699ee376"
+  integrity sha512-gJXAI5vrQIgWqKu1Ft28eZtkW3LSK1In9cN1j8InUi/8cp/0zBsyCzyqZkjG7VV9ZrTA2D6hoJFptS0RD1aLPQ==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@ckeditor/ckeditor5-vue" "^1.0.1"

@@ -13,11 +13,13 @@ import {
   TemplateShort,
 } from '../typings/model';
 
-export function getTemplateList(): Promise<ResponseBody<Array<TemplateShort>>> {
+export function getPageTemplateList(): Promise<
+  ResponseBody<Array<TemplateShort>>
+> {
   return request.get({ path: '/admin/pages/templates' });
 }
 
-export function getTemplateById(
+export function getPageTemplateById(
   templateId: string
 ): Promise<ResponseBody<TemplateFull>> {
   return request.get({ path: `/admin/pages/templates/${templateId}` });
@@ -25,6 +27,10 @@ export function getTemplateById(
 
 export function getPageList(): Promise<ResponseBody<Array<PageShort>>> {
   return request.get({ path: '/admin/pages' });
+}
+
+export function getPageCount(): Promise<ResponseBody<{ count: number }>> {
+  return request.get({ path: '/admin/pages/count' });
 }
 
 export function getPageById(

@@ -29,7 +29,6 @@ export type FormValues = {
   openGraphImage: Nullable<FileType>;
 
   template: Nullable<OptionType<TemplateShort['id']>>;
-  // templateFields: Array<Pick<TemplateFieldType, 'name' | 'value'>>;
 };
 
 const INITIAL_VALUES: FormValues = {
