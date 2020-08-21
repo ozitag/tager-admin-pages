@@ -27,9 +27,8 @@ export interface OutgoingField<Value> {
 
 /** Default - we use it as fallback for unknown fields */
 
-export interface DefaultFieldTemplate extends FieldTemplate {
-  type: 'DEFAULT';
-}
+export interface DefaultFieldTemplate extends FieldTemplate {}
+
 export interface DefaultField extends Field<DefaultFieldTemplate, null> {}
 export interface DefaultIncomingField extends IncomingField<null> {}
 export interface DefaultOutgoingField extends OutgoingField<null> {}
@@ -165,7 +164,8 @@ export type OutgoingFieldUnion =
   | GalleryOutgoingField
   | FileOutgoingField
   | DateOutgoingField
-  | RepeaterOutgoingField;
+  | RepeaterOutgoingField
+  | DefaultOutgoingField;
 
 /** Template */
 

@@ -1,18 +1,9 @@
 import { FileType, Nullable } from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
-import { v4 as uuid } from 'uuid';
 
-import {
-  PageFull,
-  RepeatedField,
-  RepeatedFieldFromRequest,
-  TemplateFieldDefinitionType,
-  TemplateFieldFromRequest,
-  TemplateFieldToSave,
-  TemplateFieldType,
-  TemplateShort,
-} from '../../typings/model';
+import { FieldUnion, PageFull, TemplateShort } from '../../typings/model';
 import { PageCreatePayload, PageUpdatePayload } from '../../services/requests';
+import { uniformFieldUtils } from '../../services/fields';
 
 export type FormValues = {
   title: string;
@@ -84,67 +75,12 @@ export function getPageFormValues(
     template: foundTemplate
       ? { value: foundTemplate.id, label: foundTemplate.label }
       : null,
-    // templateFields: pageData.templateValues,
   };
-}
-
-function getDefaultFieldValueByType(
-  fieldType: TemplateFieldType['type']
-): TemplateFieldType['value'] {
-  switch (fieldType) {
-    case 'STRING':
-    case 'TEXT':
-    case 'HTML':
-      return '';
-
-    case 'DATE':
-    case 'IMAGE':
-    case 'FILE':
-      return null;
-
-    case 'GALLERY':
-    case 'REPEATER':
-      return [];
-
-    default:
-      return null;
-  }
-}
-
-function convertFieldToPayload(field: TemplateFieldType): TemplateFieldToSave {
-  switch (field.type) {
-    case 'HTML':
-    case 'TEXT':
-    case 'STRING':
-      return { name: field.name, value: field.value };
-
-    case 'IMAGE':
-    case 'FILE':
-      return { name: field.name, value: field.value?.id ?? null };
-
-    case 'GALLERY':
-      return { name: field.name, value: field.value.map((file) => file.id) };
-
-    case 'REPEATER':
-      return {
-        name: field.name,
-        value: field.value.map((nestedValue) =>
-          nestedValue.value.map(convertFieldToPayload)
-        ),
-      };
-
-    default:
-      /** TODO FIXME */
-      return {
-        name: field.name,
-        value: field.value,
-      } as TemplateFieldToSave;
-  }
 }
 
 export function convertPageFormValuesToCreationPayload(
   values: FormValues,
-  templateValues: Array<TemplateFieldType>
+  templateValues: Array<FieldUnion>
 ): PageCreatePayload {
   return {
     ...values,
@@ -152,75 +88,18 @@ export function convertPageFormValuesToCreationPayload(
     image: values.image?.id ?? null,
     openGraphImage: values.openGraphImage?.id ?? null,
     template: values.template?.value ?? null,
-    templateFields: templateValues.map(convertFieldToPayload),
+    templateFields: templateValues.map((field) =>
+      uniformFieldUtils.getOutgoingField(field)
+    ),
   };
 }
 
 export function convertPageFormValuesToUpdatePayload(
   values: FormValues,
-  templateValues: Array<TemplateFieldType>
+  templateValues: Array<FieldUnion>
 ): PageUpdatePayload {
   return {
     ...convertPageFormValuesToCreationPayload(values, templateValues),
     path: values.path,
   };
-}
-
-function merge(
-  definitions: Array<TemplateFieldDefinitionType>,
-  shortFields: Array<TemplateFieldFromRequest>
-): Array<TemplateFieldType> {
-  const fields: Array<TemplateFieldType> = [];
-
-  for (let i = 0; i < definitions.length; i++) {
-    const definition = definitions[i];
-    const foundShortField = shortFields.find(
-      (field) => field.name === definition.name
-    );
-
-    let valueToMerge: TemplateFieldType['value'] = null;
-
-    if (definition.type === 'REPEATER') {
-      const repeatedFieldValue = (foundShortField?.value ??
-        getDefaultFieldValueByType(
-          definition.type
-        )) as RepeatedFieldFromRequest['value'];
-
-      const repeatedFieldNestedValue = repeatedFieldValue.map(
-        (nestedFieldValues) => ({
-          id: uuid(),
-          value: merge(definition.fields, nestedFieldValues),
-        })
-      );
-
-      valueToMerge = repeatedFieldNestedValue as RepeatedField['value'];
-    } else {
-      type NotRepeatedTemplateFieldValue = Exclude<
-        TemplateFieldType,
-        RepeatedField
-      >['value'];
-
-      valueToMerge = (foundShortField?.value ??
-        getDefaultFieldValueByType(
-          definition.type
-        )) as NotRepeatedTemplateFieldValue;
-    }
-
-    const mergedDefinition = {
-      ...definition,
-      value: valueToMerge,
-      id: uuid(),
-    } as TemplateFieldType;
-
-    fields.push(mergedDefinition);
-  }
-
-  return fields;
-}
-
-export function mergeValuesIntoDefinitions(
-  definitions: Array<TemplateFieldDefinitionType>,
-  shortFields: Array<TemplateFieldFromRequest>
-): Array<TemplateFieldType> {
-  return merge(definitions, shortFields);
 }

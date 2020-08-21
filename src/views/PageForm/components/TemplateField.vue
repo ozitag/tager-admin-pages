@@ -6,11 +6,12 @@ import {
   FormFieldRichTextInput,
 } from '@tager/admin-ui';
 
-import { TemplateFieldType } from '../../../typings/model';
+import { FieldUnion } from '../../../typings/model';
+
 import RepeatedItemTree from './RepeatedItemTree.vue';
 
 type Props = Readonly<{
-  field: TemplateFieldType;
+  field: FieldUnion;
 }>;
 
 export default Vue.extend<Props>({
@@ -23,18 +24,18 @@ export default Vue.extend<Props>({
     },
   },
   render(h, context) {
-    function renderField(field: TemplateFieldType): VNode {
+    function renderField(field: FieldUnion): VNode {
       const commonProps = {
-        label: field.label,
-        name: field.name,
+        label: field.template.label,
+        name: field.template.name,
         value: field.value,
       };
 
-      function handleChange(event: TemplateFieldType['value']) {
+      function handleChange(event: FieldUnion['value']) {
         field.value = event;
       }
 
-      switch (field.type) {
+      switch (field.template.type) {
         case 'STRING':
           return h(FormField, {
             props: {
@@ -83,8 +84,8 @@ export default Vue.extend<Props>({
         case 'GALLERY':
           return h(FormFieldFileInput, {
             props: {
-              label: field.label,
-              name: field.name,
+              label: field.template.label,
+              name: field.template.name,
               value: field.value,
             },
             attrs: {
@@ -110,7 +111,7 @@ export default Vue.extend<Props>({
           return h(RepeatedItemTree, { props: { field } });
 
         default:
-          return h('div', `Unknown field with type: ${field.type}`);
+          return h('div', `Unknown field with type: ${field.template.type}`);
       }
     }
 

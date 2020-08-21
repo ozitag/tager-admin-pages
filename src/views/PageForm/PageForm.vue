@@ -100,7 +100,7 @@
         <template v-if="selectedTabId === 'template'">
           <template-field
             v-for="field of templateValues"
-            :key="field.name"
+            :key="field.template.name"
             :field="field"
           />
         </template>
@@ -161,7 +161,12 @@ import {
 } from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
 
-import { TemplateFieldType, TemplateFull } from '../../typings/model';
+import {
+  FieldTemplateUnion,
+  FieldUnion,
+  IncomingFieldUnion,
+  TemplateFull,
+} from '../../typings/model';
 import {
   createPage,
   getPageById,
@@ -177,10 +182,10 @@ import {
   convertPageFormValuesToUpdatePayload,
   FormValues,
   getPageFormValues,
-  mergeValuesIntoDefinitions,
 } from './PageForm.helpers';
 import TabList, { TabType } from './components/TabList';
 import { getNameWithDepth } from '../../utils/common';
+import { uniformFieldUtils } from '../../services/fields';
 
 export default Vue.extend({
   name: 'PageForm',
@@ -294,7 +299,7 @@ export default Vue.extend({
       )
     );
     const isSubmitting = ref<boolean>(false);
-    const templateValues = ref<Array<TemplateFieldType>>([]);
+    const templateValues = ref<Array<FieldUnion>>([]);
 
     const selectedTemplate = computed(() =>
       fullTemplateList.value.find(
@@ -303,10 +308,17 @@ export default Vue.extend({
     );
 
     function updateTemplateValues() {
-      templateValues.value = mergeValuesIntoDefinitions(
-        selectedTemplate.value?.fields ?? [],
-        page.value?.templateValues ?? []
+      const fieldTemplateList: Array<FieldTemplateUnion> =
+        selectedTemplate.value?.fields ?? [];
+
+      const incomingFieldList: Array<IncomingFieldUnion> =
+        page.value?.templateValues ?? [];
+
+      console.log('incomingFieldList', incomingFieldList);
+      templateValues.value = fieldTemplateList.map((fieldTemplate, index) =>
+        uniformFieldUtils.createField(fieldTemplate, incomingFieldList[index])
       );
+      console.log('templateValues.value', templateValues.value);
     }
 
     function updateFormValues() {

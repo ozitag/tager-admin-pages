@@ -1,7 +1,7 @@
 <template>
   <div class="repeated-field">
     <div class="title-row">
-      <span class="title">{{ field.label }}</span>
+      <span class="title">{{ field.template.label }}</span>
       <base-button variant="icon" title="Add item" @click="addElement">
         <svg-icon name="addCircle" />
       </base-button>
@@ -29,12 +29,13 @@
 import { defineComponent } from '@vue/composition-api';
 import { v4 as uuid } from 'uuid';
 
-import { RepeatedField } from '../../../typings/model';
-import { mergeValuesIntoDefinitions } from '../PageForm.helpers';
+import { RepeaterField } from '../../../typings/model';
+
 import RepeatedItem from './RepeatedItem.vue';
+import { uniformFieldUtils } from '../../../services/fields';
 
 type Props = Readonly<{
-  field: RepeatedField;
+  field: RepeaterField;
 }>;
 
 export default defineComponent<Props>({
@@ -48,8 +49,12 @@ export default defineComponent<Props>({
   },
   setup(props, context) {
     function addElement() {
-      const newElement = mergeValuesIntoDefinitions(props.field.fields, []);
-      const newNestedField = { id: uuid(), value: newElement };
+      const newNestedField = {
+        id: uuid(),
+        value: props.field.template.fields.map((nestedFieldTemplate) =>
+          uniformFieldUtils.createField(nestedFieldTemplate, null)
+        ),
+      };
 
       props.field.value.unshift(newNestedField);
     }

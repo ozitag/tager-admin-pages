@@ -2,7 +2,7 @@
   <div class="menu-item">
     <div class="top">
       <button class="title-button" @click="toggleItem">
-        <h4>{{ parentField.label }} - #{{ index + 1 }}</h4>
+        <h4>{{ parentField.template.label }} - #{{ index + 1 }}</h4>
       </button>
 
       <div>
@@ -49,12 +49,12 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 
-import { RepeatedField } from '../../../typings/model';
+import { RepeaterField } from '../../../typings/model';
 import TemplateField from './TemplateField.vue';
 
 type Props = Readonly<{
-  item: RepeatedField['value'][number];
-  parentField: RepeatedField;
+  item: RepeaterField['value'][number];
+  parentField: RepeaterField;
   index: number;
   indexPath: Array<number>;
   components: { TemplateField: typeof TemplateField };

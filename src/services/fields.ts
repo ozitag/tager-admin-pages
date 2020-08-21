@@ -13,8 +13,8 @@ import {
   DefaultIncomingField,
   DefaultOutgoingField,
   Field,
-  FieldTemplate,
   FieldTemplateUnion,
+  FieldUnion,
   FileField,
   FileFieldTemplate,
   FileIncomingField,
@@ -31,9 +31,8 @@ import {
   ImageFieldTemplate,
   ImageIncomingField,
   ImageOutgoingField,
-  IncomingField,
   IncomingFieldUnion,
-  OutgoingField,
+  OutgoingFieldUnion,
   RepeaterField,
   RepeaterFieldTemplate,
   RepeaterIncomingField,
@@ -56,16 +55,15 @@ interface FieldUtils<Type, IF, Template, F extends Field<any>, OF> {
   getOutgoingField(field: F): OF;
 }
 
-interface IStringFieldUtils
-  extends FieldUtils<
-    'STRING',
-    StringIncomingField,
-    StringFieldTemplate,
-    StringField,
-    StringOutgoingField
-  > {}
+type StringFieldUtilsType = FieldUtils<
+  'STRING',
+  StringIncomingField,
+  StringFieldTemplate,
+  StringField,
+  StringOutgoingField
+>;
 
-const StringFieldUtils: IStringFieldUtils = {
+const stringFieldUtils: StringFieldUtilsType = {
   type: 'STRING',
   getDefaultFieldValue() {
     return '';
@@ -82,16 +80,15 @@ const StringFieldUtils: IStringFieldUtils = {
   },
 };
 
-interface IDateFieldUtils
-  extends FieldUtils<
-    'DATE',
-    DateIncomingField,
-    DateFieldTemplate,
-    DateField,
-    DateOutgoingField
-  > {}
+type DateFieldUtilsType = FieldUtils<
+  'DATE',
+  DateIncomingField,
+  DateFieldTemplate,
+  DateField,
+  DateOutgoingField
+>;
 
-const DateFieldUtils: IDateFieldUtils = {
+const dateFieldUtils: DateFieldUtilsType = {
   type: 'DATE',
   getDefaultFieldValue() {
     return '';
@@ -108,16 +105,15 @@ const DateFieldUtils: IDateFieldUtils = {
   },
 };
 
-interface IDateTimeFieldUtils
-  extends FieldUtils<
-    'DATETIME',
-    DateTimeIncomingField,
-    DateTimeFieldTemplate,
-    DateTimeField,
-    DateTimeOutgoingField
-  > {}
+type DateTimeFieldUtilsType = FieldUtils<
+  'DATETIME',
+  DateTimeIncomingField,
+  DateTimeFieldTemplate,
+  DateTimeField,
+  DateTimeOutgoingField
+>;
 
-const DateTimeFieldUtils: IDateTimeFieldUtils = {
+const dateTimeFieldUtils: DateTimeFieldUtilsType = {
   type: 'DATETIME',
   getDefaultFieldValue() {
     return '';
@@ -134,16 +130,15 @@ const DateTimeFieldUtils: IDateTimeFieldUtils = {
   },
 };
 
-interface ITextFieldUtils
-  extends FieldUtils<
-    'TEXT',
-    TextIncomingField,
-    TextFieldTemplate,
-    TextField,
-    TextOutgoingField
-  > {}
+type TextFieldUtilsType = FieldUtils<
+  'TEXT',
+  TextIncomingField,
+  TextFieldTemplate,
+  TextField,
+  TextOutgoingField
+>;
 
-const TextFieldUtils: ITextFieldUtils = {
+const textFieldUtils: TextFieldUtilsType = {
   type: 'TEXT',
   getDefaultFieldValue() {
     return '';
@@ -160,16 +155,15 @@ const TextFieldUtils: ITextFieldUtils = {
   },
 };
 
-interface IHtmlFieldUtils
-  extends FieldUtils<
-    'HTML',
-    HtmlIncomingField,
-    HtmlFieldTemplate,
-    HtmlField,
-    HtmlOutgoingField
-  > {}
+type HtmlFieldUtilsType = FieldUtils<
+  'HTML',
+  HtmlIncomingField,
+  HtmlFieldTemplate,
+  HtmlField,
+  HtmlOutgoingField
+>;
 
-const HtmlFieldUtils: IHtmlFieldUtils = {
+const htmlFieldUtils: HtmlFieldUtilsType = {
   type: 'HTML',
   getDefaultFieldValue() {
     return '';
@@ -186,16 +180,15 @@ const HtmlFieldUtils: IHtmlFieldUtils = {
   },
 };
 
-interface IImageFieldUtils
-  extends FieldUtils<
-    'IMAGE',
-    ImageIncomingField,
-    ImageFieldTemplate,
-    ImageField,
-    ImageOutgoingField
-  > {}
+type ImageFieldUtilsType = FieldUtils<
+  'IMAGE',
+  ImageIncomingField,
+  ImageFieldTemplate,
+  ImageField,
+  ImageOutgoingField
+>;
 
-const ImageFieldUtils: IImageFieldUtils = {
+const imageFieldUtils: ImageFieldUtilsType = {
   type: 'IMAGE',
   getDefaultFieldValue() {
     return null;
@@ -215,16 +208,15 @@ const ImageFieldUtils: IImageFieldUtils = {
   },
 };
 
-interface IFileFieldUtils
-  extends FieldUtils<
-    'FILE',
-    FileIncomingField,
-    FileFieldTemplate,
-    FileField,
-    FileOutgoingField
-  > {}
+type FileFieldUtilsType = FieldUtils<
+  'FILE',
+  FileIncomingField,
+  FileFieldTemplate,
+  FileField,
+  FileOutgoingField
+>;
 
-const FileFieldUtils: IFileFieldUtils = {
+const fileFieldUtils: FileFieldUtilsType = {
   type: 'FILE',
   getDefaultFieldValue() {
     return null;
@@ -244,16 +236,15 @@ const FileFieldUtils: IFileFieldUtils = {
   },
 };
 
-interface IGalleryFieldUtils
-  extends FieldUtils<
-    'GALLERY',
-    GalleryIncomingField,
-    GalleryFieldTemplate,
-    GalleryField,
-    GalleryOutgoingField
-  > {}
+type GalleryFieldUtilsType = FieldUtils<
+  'GALLERY',
+  GalleryIncomingField,
+  GalleryFieldTemplate,
+  GalleryField,
+  GalleryOutgoingField
+>;
 
-const GalleryFieldUtils: IGalleryFieldUtils = {
+const galleryFieldUtils: GalleryFieldUtilsType = {
   type: 'GALLERY',
   getDefaultFieldValue() {
     return [];
@@ -273,16 +264,15 @@ const GalleryFieldUtils: IGalleryFieldUtils = {
   },
 };
 
-interface IRepeaterFieldUtils
-  extends FieldUtils<
-    'REPEATER',
-    RepeaterIncomingField,
-    RepeaterFieldTemplate,
-    RepeaterField,
-    RepeaterOutgoingField
-  > {}
+type RepeaterFieldUtilsType = FieldUtils<
+  'REPEATER',
+  RepeaterIncomingField,
+  RepeaterFieldTemplate,
+  RepeaterField,
+  RepeaterOutgoingField
+>;
 
-const RepeaterFieldUtils: IRepeaterFieldUtils = {
+const repeaterFieldUtils: RepeaterFieldUtilsType = {
   type: 'REPEATER',
   getDefaultFieldValue() {
     return [];
@@ -292,10 +282,20 @@ const RepeaterFieldUtils: IRepeaterFieldUtils = {
       fieldTemplateList: RepeaterFieldTemplate['fields'],
       incomingFieldList: RepeaterIncomingField['value']
     ): RepeaterField['value'] {
+      console.log(
+        'createNestedFieldArray',
+        fieldTemplateList,
+        incomingFieldList
+      );
       const nestedFieldList: RepeaterField['value'] = [];
 
       for (let i = 0; i < incomingFieldList.length; i++) {
         const nestedIncomingFieldList = incomingFieldList[i];
+
+        const nestedField: RepeaterField['value'][number] = {
+          id: uuid(),
+          value: [],
+        };
 
         for (let j = 0; j < fieldTemplateList.length; j++) {
           const nestedFieldTemplate = fieldTemplateList[j];
@@ -304,23 +304,28 @@ const RepeaterFieldUtils: IRepeaterFieldUtils = {
             (field) => field.name === nestedFieldTemplate.name
           );
 
-          const foundFieldUtils = FIELD_UTILS_LIST.find(
-            (utils) => utils.type === nestedFieldTemplate.type
-          );
+          console.log('nestedFieldTemplate', nestedFieldTemplate);
+          console.log('nestedIncomingFieldList', nestedIncomingFieldList);
+          console.log('foundNestedIncomingField', foundNestedIncomingField);
 
-          /** @ts-ignore */
+          // eslint-disable-next-line
+          const foundFieldUtils = getFieldUtilsByType(nestedFieldTemplate.type);
+
           const field = foundFieldUtils.createField(
-            nestedFieldTemplate as any,
-            foundNestedIncomingField as any
+            /** @ts-ignore */
+            nestedFieldTemplate,
+            /** @ts-ignore */
+            foundNestedIncomingField
           );
 
-          nestedFieldList.push(field);
+          nestedField.value.push(field as FieldUnion);
         }
       }
 
       return nestedFieldList;
     }
 
+    console.log('incomingField', incomingField);
     return {
       id: uuid(),
       template: fieldTemplate,
@@ -332,26 +337,35 @@ const RepeaterFieldUtils: IRepeaterFieldUtils = {
   getOutgoingField(field) {
     return {
       name: field.template.name,
-      value: field.value.map((image) => image.id),
+      value: field.value.map((entity) =>
+        entity.value.map((entityField) => {
+          // eslint-disable-next-line
+          const foundFieldUtils = getFieldUtilsByType(
+            entityField.template.type
+          );
+
+          /** @ts-ignore */
+          return foundFieldUtils.getOutgoingField(entityField);
+        })
+      ),
     };
   },
 };
 
-interface IDefaultFieldUtils
-  extends FieldUtils<
-    'DEFAULT',
-    DefaultIncomingField,
-    DefaultFieldTemplate,
-    DefaultField,
-    DefaultOutgoingField
-  > {}
+type DefaultFieldUtilsType = FieldUtils<
+  'DEFAULT',
+  DefaultIncomingField,
+  DefaultFieldTemplate,
+  DefaultField,
+  DefaultOutgoingField
+>;
 
-const DefaultFieldUtils: IDefaultFieldUtils = {
+const defaultFieldUtils: DefaultFieldUtilsType = {
   type: 'DEFAULT',
   getDefaultFieldValue() {
     return null;
   },
-  createField(fieldTemplate, incomingField) {
+  createField(fieldTemplate) {
     return {
       id: uuid(),
       template: fieldTemplate,
@@ -367,13 +381,38 @@ const DefaultFieldUtils: IDefaultFieldUtils = {
 };
 
 const FIELD_UTILS_LIST = [
-  StringFieldUtils,
-  TextFieldUtils,
-  HtmlFieldUtils,
-  ImageFieldUtils,
-  FileFieldUtils,
-  GalleryFieldUtils,
-  DateFieldUtils,
-  DateTimeFieldUtils,
-  RepeaterFieldUtils,
+  stringFieldUtils,
+  textFieldUtils,
+  htmlFieldUtils,
+  imageFieldUtils,
+  fileFieldUtils,
+  galleryFieldUtils,
+  dateFieldUtils,
+  dateTimeFieldUtils,
+  repeaterFieldUtils,
+  defaultFieldUtils,
 ];
+
+type FieldUtilsUnion = typeof FIELD_UTILS_LIST[number];
+
+export function getFieldUtilsByType(type: string): FieldUtilsUnion {
+  return (
+    FIELD_UTILS_LIST.find((utils) => utils.type === type) ?? defaultFieldUtils
+  );
+}
+
+export const uniformFieldUtils = {
+  createField(
+    fieldTemplate: FieldTemplateUnion,
+    incomingField: Nullish<IncomingFieldUnion>
+  ): FieldUnion {
+    const foundFieldUtils = getFieldUtilsByType(fieldTemplate.type);
+    /** @ts-ignore */
+    return foundFieldUtils.createField(fieldTemplate, incomingField);
+  },
+  getOutgoingField(field: FieldUnion): OutgoingFieldUnion {
+    const foundFieldUtils = getFieldUtilsByType(field.template.type);
+    /** @ts-ignore */
+    return foundFieldUtils.getOutgoingField(field);
+  },
+};

@@ -6,9 +6,9 @@ import {
 } from '@tager/admin-services';
 
 import {
+  OutgoingFieldUnion,
   PageFull,
   PageShort,
-  TemplateFieldToSave,
   TemplateFull,
   TemplateShort,
 } from '../typings/model';
@@ -53,7 +53,7 @@ export type PageCreatePayload = {
   openGraphImage: Nullable<FileType['id']>;
 
   template: Nullable<TemplateShort['id']>;
-  templateFields: Array<TemplateFieldToSave>;
+  templateFields: Array<OutgoingFieldUnion>;
 };
 
 export function createPage(
