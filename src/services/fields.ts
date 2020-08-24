@@ -46,24 +46,26 @@ import {
   TextFieldTemplate,
   TextIncomingField,
   TextOutgoingField,
+  UrlField,
+  UrlFieldTemplate,
+  UrlIncomingField,
+  UrlOutgoingField,
 } from '../typings/model';
 import { Nullish } from '@tager/admin-services';
 
 interface FieldUtils<
-  Type,
   IF,
   Template extends FieldTemplate,
   F extends Field<Template>,
   OF
 > {
-  type: Type;
+  type: Template['type'];
   getDefaultFieldValue(): F['value'];
   createField(fieldTemplate: Template, incomingField: Nullish<IF>): F;
   getOutgoingField(field: F): OF;
 }
 
 type StringFieldUtilsType = FieldUtils<
-  'STRING',
   StringIncomingField,
   StringFieldTemplate,
   StringField,
@@ -87,8 +89,31 @@ const stringFieldUtils: StringFieldUtilsType = {
   },
 };
 
+type UrlFieldUtilsType = FieldUtils<
+  UrlIncomingField,
+  UrlFieldTemplate,
+  UrlField,
+  UrlOutgoingField
+>;
+
+const urlFieldUtils: UrlFieldUtilsType = {
+  type: 'URL',
+  getDefaultFieldValue() {
+    return '';
+  },
+  createField(fieldTemplate, incomingField) {
+    return {
+      id: uuid(),
+      template: fieldTemplate,
+      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+    };
+  },
+  getOutgoingField(field) {
+    return { name: field.template.name, value: field.value };
+  },
+};
+
 type DateFieldUtilsType = FieldUtils<
-  'DATE',
   DateIncomingField,
   DateFieldTemplate,
   DateField,
@@ -113,7 +138,6 @@ const dateFieldUtils: DateFieldUtilsType = {
 };
 
 type DateTimeFieldUtilsType = FieldUtils<
-  'DATETIME',
   DateTimeIncomingField,
   DateTimeFieldTemplate,
   DateTimeField,
@@ -138,7 +162,6 @@ const dateTimeFieldUtils: DateTimeFieldUtilsType = {
 };
 
 type TextFieldUtilsType = FieldUtils<
-  'TEXT',
   TextIncomingField,
   TextFieldTemplate,
   TextField,
@@ -163,7 +186,6 @@ const textFieldUtils: TextFieldUtilsType = {
 };
 
 type HtmlFieldUtilsType = FieldUtils<
-  'HTML',
   HtmlIncomingField,
   HtmlFieldTemplate,
   HtmlField,
@@ -188,7 +210,6 @@ const htmlFieldUtils: HtmlFieldUtilsType = {
 };
 
 type ImageFieldUtilsType = FieldUtils<
-  'IMAGE',
   ImageIncomingField,
   ImageFieldTemplate,
   ImageField,
@@ -216,7 +237,6 @@ const imageFieldUtils: ImageFieldUtilsType = {
 };
 
 type FileFieldUtilsType = FieldUtils<
-  'FILE',
   FileIncomingField,
   FileFieldTemplate,
   FileField,
@@ -244,7 +264,6 @@ const fileFieldUtils: FileFieldUtilsType = {
 };
 
 type GalleryFieldUtilsType = FieldUtils<
-  'GALLERY',
   GalleryIncomingField,
   GalleryFieldTemplate,
   GalleryField,
@@ -272,7 +291,6 @@ const galleryFieldUtils: GalleryFieldUtilsType = {
 };
 
 type RepeaterFieldUtilsType = FieldUtils<
-  'REPEATER',
   RepeaterIncomingField,
   RepeaterFieldTemplate,
   RepeaterField,
@@ -343,7 +361,6 @@ const repeaterFieldUtils: RepeaterFieldUtilsType = {
 };
 
 type DefaultFieldUtilsType = FieldUtils<
-  'DEFAULT',
   DefaultIncomingField,
   DefaultFieldTemplate,
   DefaultField,
@@ -372,6 +389,7 @@ const defaultFieldUtils: DefaultFieldUtilsType = {
 
 const FIELD_UTILS_LIST = [
   stringFieldUtils,
+  urlFieldUtils,
   textFieldUtils,
   htmlFieldUtils,
   imageFieldUtils,

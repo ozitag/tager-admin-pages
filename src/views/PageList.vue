@@ -85,10 +85,16 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
   },
   {
     id: 5,
+    name: 'Template',
+    field: 'templateName',
+  },
+
+  {
+    id: 6,
     name: 'Actions',
     field: 'actions',
-    style: { width: '120px', textAlign: 'center', whiteSpace: 'nowrap' },
-    headStyle: { width: '120px', textAlign: 'center' },
+    style: { width: '140px', textAlign: 'center', whiteSpace: 'nowrap' },
+    headStyle: { width: '140px', textAlign: 'center' },
   },
 ];
 

@@ -18,21 +18,23 @@
         />
 
         <form-field-select
-          v-model="values.parent"
-          name="parent"
-          :error="errors.parent"
-          label="Parent page"
-          no-options-message="No Parents"
-          :options="parentPageOptions"
-        />
-
-        <form-field-select
           v-model="values.template"
           name="template"
           :error="errors.template"
           label="Template"
           no-options-message="No Template"
+          placeholder="No Template"
           :options="templateOptions"
+        />
+
+        <form-field-select
+          v-model="values.parent"
+          name="parent"
+          :error="errors.parent"
+          label="Parent page"
+          no-options-message="No Parent"
+          placeholder="No Parent"
+          :options="parentPageOptions"
         />
       </template>
       <template v-else>
@@ -50,13 +52,12 @@
             label="Title"
           />
 
-          <form-field-select
-            v-model="values.parent"
-            name="parent"
-            :error="errors.parent"
-            label="Parent page"
-            no-options-message="No Parents"
-            :options="parentPageOptions"
+          <form-field-url-alias-input
+            v-model="values.path"
+            name="path"
+            :error="errors.path"
+            label="Path"
+            :url-template="websiteOrigin"
           />
 
           <form-field-select
@@ -65,15 +66,17 @@
             :error="errors.template"
             label="Template"
             no-options-message="No Template"
+            placeholder="No Template"
             :options="templateOptions"
           />
 
-          <form-field
-            v-model="values.path"
-            name="path"
-            :error="errors.path"
-            label="Path"
+          <form-field-rich-text-input
+            v-model="values.body"
+            name="body"
+            :error="errors.body"
+            label="Body"
           />
+
           <form-field-file-input
             v-model="values.image"
             name="image"
@@ -81,6 +84,7 @@
             label="Image"
             file-type="image"
           />
+
           <form-field
             v-model="values.excerpt"
             name="excerpt"
@@ -89,11 +93,15 @@
             type="textarea"
             rows="4"
           />
-          <form-field-rich-text-input
-            v-model="values.body"
-            name="body"
-            :error="errors.body"
-            label="Body"
+
+          <form-field-select
+            v-model="values.parent"
+            name="parent"
+            :error="errors.parent"
+            label="Parent page"
+            no-options-message="No Parent"
+            placeholder="No Parent"
+            :options="parentPageOptions"
           />
         </template>
 
@@ -207,7 +215,7 @@ export default Vue.extend({
 
     /** Page fetching */
 
-    const [fetchPage, { data: page, loading }] = useResource({
+    const [fetchPage, { data: page, loading: isPageLoading }] = useResource({
       fetchResource: () => getPageById(pageId.value),
       initialValue: null,
       context,
@@ -224,7 +232,10 @@ export default Vue.extend({
 
     /** Page list fetching */
 
-    const [fetchPageList, { data: pageList }] = useResource({
+    const [
+      fetchPageList,
+      { data: pageList, loading: isPageListLoading },
+    ] = useResource({
       fetchResource: () => getPageList(),
       initialValue: [],
       context,
@@ -249,7 +260,10 @@ export default Vue.extend({
 
     /** Short template list */
 
-    const [fetchTemplateList, { data: shortTemplateList }] = useResource({
+    const [
+      fetchTemplateList,
+      { data: shortTemplateList, loading: isShortTemplateListLoading },
+    ] = useResource({
       fetchResource: getPageTemplateList,
       initialValue: [],
       context,
@@ -270,9 +284,12 @@ export default Vue.extend({
     /** Full template list */
 
     const fullTemplateList = ref<Array<TemplateFull>>([]);
+    const isFullTemplateListLoading = ref<boolean>(false);
 
     watch(shortTemplateList, (currentTemplateList) => {
       if (currentTemplateList.length === 0) return;
+
+      isFullTemplateListLoading.value = true;
 
       Promise.all(
         currentTemplateList.map((shortTemplate) =>
@@ -284,7 +301,10 @@ export default Vue.extend({
         .then((list) => {
           fullTemplateList.value = list;
         })
-        .catch(console.error);
+        .catch(console.error)
+        .finally(() => {
+          isFullTemplateListLoading.value = false;
+        });
     });
 
     /** Form state */
@@ -396,21 +416,42 @@ export default Vue.extend({
 
     /** Tabs */
 
+    const shouldDisplayTemplateTab = computed<boolean>(() =>
+      fullTemplateList.value.some(
+        (template) =>
+          template.id === values.value.template?.value &&
+          template.fields.length > 0
+      )
+    );
+
     const tabList = computed<Array<TabType>>(() =>
       [
         { id: 'common', label: 'Common' },
-        values.value.template ? { id: 'template', label: 'Template' } : null,
+        shouldDisplayTemplateTab.value
+          ? { id: 'template', label: 'Template' }
+          : null,
         { id: 'seo', label: 'SEO' },
       ].filter(notEmpty)
     );
     const selectedTabId = ref<string>(tabList.value[0].id);
+
+    const websiteOrigin: string =
+      process.env.VUE_APP_WEBSITE_URL || window.location.origin;
+
+    const isLoading = computed<boolean>(
+      () =>
+        isPageLoading.value ||
+        isPageListLoading.value ||
+        isShortTemplateListLoading.value ||
+        isFullTemplateListLoading.value
+    );
 
     return {
       submitForm,
       isSubmitting,
       isCreation,
       getPageListUrl,
-      isLoading: loading,
+      isLoading,
       values,
       errors,
       templateOptions,
@@ -418,6 +459,7 @@ export default Vue.extend({
       tabList,
       selectedTabId,
       parentPageOptions,
+      websiteOrigin,
     };
   },
 });

@@ -42,6 +42,15 @@ export interface StringField extends Field<StringFieldTemplate, string> {}
 export interface StringIncomingField extends IncomingField<string> {}
 export interface StringOutgoingField extends OutgoingField<string> {}
 
+/** URL */
+
+export interface UrlFieldTemplate extends FieldTemplate {
+  type: 'URL';
+}
+export interface UrlField extends Field<UrlFieldTemplate, string> {}
+export interface UrlIncomingField extends IncomingField<string> {}
+export interface UrlOutgoingField extends OutgoingField<string> {}
+
 /** DATE */
 
 export interface DateFieldTemplate extends FieldTemplate {
@@ -128,6 +137,7 @@ export interface RepeaterOutgoingField
 /** All */
 export type FieldTemplateUnion =
   | StringFieldTemplate
+  | UrlFieldTemplate
   | TextFieldTemplate
   | HtmlFieldTemplate
   | ImageFieldTemplate
@@ -138,6 +148,7 @@ export type FieldTemplateUnion =
 
 export type FieldUnion =
   | StringField
+  | UrlField
   | TextField
   | HtmlField
   | ImageField
@@ -149,6 +160,7 @@ export type FieldUnion =
 
 export type IncomingFieldUnion =
   | StringIncomingField
+  | UrlIncomingField
   | TextIncomingField
   | HtmlIncomingField
   | ImageIncomingField
@@ -159,6 +171,7 @@ export type IncomingFieldUnion =
 
 export type OutgoingFieldUnion =
   | StringOutgoingField
+  | UrlOutgoingField
   | TextOutgoingField
   | HtmlOutgoingField
   | ImageOutgoingField
@@ -184,8 +197,8 @@ export type TemplateFull = Readonly<
 export type PageShort = {
   readonly id: number;
   readonly title: string;
-  readonly image: Nullable<FileType>;
   readonly path: string;
+  readonly templateName: string;
   readonly parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
   readonly depth: number;
 };

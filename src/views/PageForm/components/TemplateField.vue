@@ -43,6 +43,7 @@ export default Vue.extend<Props>({
       }
 
       switch (field.template.type) {
+        case 'URL':
         case 'STRING':
           return h(FormField, {
             props: {
