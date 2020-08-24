@@ -1,14 +1,10 @@
 <template>
   <div class="repeated-field">
-    <div class="title-row">
+    <div class="title-row" @click="toggleChildren">
       <span class="title">
         {{ field.template.label }} ({{ field.value.length }})
       </span>
-      <base-button
-        variant="icon"
-        :title="isOpen ? 'Collapse' : 'Expand'"
-        @click="toggleChildren"
-      >
+      <base-button variant="icon" :title="isOpen ? 'Collapse' : 'Expand'">
         <svg-icon :name="isOpen ? 'expandLess' : 'expandMore'" />
       </base-button>
     </div>
@@ -100,13 +96,21 @@ export default defineComponent<Props>({
 
 .repeated-field {
   .title-row {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .title {
     font-size: 1.2rem;
     margin-right: 0.5rem;
+
+    &:hover {
+      color: #888;
+    }
   }
 
   .content {

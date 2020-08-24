@@ -123,28 +123,3 @@ export default Vue.extend<Props>({
   },
 });
 </script>
-
-<style scoped lang="scss">
-.repeated-field {
-  padding-bottom: 1rem;
-
-  .title-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  .title {
-    font-size: 1.2rem;
-    margin-right: 0.5rem;
-  }
-}
-
-.nested-element-list {
-  padding-left: 2rem;
-}
-
-.nested-element-container {
-  margin-bottom: 0.7rem;
-}
-</style>
