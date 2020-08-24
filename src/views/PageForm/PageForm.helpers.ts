@@ -3,7 +3,7 @@ import { OptionType } from '@tager/admin-ui';
 
 import { FieldUnion, PageFull, TemplateShort } from '../../typings/model';
 import { PageCreatePayload, PageUpdatePayload } from '../../services/requests';
-import { uniformFieldUtils } from '../../services/fields';
+import { universalFieldUtils } from '../../services/fields';
 
 export type FormValues = {
   title: string;
@@ -89,7 +89,7 @@ export function convertPageFormValuesToCreationPayload(
     openGraphImage: values.openGraphImage?.id ?? null,
     template: values.template?.value ?? null,
     templateFields: templateValues.map((field) =>
-      uniformFieldUtils.getOutgoingField(field)
+      universalFieldUtils.getOutgoingField(field)
     ),
   };
 }

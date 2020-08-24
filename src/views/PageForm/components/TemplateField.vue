@@ -8,10 +8,11 @@ import {
 
 import { FieldUnion } from '../../../typings/model';
 
-import RepeatedItemTree from './RepeatedItemTree.vue';
+import RepeatedItemTree from './RepeatedItemTree';
 
 type Props = Readonly<{
   field: FieldUnion;
+  isLabelHidden?: boolean;
 }>;
 
 export default Vue.extend<Props>({
@@ -22,11 +23,17 @@ export default Vue.extend<Props>({
       type: Object,
       required: true,
     },
+    isLabelHidden: {
+      type: Boolean,
+      default: false,
+    },
   },
   render(h, context) {
+    const isLabelHidden = context.props.isLabelHidden;
+
     function renderField(field: FieldUnion): VNode {
       const commonProps = {
-        label: field.template.label,
+        label: isLabelHidden ? null : field.template.label,
         name: field.template.name,
         value: field.value,
       };
@@ -84,7 +91,7 @@ export default Vue.extend<Props>({
         case 'GALLERY':
           return h(FormFieldFileInput, {
             props: {
-              label: field.template.label,
+              label: isLabelHidden ? null : field.template.label,
               name: field.template.name,
               value: field.value,
             },

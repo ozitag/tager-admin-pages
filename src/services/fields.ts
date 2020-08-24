@@ -13,6 +13,7 @@ import {
   DefaultIncomingField,
   DefaultOutgoingField,
   Field,
+  FieldTemplate,
   FieldTemplateUnion,
   FieldUnion,
   FileField,
@@ -48,7 +49,13 @@ import {
 } from '../typings/model';
 import { Nullish } from '@tager/admin-services';
 
-interface FieldUtils<Type, IF, Template, F extends Field<any>, OF> {
+interface FieldUtils<
+  Type,
+  IF,
+  Template extends FieldTemplate,
+  F extends Field<Template>,
+  OF
+> {
   type: Type;
   getDefaultFieldValue(): F['value'];
   createField(fieldTemplate: Template, incomingField: Nullish<IF>): F;
@@ -282,11 +289,6 @@ const repeaterFieldUtils: RepeaterFieldUtilsType = {
       fieldTemplateList: RepeaterFieldTemplate['fields'],
       incomingFieldList: RepeaterIncomingField['value']
     ): RepeaterField['value'] {
-      console.log(
-        'createNestedFieldArray',
-        fieldTemplateList,
-        incomingFieldList
-      );
       const nestedFieldList: RepeaterField['value'] = [];
 
       for (let i = 0; i < incomingFieldList.length; i++) {
@@ -304,28 +306,21 @@ const repeaterFieldUtils: RepeaterFieldUtilsType = {
             (field) => field.name === nestedFieldTemplate.name
           );
 
-          console.log('nestedFieldTemplate', nestedFieldTemplate);
-          console.log('nestedIncomingFieldList', nestedIncomingFieldList);
-          console.log('foundNestedIncomingField', foundNestedIncomingField);
-
-          // eslint-disable-next-line
-          const foundFieldUtils = getFieldUtilsByType(nestedFieldTemplate.type);
-
-          const field = foundFieldUtils.createField(
-            /** @ts-ignore */
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          const field = universalFieldUtils.createField(
             nestedFieldTemplate,
-            /** @ts-ignore */
             foundNestedIncomingField
           );
 
           nestedField.value.push(field as FieldUnion);
         }
+
+        nestedFieldList.push(nestedField);
       }
 
       return nestedFieldList;
     }
 
-    console.log('incomingField', incomingField);
     return {
       id: uuid(),
       template: fieldTemplate,
@@ -339,13 +334,8 @@ const repeaterFieldUtils: RepeaterFieldUtilsType = {
       name: field.template.name,
       value: field.value.map((entity) =>
         entity.value.map((entityField) => {
-          // eslint-disable-next-line
-          const foundFieldUtils = getFieldUtilsByType(
-            entityField.template.type
-          );
-
-          /** @ts-ignore */
-          return foundFieldUtils.getOutgoingField(entityField);
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          return universalFieldUtils.getOutgoingField(entityField);
         })
       ),
     };
@@ -395,24 +385,36 @@ const FIELD_UTILS_LIST = [
 
 type FieldUtilsUnion = typeof FIELD_UTILS_LIST[number];
 
-export function getFieldUtilsByType(type: string): FieldUtilsUnion {
+function getFieldUtilsByType(type: string): FieldUtilsUnion {
   return (
     FIELD_UTILS_LIST.find((utils) => utils.type === type) ?? defaultFieldUtils
   );
 }
 
-export const uniformFieldUtils = {
+interface UniversalFieldUtils {
+  createField(
+    fieldTemplate: FieldTemplateUnion,
+    incomingField: Nullish<IncomingFieldUnion>
+  ): FieldUnion;
+  getOutgoingField(field: FieldUnion): OutgoingFieldUnion;
+}
+
+export const universalFieldUtils: UniversalFieldUtils = {
   createField(
     fieldTemplate: FieldTemplateUnion,
     incomingField: Nullish<IncomingFieldUnion>
   ): FieldUnion {
     const foundFieldUtils = getFieldUtilsByType(fieldTemplate.type);
-    /** @ts-ignore */
-    return foundFieldUtils.createField(fieldTemplate, incomingField);
+
+    return (foundFieldUtils.createField as UniversalFieldUtils['createField'])(
+      fieldTemplate,
+      incomingField
+    );
   },
   getOutgoingField(field: FieldUnion): OutgoingFieldUnion {
     const foundFieldUtils = getFieldUtilsByType(field.template.type);
-    /** @ts-ignore */
-    return foundFieldUtils.getOutgoingField(field);
+    return (foundFieldUtils.getOutgoingField as UniversalFieldUtils['getOutgoingField'])(
+      field
+    );
   },
 };

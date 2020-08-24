@@ -49,14 +49,15 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 
-import { RepeaterField } from '../../../typings/model';
-import TemplateField from './TemplateField.vue';
+import { RepeaterField } from '../../../../../typings/model';
+
+import TemplateField from '../../TemplateField.vue';
+import { moveItem, removeItem } from '../RepeatedItemTree.helpers';
 
 type Props = Readonly<{
   item: RepeaterField['value'][number];
   parentField: RepeaterField;
   index: number;
-  indexPath: Array<number>;
   components: { TemplateField: typeof TemplateField };
 }>;
 
@@ -87,12 +88,8 @@ export default defineComponent<Props>({
       type: Number,
       required: true,
     },
-    indexPath: {
-      type: Array,
-      required: true,
-    },
   },
-  setup(props, context) {
+  setup(props) {
     const isOpen = ref<boolean>(false);
 
     function toggleItem() {
@@ -100,28 +97,11 @@ export default defineComponent<Props>({
     }
 
     function handleItemRemove() {
-      props.parentField.value.splice(props.index, 1);
+      removeItem(props.parentField, props.index);
     }
 
     function handleItemMove(direction: 'up' | 'down') {
-      const itemList = props.parentField.value;
-      const itemIndex = props.index;
-
-      if (
-        (direction === 'up' && itemIndex === 0) ||
-        (direction === 'down' && itemIndex === itemList.length - 1)
-      ) {
-        return;
-      }
-
-      const item = itemList[itemIndex];
-
-      itemList.splice(itemIndex, 1);
-      itemList.splice(
-        direction === 'up' ? itemIndex - 1 : itemIndex + 1,
-        0,
-        item
-      );
+      moveItem(props.parentField, props.index, direction);
     }
 
     return { handleItemRemove, handleItemMove, isOpen, toggleItem };

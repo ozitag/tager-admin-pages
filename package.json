@@ -19,6 +19,7 @@
     "yalc:clean": "yalc remove --all"
   },
   "dependencies": {
+    "lodash.kebabcase": "^4.1.1",
     "path-to-regexp": "^6.1.0",
     "uuid": "^8.3.0"
   },
@@ -28,6 +29,7 @@
     "@tager/admin-layout": "^0.4.2",
     "@tager/admin-services": "^0.2.4",
     "@tager/admin-ui": "^0.6.9",
+    "@types/lodash.kebabcase": "^4.1.6",
     "@types/node": "12.x",
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^2.26.0",

@@ -113,6 +113,7 @@ export interface FileOutgoingField extends OutgoingField<Nullable<number>> {}
 export interface RepeaterFieldTemplate extends FieldTemplate {
   type: 'REPEATER';
   fields: Array<FieldTemplateUnion>;
+  meta: { view?: 'TABLE' };
 }
 export interface RepeaterField
   extends Field<

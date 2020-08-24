@@ -1,0 +1,125 @@
+<template>
+  <div class="repeated-field">
+    <div class="title-row">
+      <span class="title">
+        {{ field.template.label }} ({{ field.value.length }})
+      </span>
+      <base-button
+        variant="icon"
+        :title="isOpen ? 'Collapse' : 'Expand'"
+        @click="toggleChildren"
+      >
+        <svg-icon :name="isOpen ? 'expandLess' : 'expandMore'" />
+      </base-button>
+    </div>
+
+    <div v-show="isOpen" class="content">
+      <RepeatedItemTable v-if="isTable" :field="field" />
+      <ul v-else class="nested-element-list">
+        <li
+          v-for="(nestedElement, index) of field.value"
+          :key="nestedElement.id"
+          class="nested-element-container"
+        >
+          <RepeatedItem
+            :item="nestedElement"
+            :index="index"
+            :parent-field="field"
+            v-on="$listeners"
+          />
+        </li>
+      </ul>
+      <base-button
+        variant="outline-primary"
+        title="Add item"
+        @click="addElement"
+      >
+        Add item
+      </base-button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref } from '@vue/composition-api';
+import { v4 as uuid } from 'uuid';
+
+import { RepeaterField } from '../../../../typings/model';
+import { universalFieldUtils } from '../../../../services/fields';
+
+import RepeatedItem from './components/RepeatedItem.vue';
+import RepeatedItemTable from './components/RepeatedItemTable.vue';
+
+type Props = Readonly<{
+  field: RepeaterField;
+}>;
+
+export default defineComponent<Props>({
+  name: 'RepeatedItemTree',
+  components: { RepeatedItem, RepeatedItemTable },
+  props: {
+    field: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const isOpen = ref<boolean>(false);
+
+    function toggleChildren() {
+      isOpen.value = !isOpen.value;
+    }
+
+    function addElement() {
+      const newNestedField = {
+        id: uuid(),
+        value: props.field.template.fields.map((nestedFieldTemplate) =>
+          universalFieldUtils.createField(nestedFieldTemplate, null)
+        ),
+      };
+
+      props.field.value.push(newNestedField);
+    }
+
+    return {
+      addElement,
+      toggleChildren,
+      isOpen,
+      isTable: props.field.template.meta.view === 'TABLE',
+    };
+  },
+});
+</script>
+
+<style scoped lang="scss">
+.repeated-field-table {
+  ::v-deep .form-group {
+    margin-bottom: 0;
+  }
+}
+
+.repeated-field {
+  .title-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+  }
+
+  .content {
+    margin-top: 0.2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.nested-element-list {
+  padding-left: 2rem;
+}
+
+.nested-element-container {
+  margin-bottom: 0.7rem;
+}
+</style>

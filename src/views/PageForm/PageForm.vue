@@ -185,7 +185,7 @@ import {
 } from './PageForm.helpers';
 import TabList, { TabType } from './components/TabList';
 import { getNameWithDepth } from '../../utils/common';
-import { uniformFieldUtils } from '../../services/fields';
+import { universalFieldUtils } from '../../services/fields';
 
 export default Vue.extend({
   name: 'PageForm',
@@ -314,11 +314,9 @@ export default Vue.extend({
       const incomingFieldList: Array<IncomingFieldUnion> =
         page.value?.templateValues ?? [];
 
-      console.log('incomingFieldList', incomingFieldList);
       templateValues.value = fieldTemplateList.map((fieldTemplate, index) =>
-        uniformFieldUtils.createField(fieldTemplate, incomingFieldList[index])
+        universalFieldUtils.createField(fieldTemplate, incomingFieldList[index])
       );
-      console.log('templateValues.value', templateValues.value);
     }
 
     function updateFormValues() {
