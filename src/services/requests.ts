@@ -9,9 +9,18 @@ import {
   OutgoingFieldUnion,
   PageFull,
   PageShort,
+  PagesModuleConfigType,
   TemplateFull,
   TemplateShort,
 } from '../typings/model';
+
+export function getPagesModuleConfig(): Promise<
+  ResponseBody<PagesModuleConfigType>
+> {
+  return request.get({
+    path: `/admin/pages/module-info`,
+  });
+}
 
 export function getPageTemplateList(): Promise<
   ResponseBody<Array<TemplateShort>>

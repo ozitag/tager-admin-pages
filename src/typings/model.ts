@@ -1,6 +1,10 @@
 import { FileType, Nullable } from '@tager/admin-services';
 
 /** Common */
+export type PagesModuleConfigType = {
+  contentImageScenario: Nullable<string>;
+};
+
 export interface FieldTemplate {
   readonly name: string;
   readonly label: string;

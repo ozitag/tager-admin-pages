@@ -38,6 +38,7 @@
     "@vue/cli-plugin-eslint": "~4.4.6",
     "@vue/cli-plugin-router": "~4.4.6",
     "@vue/cli-plugin-typescript": "~4.4.6",
+    "@vue/cli-plugin-vuex": "^4.5.4",
     "@vue/cli-service": "~4.4.6",
     "@vue/composition-api": "^1.0.0-beta.9",
     "@vue/eslint-config-prettier": "^6.0.0",
@@ -55,14 +56,16 @@
     "typescript": "~3.9.6",
     "vue": "2.6.x",
     "vue-router": "3.4.x",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "vuex": "^3.5.1"
   },
   "peerDependencies": {
     "@tager/admin-layout": ">=0.4.2",
     "@tager/admin-services": ">=0.2.6",
     "@tager/admin-ui": ">=0.6.11",
     "@vue/composition-api": ">=1.0.0-beta.11",
-    "vue": "2.6.x"
+    "vue": "2.6.x",
+    "vuex": "3.5.x"
   },
   "resolutions": {
     "prettier": "2.x"
