@@ -797,10 +797,10 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2":
-  version "7.10.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.5.tgz#303d8bd440ecd5a491eae6117fd3367698674c5c"
-  integrity sha512-otddXKhdNn7d0ptoFRHtMLa8LqDxLYwTjB4nYgM1yy5N6gU/MUf8zqyyLltCH3yAVitBzmwK4us+DD0l/MauAg==
+"@babel/runtime@^7.11.2":
+  version "7.11.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
+  integrity sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -959,12 +959,12 @@
   dependencies:
     i18next "^19.6.3"
 
-"@tager/admin-ui@^0.6.9":
-  version "0.6.9"
-  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-0.6.9.tgz#a13e200cc796c93dc9f979421c414feb699ee376"
-  integrity sha512-gJXAI5vrQIgWqKu1Ft28eZtkW3LSK1In9cN1j8InUi/8cp/0zBsyCzyqZkjG7VV9ZrTA2D6hoJFptS0RD1aLPQ==
+"@tager/admin-ui@^0.6.11":
+  version "0.6.11"
+  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-0.6.11.tgz#dac7217898cba6da7aade5cee2130576835a9cdf"
+  integrity sha512-OAl3VeJbBIZphntfr6q22at/D6F9TF3Bb+ObvohUAzJX2TrqG3Hns2lxFMP3+orb7vwj3gCZRDpXhalT5QBKCQ==
   dependencies:
-    "@babel/runtime" "^7.10.2"
+    "@babel/runtime" "^7.11.2"
     "@ckeditor/ckeditor5-vue" "^1.0.1"
     "@tager/admin-wysiwyg" "^0.1.0"
     lodash.get "^4.4.2"

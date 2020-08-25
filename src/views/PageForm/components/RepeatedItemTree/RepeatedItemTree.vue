@@ -106,7 +106,6 @@ export default defineComponent<Props>({
 
   .title {
     font-size: 1.2rem;
-    margin-right: 0.5rem;
 
     &:hover {
       color: #888;
