@@ -11,11 +11,27 @@
       :loading="isRowDataLoading"
       :error-message="errorMessage"
     >
-      <template v-slot:cell(actions)="{ row }">
+      <template v-slot:cell(actions)="{ row, rowIndex }">
+        <base-button
+          variant="icon"
+          :disabled="isBusy(row.id) || rowIndex === rowData.length - 1"
+          @click="handleResourceMove(row.id, 'down')"
+        >
+          <svg-icon name="south" />
+        </base-button>
+
+        <base-button
+          variant="icon"
+          :disabled="isBusy(row.id) || rowIndex === 0"
+          @click="handleResourceMove(row.id, 'up')"
+        >
+          <svg-icon name="north" />
+        </base-button>
+
         <base-button
           variant="icon"
           title="Edit"
-          :disabled="isEntityDeleting(row.id) || isRowDataLoading"
+          :disabled="isBusy(row.id)"
           :href="getPageFormUrl({ pageId: row.id })"
         >
           <svg-icon name="edit"></svg-icon>
@@ -23,7 +39,7 @@
         <base-button
           variant="icon"
           title="Add child page"
-          :disabled="isEntityDeleting(row.id) || isRowDataLoading"
+          :disabled="isBusy(row.id)"
           :href="getChildPageCreationFormUrl({ parentId: row.id })"
         >
           <svg-icon name="addCircle"></svg-icon>
@@ -31,9 +47,7 @@
         <base-button
           variant="icon"
           title="Delete"
-          :disabled="
-            hasChild(row.id) || isEntityDeleting(row.id) || isRowDataLoading
-          "
+          :disabled="hasChild(row.id) || isBusy(row.id)"
           @click="handleResourceDelete(row.id)"
         >
           <svg-icon name="delete"></svg-icon>
@@ -44,13 +58,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from '@vue/composition-api';
+import { computed, defineComponent, onMounted } from '@vue/composition-api';
 import { ColumnDefinition } from '@tager/admin-ui';
-import { useResource, useResourceDelete } from '@tager/admin-services';
+import {
+  useResource,
+  useResourceDelete,
+  useResourceMove,
+} from '@tager/admin-services';
 
 import { PageShort } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
-import { deletePage, getPageList } from '../services/requests';
+import { deletePage, getPageList, movePage } from '../services/requests';
 import { getNameWithDepth } from '../utils/common';
 
 const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
@@ -101,9 +119,10 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
 export default defineComponent({
   name: 'PageList',
   setup(props, context) {
-    const [fetchPageList, { data: pageList, loading, error }] = useResource<
-      Array<PageShort>
-    >({
+    const [
+      fetchPageList,
+      { data: pageList, loading: isPageListLoading, error },
+    ] = useResource<Array<PageShort>>({
       fetchResource: getPageList,
       initialValue: [],
       context,
@@ -116,6 +135,13 @@ export default defineComponent({
 
     const { handleResourceDelete, isDeleting } = useResourceDelete({
       deleteResource: deletePage,
+      resourceName: 'Page',
+      onSuccess: fetchPageList,
+      context,
+    });
+
+    const { isMoving, handleResourceMove } = useResourceMove({
+      moveResource: movePage,
       resourceName: 'Page',
       onSuccess: fetchPageList,
       context,
@@ -136,16 +162,27 @@ export default defineComponent({
       return pageList.value.some((page) => page.parent?.id === parentId);
     }
 
+    const isRowDataLoading = computed<boolean>(() => isPageListLoading.value);
+
+    function isBusy(departmentId: number): boolean {
+      return (
+        isDeleting(departmentId) ||
+        isMoving(departmentId) ||
+        isRowDataLoading.value
+      );
+    }
+
     return {
       columnDefs: COLUMN_DEFS,
       getPageFormUrl,
       getChildPageCreationFormUrl,
       rowData: pageList,
-      isRowDataLoading: loading,
+      isRowDataLoading: isPageListLoading,
       errorMessage: error,
-      isEntityDeleting: isDeleting,
       handleResourceDelete,
+      handleResourceMove,
       hasChild,
+      isBusy,
     };
   },
 });

@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import VueCompositionAPI from '@vue/composition-api';
+import Vue, { CreateElement } from 'vue';
+import VueCompositionApi, { createApp } from '@vue/composition-api';
 import { configStore, i18n } from '@tager/admin-services';
 import { AdminUiPlugin } from '@tager/admin-ui';
 import { AdminLayoutPlugin, createRouter } from '@tager/admin-layout';
@@ -12,10 +12,6 @@ import { PAGE_FORM_ROUTE, PAGE_LIST_ROUTE } from './constants/routes';
 
 configStore.setConfig(config);
 
-Vue.use(AdminUiPlugin);
-Vue.use(AdminLayoutPlugin);
-Vue.use(VueCompositionAPI);
-
 const router = createRouter(
   {
     routes: [PAGE_LIST_ROUTE, PAGE_FORM_ROUTE],
@@ -23,11 +19,17 @@ const router = createRouter(
   { useTitleSync: false }
 );
 
-i18n.init().then(() => {
-  Vue.use(i18n.getPlugin());
+i18n.init({ debug: false }).then(() => {
+  Vue.use(VueCompositionApi);
 
-  new Vue({
+  const app = createApp({
     router,
-    render: (h) => h(App),
-  }).$mount('#app');
+    render: (h: CreateElement) => h(App),
+  });
+
+  app.use(i18n.getPlugin());
+  app.use(AdminUiPlugin);
+  app.use(AdminLayoutPlugin);
+
+  app.mount('#app');
 });

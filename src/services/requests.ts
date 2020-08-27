@@ -78,3 +78,10 @@ export function deletePage(
 ): Promise<{ success: boolean }> {
   return request.delete({ path: `/admin/pages/${pageId}` });
 }
+
+export function movePage(
+  pageId: number | string,
+  direction: 'up' | 'down'
+): Promise<{ success: boolean }> {
+  return request.post({ path: `/admin/pages/${pageId}/move/${direction}` });
+}
