@@ -1,4 +1,5 @@
 import { MenuItemType } from '@tager/admin-layout';
+
 import { getPageFormUrl, getPageListUrl } from '../utils/paths';
 
 export const PAGES_MENU_ITEM: MenuItemType = {

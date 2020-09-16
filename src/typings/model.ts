@@ -1,185 +1,185 @@
 import { FileType, Nullable } from '@tager/admin-services';
 
 /** Common */
-export interface FieldTemplate {
+export interface FieldConfig {
   readonly name: string;
   readonly label: string;
   readonly type: string;
-  readonly meta: Record<string, any>;
-  readonly fields?: Array<FieldTemplate>;
+  readonly meta: Record<string, unknown>;
+  readonly fields?: Array<FieldConfig>;
 }
 
-export interface Field<Template extends FieldTemplate, Value = any> {
+export interface Field<Config extends FieldConfig, Value = unknown> {
   readonly id: string;
-  readonly template: Template;
+  readonly config: Config;
   value: Value;
 }
 
-export interface IncomingField<Value> {
-  readonly name: string;
-  readonly value: Value;
-}
-
-export interface OutgoingField<Value> {
-  readonly name: string;
-  readonly value: Value;
-}
+export type FieldShortType<Value> = {
+  name: string;
+  value: Value;
+};
 
 /** Default - we use it as fallback for unknown fields */
 
-export interface DefaultFieldTemplate extends FieldTemplate {}
+export type DefaultFieldConfig = FieldConfig;
 
-export interface DefaultField extends Field<DefaultFieldTemplate, null> {}
-export interface DefaultIncomingField extends IncomingField<null> {}
-export interface DefaultOutgoingField extends OutgoingField<null> {}
+export type DefaultField = Field<DefaultFieldConfig, null>;
+export type DefaultIncomingValue = null;
+export type DefaultOutgoingValue = null;
 
 /** STRING */
 
-export interface StringFieldTemplate extends FieldTemplate {
+export interface StringFieldConfig extends FieldConfig {
   type: 'STRING';
 }
-export interface StringField extends Field<StringFieldTemplate, string> {}
-export interface StringIncomingField extends IncomingField<string> {}
-export interface StringOutgoingField extends OutgoingField<string> {}
+export type StringField = Field<StringFieldConfig, string>;
+export type StringIncomingValue = string;
+export type StringOutgoingValue = string;
 
 /** URL */
 
-export interface UrlFieldTemplate extends FieldTemplate {
+export interface UrlFieldConfig extends FieldConfig {
   type: 'URL';
 }
-export interface UrlField extends Field<UrlFieldTemplate, string> {}
-export interface UrlIncomingField extends IncomingField<string> {}
-export interface UrlOutgoingField extends OutgoingField<string> {}
+export type UrlField = Field<UrlFieldConfig, string>;
+export type UrlIncomingValue = string;
+export type UrlOutgoingValue = string;
 
 /** DATE */
 
-export interface DateFieldTemplate extends FieldTemplate {
+export interface DateFieldConfig extends FieldConfig {
   type: 'DATE';
 }
-export interface DateField extends Field<DateFieldTemplate, string> {}
-export interface DateIncomingField extends IncomingField<string> {}
-export interface DateOutgoingField extends OutgoingField<string> {}
+export type DateField = Field<DateFieldConfig, string>;
+export type DateIncomingValue = string;
+export type DateOutgoingValue = string;
 
 /** DATETIME */
 
-export interface DateTimeFieldTemplate extends FieldTemplate {
+export interface DateTimeFieldConfig extends FieldConfig {
   type: 'DATETIME';
 }
-export interface DateTimeField extends Field<DateTimeFieldTemplate, string> {}
-export interface DateTimeIncomingField extends IncomingField<string> {}
-export interface DateTimeOutgoingField extends OutgoingField<string> {}
+export type DateTimeField = Field<DateTimeFieldConfig, string>;
+export type DateTimeIncomingValue = string;
+export type DateTimeOutgoingValue = string;
 
 /** TEXT */
 
-export interface TextFieldTemplate extends FieldTemplate {
+export interface TextFieldConfig extends FieldConfig {
   type: 'TEXT';
 }
-export interface TextField extends Field<TextFieldTemplate, string> {}
-export interface TextIncomingField extends IncomingField<string> {}
-export interface TextOutgoingField extends OutgoingField<string> {}
+export type TextField = Field<TextFieldConfig, string>;
+export type TextIncomingValue = string;
+export type TextOutgoingValue = string;
 
 /** HTML */
 
-export interface HtmlFieldTemplate extends FieldTemplate {
+export interface HtmlFieldConfig extends FieldConfig {
   type: 'HTML';
 }
-export interface HtmlField extends Field<HtmlFieldTemplate, string> {}
-export interface HtmlIncomingField extends IncomingField<string> {}
-export interface HtmlOutgoingField extends OutgoingField<string> {}
+export type HtmlField = Field<HtmlFieldConfig, string>;
+export type HtmlIncomingValue = string;
+export type HtmlOutgoingValue = string;
 
 /** IMAGE */
 
-export interface ImageFieldTemplate extends FieldTemplate {
+export interface ImageFieldConfig extends FieldConfig {
   type: 'IMAGE';
 }
-export interface ImageField
-  extends Field<ImageFieldTemplate, Nullable<FileType>> {}
-export interface ImageIncomingField extends IncomingField<Nullable<FileType>> {}
-export interface ImageOutgoingField extends OutgoingField<Nullable<number>> {}
+export type ImageField = Field<ImageFieldConfig, Nullable<FileType>>;
+export type ImageIncomingValue = Nullable<FileType>;
+export type ImageOutgoingValue = Nullable<number>;
 
 /** GALLERY */
 
-export interface GalleryFieldTemplate extends FieldTemplate {
+export interface GalleryFieldConfig extends FieldConfig {
   type: 'GALLERY';
 }
-export interface GalleryField
-  extends Field<GalleryFieldTemplate, Array<FileType>> {}
-export interface GalleryIncomingField extends IncomingField<Array<FileType>> {}
-export interface GalleryOutgoingField extends OutgoingField<Array<number>> {}
+export type GalleryField = Field<GalleryFieldConfig, Array<FileType>>;
+export type GalleryIncomingValue = Array<FileType>;
+export type GalleryOutgoingValue = Array<number>;
 
 /** FILE */
 
-export interface FileFieldTemplate extends FieldTemplate {
+export interface FileFieldConfig extends FieldConfig {
   type: 'FILE';
 }
-export interface FileField
-  extends Field<FileFieldTemplate, Nullable<FileType>> {}
-export interface FileIncomingField extends IncomingField<Nullable<FileType>> {}
-export interface FileOutgoingField extends OutgoingField<Nullable<number>> {}
+export type FileField = Field<FileFieldConfig, Nullable<FileType>>;
+export type FileIncomingValue = Nullable<FileType>;
+export type FileOutgoingValue = Nullable<number>;
 
 /** REPEATER */
 
-export interface RepeaterFieldTemplate extends FieldTemplate {
+export interface RepeaterFieldConfig extends FieldConfig {
   type: 'REPEATER';
-  fields: Array<FieldTemplateUnion>;
+  fields: Array<FieldConfigUnion>;
   meta: { view?: 'TABLE' };
 }
-export interface RepeaterField
-  extends Field<
-    RepeaterFieldTemplate,
-    Array<{ id: string; value: Array<FieldUnion> }>
-  > {}
-export interface RepeaterIncomingField
-  extends IncomingField<Array<Array<IncomingFieldUnion>>> {}
-export interface RepeaterOutgoingField
-  extends OutgoingField<Array<Array<OutgoingFieldUnion>>> {}
+export type RepeaterField = Field<
+  RepeaterFieldConfig,
+  Array<{ id: string; value: Array<FieldUnion> }>
+>;
+export type RepeaterIncomingValue = Array<
+  Array<FieldShortType<IncomingValueUnion>>
+>;
+export type RepeaterOutgoingValue = Array<
+  Array<FieldShortType<OutgoingValueUnion>>
+>;
 
 /** All */
-export type FieldTemplateUnion =
-  | StringFieldTemplate
-  | UrlFieldTemplate
-  | TextFieldTemplate
-  | HtmlFieldTemplate
-  | ImageFieldTemplate
-  | GalleryFieldTemplate
-  | FileFieldTemplate
-  | DateFieldTemplate
-  | RepeaterFieldTemplate;
+export type FieldConfigUnion =
+  | StringFieldConfig
+  | UrlFieldConfig
+  | TextFieldConfig
+  | HtmlFieldConfig
+  | DateFieldConfig
+  | DateTimeFieldConfig
+  | ImageFieldConfig
+  | GalleryFieldConfig
+  | FileFieldConfig
+  | RepeaterFieldConfig;
 
 export type FieldUnion =
   | StringField
   | UrlField
   | TextField
   | HtmlField
+  | DateField
+  | DateTimeField
   | ImageField
   | GalleryField
   | FileField
-  | DateField
   | RepeaterField
   | DefaultField;
 
-export type IncomingFieldUnion =
-  | StringIncomingField
-  | UrlIncomingField
-  | TextIncomingField
-  | HtmlIncomingField
-  | ImageIncomingField
-  | GalleryIncomingField
-  | FileIncomingField
-  | DateIncomingField
-  | RepeaterIncomingField;
+export type IncomingValueUnion =
+  | StringIncomingValue
+  | UrlIncomingValue
+  | TextIncomingValue
+  | HtmlIncomingValue
+  | DateIncomingValue
+  | DateTimeIncomingValue
+  | DefaultIncomingValue
+  | ImageIncomingValue
+  | GalleryIncomingValue
+  | FileIncomingValue
+  | RepeaterIncomingValue;
 
-export type OutgoingFieldUnion =
-  | StringOutgoingField
-  | UrlOutgoingField
-  | TextOutgoingField
-  | HtmlOutgoingField
-  | ImageOutgoingField
-  | GalleryOutgoingField
-  | FileOutgoingField
-  | DateOutgoingField
-  | RepeaterOutgoingField
-  | DefaultOutgoingField;
+export type OutgoingValueUnion =
+  | StringOutgoingValue
+  | UrlOutgoingValue
+  | TextOutgoingValue
+  | HtmlOutgoingValue
+  | DateOutgoingValue
+  | DateTimeOutgoingValue
+  | ImageOutgoingValue
+  | GalleryOutgoingValue
+  | FileOutgoingValue
+  | RepeaterOutgoingValue
+  | DefaultOutgoingValue;
+
+/***************************/
 
 /** Template */
 
@@ -190,7 +190,7 @@ export type TemplateShort = Readonly<{
 
 export type TemplateFull = Readonly<
   TemplateShort & {
-    fields: Array<FieldTemplateUnion>;
+    fields: Array<FieldConfigUnion>;
   }
 >;
 
@@ -222,5 +222,5 @@ export type PageFull = {
 
   /** Template */
   readonly template: TemplateShort['id'];
-  readonly templateValues: Array<IncomingFieldUnion>;
+  readonly templateValues: Array<FieldShortType<IncomingValueUnion>>;
 };

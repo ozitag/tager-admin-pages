@@ -88,9 +88,10 @@ export function convertPageFormValuesToCreationPayload(
     image: values.image?.id ?? null,
     openGraphImage: values.openGraphImage?.id ?? null,
     template: values.template?.value ?? null,
-    templateFields: templateValues.map((field) =>
-      universalFieldUtils.getOutgoingField(field)
-    ),
+    templateFields: templateValues.map((field) => ({
+      value: universalFieldUtils.getOutgoingValue(field),
+      name: field.config.name,
+    })),
   };
 }
 

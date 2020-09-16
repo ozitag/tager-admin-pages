@@ -59,6 +59,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted } from '@vue/composition-api';
+
 import { ColumnDefinition } from '@tager/admin-ui';
 import {
   useResource,

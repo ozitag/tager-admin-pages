@@ -6,7 +6,8 @@ import {
 } from '@tager/admin-services';
 
 import {
-  OutgoingFieldUnion,
+  FieldShortType,
+  OutgoingValueUnion,
   PageFull,
   PageShort,
   TemplateFull,
@@ -53,7 +54,7 @@ export type PageCreatePayload = {
   openGraphImage: Nullable<FileType['id']>;
 
   template: Nullable<TemplateShort['id']>;
-  templateFields: Array<OutgoingFieldUnion>;
+  templateFields: Array<FieldShortType<OutgoingValueUnion>>;
 };
 
 export function createPage(

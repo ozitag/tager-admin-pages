@@ -106,9 +106,9 @@
         </template>
 
         <template v-if="selectedTabId === 'template'">
-          <template-field
+          <DynamicField
             v-for="field of templateValues"
-            :key="field.template.name"
+            :key="field.config.name"
             :field="field"
           />
         </template>
@@ -162,6 +162,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { computed, onMounted, ref, watch } from '@vue/composition-api';
+
 import {
   convertRequestErrorToMap,
   notEmpty,
@@ -170,9 +171,10 @@ import {
 import { OptionType } from '@tager/admin-ui';
 
 import {
-  FieldTemplateUnion,
+  FieldConfigUnion,
+  FieldShortType,
   FieldUnion,
-  IncomingFieldUnion,
+  IncomingValueUnion,
   TemplateFull,
 } from '../../typings/model';
 import {
@@ -184,7 +186,10 @@ import {
   updatePage,
 } from '../../services/requests';
 import { getPageFormUrl, getPageListUrl } from '../../utils/paths';
-import TemplateField from './components/TemplateField.vue';
+import { getNameWithDepth } from '../../utils/common';
+import { universalFieldUtils } from '../../services/fields';
+
+import DynamicField from './components/DynamicField.vue';
 import {
   convertPageFormValuesToCreationPayload,
   convertPageFormValuesToUpdatePayload,
@@ -192,12 +197,10 @@ import {
   getPageFormValues,
 } from './PageForm.helpers';
 import TabList, { TabType } from './components/TabList';
-import { getNameWithDepth } from '../../utils/common';
-import { universalFieldUtils } from '../../services/fields';
 
 export default Vue.extend({
   name: 'PageForm',
-  components: { TemplateField, TabList },
+  components: { DynamicField, TabList },
   setup(props, context) {
     const pageId = computed(() => context.root.$route.params.pageId);
 
@@ -328,14 +331,17 @@ export default Vue.extend({
     );
 
     function updateTemplateValues() {
-      const fieldTemplateList: Array<FieldTemplateUnion> =
+      const fieldTemplateList: Array<FieldConfigUnion> =
         selectedTemplate.value?.fields ?? [];
 
-      const incomingFieldList: Array<IncomingFieldUnion> =
+      const incomingFieldList: Array<FieldShortType<IncomingValueUnion>> =
         page.value?.templateValues ?? [];
 
-      templateValues.value = fieldTemplateList.map((fieldTemplate, index) =>
-        universalFieldUtils.createField(fieldTemplate, incomingFieldList[index])
+      templateValues.value = fieldTemplateList.map((fieldConfig, index) =>
+        universalFieldUtils.createFormField(
+          fieldConfig,
+          incomingFieldList[index]?.value
+        )
       );
     }
 

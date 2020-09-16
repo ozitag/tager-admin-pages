@@ -1,5 +1,6 @@
 <script lang="ts">
 import Vue, { VNode } from 'vue';
+
 import {
   FormField,
   FormFieldFileInput,
@@ -16,7 +17,7 @@ type Props = Readonly<{
 }>;
 
 export default Vue.extend<Props>({
-  name: 'TemplateField',
+  name: 'DynamicField',
   functional: true,
   props: {
     field: {
@@ -33,8 +34,8 @@ export default Vue.extend<Props>({
 
     function renderField(field: FieldUnion): VNode {
       const commonProps = {
-        label: isLabelHidden ? null : field.template.label,
-        name: field.template.name,
+        label: isLabelHidden ? null : field.config.label,
+        name: field.config.name,
         value: field.value,
       };
 
@@ -42,7 +43,7 @@ export default Vue.extend<Props>({
         field.value = event;
       }
 
-      switch (field.template.type) {
+      switch (field.config.type) {
         case 'URL':
         case 'STRING':
           return h(FormField, {
@@ -92,8 +93,8 @@ export default Vue.extend<Props>({
         case 'GALLERY':
           return h(FormFieldFileInput, {
             props: {
-              label: isLabelHidden ? null : field.template.label,
-              name: field.template.name,
+              label: isLabelHidden ? null : field.config.label,
+              name: field.config.name,
               value: field.value,
             },
             attrs: {
@@ -119,7 +120,7 @@ export default Vue.extend<Props>({
           return h(RepeatedItemTree, { props: { field } });
 
         default:
-          return h('div', `Unknown field with type: ${field.template.type}`);
+          return h('div', `Unknown field with type: ${field.config.type}`);
       }
     }
 

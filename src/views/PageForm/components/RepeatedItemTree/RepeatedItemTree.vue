@@ -2,7 +2,7 @@
   <div class="repeated-field">
     <div class="title-row" @click="toggleChildren">
       <span class="title">
-        {{ field.template.label }} ({{ field.value.length }})
+        {{ field.config.label }} ({{ field.value.length }})
       </span>
       <base-button variant="icon" :title="isOpen ? 'Collapse' : 'Expand'">
         <svg-icon :name="isOpen ? 'expandLess' : 'expandMore'" />
@@ -69,8 +69,8 @@ export default defineComponent<Props>({
     function addElement() {
       const newNestedField = {
         id: uuid(),
-        value: props.field.template.fields.map((nestedFieldTemplate) =>
-          universalFieldUtils.createField(nestedFieldTemplate, null)
+        value: props.field.config.fields.map((nestedFieldConfig) =>
+          universalFieldUtils.createFormField(nestedFieldConfig, null)
         ),
       };
 
@@ -81,7 +81,7 @@ export default defineComponent<Props>({
       addElement,
       toggleChildren,
       isOpen,
-      isTable: props.field.template.meta.view === 'TABLE',
+      isTable: props.field.config.meta.view === 'TABLE',
     };
   },
 });

@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { TabType } from './TabList.types';
 
 export default Vue.extend({

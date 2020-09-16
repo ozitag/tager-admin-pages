@@ -2,11 +2,11 @@
 import Vue from 'vue';
 import kebabCase from 'lodash.kebabcase';
 import { ScopedSlot } from 'vue/types/vnode';
+
 import { BaseButton, ColumnDefinition, SvgIcon, Table } from '@tager/admin-ui';
 
 import { FieldUnion, RepeaterField } from '../../../../../typings/model';
-
-import TemplateField from '../../TemplateField.vue';
+import DynamicField from '../../DynamicField.vue';
 import { moveItem, removeItem } from '../RepeatedItemTree.helpers';
 
 type Props = Readonly<{
@@ -29,10 +29,10 @@ export default Vue.extend<Props>({
 
     const columnDefs: Array<ColumnDefinition<
       RowData
-    >> = repeaterField.template.fields.map((fieldTemplate, index) => ({
+    >> = repeaterField.config.fields.map((fieldConfig, index) => ({
       id: index + 1,
-      name: fieldTemplate.label,
-      field: fieldTemplate.name,
+      name: fieldConfig.label,
+      field: fieldConfig.name,
       useCustomDataCell: true,
     }));
 
@@ -45,18 +45,18 @@ export default Vue.extend<Props>({
 
     const rowData: Array<RowData> = repeaterField.value.map((entity) =>
       entity.value.reduce(
-        (row, field) => ({ ...row, [field.template.name]: field }),
+        (row, field) => ({ ...row, [field.config.name]: field }),
         {}
       )
     );
 
-    const columnWidth = `calc(100% / ${repeaterField.template.fields.length})`;
+    const columnWidth = `calc(100% / ${repeaterField.config.fields.length})`;
 
     const scopedSlots: Record<
       string,
       ScopedSlot
-    > = repeaterField.template.fields.reduce((scopedSlots, fieldTemplate) => {
-      const slotName = `cell(${kebabCase(fieldTemplate.name)})`;
+    > = repeaterField.config.fields.reduce((scopedSlots, fieldConfig) => {
+      const slotName = `cell(${kebabCase(fieldConfig.name)})`;
 
       return {
         ...scopedSlots,
@@ -65,9 +65,9 @@ export default Vue.extend<Props>({
           column: ColumnDefinition<RowData>;
         }) =>
           h('td', { style: { width: columnWidth } }, [
-            h(TemplateField, {
+            h(DynamicField, {
               props: {
-                field: props.row[fieldTemplate.name],
+                field: props.row[fieldConfig.name],
                 isLabelHidden: true,
               },
             }),

@@ -2,7 +2,7 @@
   <div class="menu-item">
     <div class="top">
       <button class="title-button" @click="toggleItem">
-        <h4>{{ parentField.template.label }} - #{{ index + 1 }}</h4>
+        <h4>{{ parentField.config.label }} - #{{ index + 1 }}</h4>
       </button>
 
       <div>
@@ -36,7 +36,7 @@
     <div v-show="isOpen" class="item-form">
       <fieldset>
         <component
-          :is="components.TemplateField"
+          :is="components.DynamicField"
           v-for="field of item.value"
           :key="field.id"
           :field="field"
@@ -50,15 +50,14 @@
 import { defineComponent, ref } from '@vue/composition-api';
 
 import { RepeaterField } from '../../../../../typings/model';
-
-import TemplateField from '../../TemplateField.vue';
+import DynamicField from '../../DynamicField.vue';
 import { moveItem, removeItem } from '../RepeatedItemTree.helpers';
 
 type Props = Readonly<{
   item: RepeaterField['value'][number];
   parentField: RepeaterField;
   index: number;
-  components: { TemplateField: typeof TemplateField };
+  components: { DynamicField: typeof DynamicField };
 }>;
 
 export default defineComponent<Props>({
@@ -72,7 +71,7 @@ export default defineComponent<Props>({
       type: Object,
       default() {
         return {
-          TemplateField,
+          DynamicField,
         };
       },
     },

@@ -1,311 +1,307 @@
 import { v4 as uuid } from 'uuid';
-import {
-  DateField,
-  DateFieldTemplate,
-  DateIncomingField,
-  DateOutgoingField,
-  DateTimeField,
-  DateTimeFieldTemplate,
-  DateTimeIncomingField,
-  DateTimeOutgoingField,
-  DefaultField,
-  DefaultFieldTemplate,
-  DefaultIncomingField,
-  DefaultOutgoingField,
-  Field,
-  FieldTemplate,
-  FieldTemplateUnion,
-  FieldUnion,
-  FileField,
-  FileFieldTemplate,
-  FileIncomingField,
-  FileOutgoingField,
-  GalleryField,
-  GalleryFieldTemplate,
-  GalleryIncomingField,
-  GalleryOutgoingField,
-  HtmlField,
-  HtmlFieldTemplate,
-  HtmlIncomingField,
-  HtmlOutgoingField,
-  ImageField,
-  ImageFieldTemplate,
-  ImageIncomingField,
-  ImageOutgoingField,
-  IncomingFieldUnion,
-  OutgoingFieldUnion,
-  RepeaterField,
-  RepeaterFieldTemplate,
-  RepeaterIncomingField,
-  RepeaterOutgoingField,
-  StringField,
-  StringFieldTemplate,
-  StringIncomingField,
-  StringOutgoingField,
-  TextField,
-  TextFieldTemplate,
-  TextIncomingField,
-  TextOutgoingField,
-  UrlField,
-  UrlFieldTemplate,
-  UrlIncomingField,
-  UrlOutgoingField,
-} from '../typings/model';
+
 import { Nullish } from '@tager/admin-services';
 
+import {
+  DateField,
+  DateFieldConfig,
+  DateIncomingValue,
+  DateOutgoingValue,
+  DateTimeField,
+  DateTimeFieldConfig,
+  DateTimeIncomingValue,
+  DateTimeOutgoingValue,
+  DefaultField,
+  DefaultFieldConfig,
+  DefaultIncomingValue,
+  DefaultOutgoingValue,
+  Field,
+  FieldConfig,
+  FieldConfigUnion,
+  FieldUnion,
+  FileField,
+  FileFieldConfig,
+  FileIncomingValue,
+  FileOutgoingValue,
+  GalleryField,
+  GalleryFieldConfig,
+  GalleryIncomingValue,
+  GalleryOutgoingValue,
+  HtmlField,
+  HtmlFieldConfig,
+  HtmlIncomingValue,
+  HtmlOutgoingValue,
+  ImageField,
+  ImageFieldConfig,
+  ImageIncomingValue,
+  ImageOutgoingValue,
+  IncomingValueUnion,
+  OutgoingValueUnion,
+  RepeaterField,
+  RepeaterFieldConfig,
+  RepeaterIncomingValue,
+  RepeaterOutgoingValue,
+  StringField,
+  StringFieldConfig,
+  StringIncomingValue,
+  StringOutgoingValue,
+  TextField,
+  TextFieldConfig,
+  TextIncomingValue,
+  TextOutgoingValue,
+  UrlField,
+  UrlFieldConfig,
+  UrlIncomingValue,
+  UrlOutgoingValue,
+} from '../typings/model';
+
 interface FieldUtils<
-  IF,
-  Template extends FieldTemplate,
-  F extends Field<Template>,
-  OF
+  IncomingValue,
+  Config extends FieldConfig,
+  F extends Field<Config>,
+  OutgoingValue
 > {
-  type: Template['type'];
-  getDefaultFieldValue(): F['value'];
-  createField(fieldTemplate: Template, incomingField: Nullish<IF>): F;
-  getOutgoingField(field: F): OF;
+  type: Config['type'];
+  getDefaultFormFieldValue(): F['value'];
+  createFormField(
+    fieldConfig: Config,
+    incomingValueValue: Nullish<IncomingValue>
+  ): F;
+  getOutgoingValue(field: F): OutgoingValue;
 }
 
 type StringFieldUtilsType = FieldUtils<
-  StringIncomingField,
-  StringFieldTemplate,
+  StringIncomingValue,
+  StringFieldConfig,
   StringField,
-  StringOutgoingField
+  StringOutgoingValue
 >;
 
 const stringFieldUtils: StringFieldUtilsType = {
   type: 'STRING',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return '';
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return { name: field.template.name, value: field.value };
+  getOutgoingValue(field) {
+    return field.value;
   },
 };
 
 type UrlFieldUtilsType = FieldUtils<
-  UrlIncomingField,
-  UrlFieldTemplate,
+  UrlIncomingValue,
+  UrlFieldConfig,
   UrlField,
-  UrlOutgoingField
+  UrlOutgoingValue
 >;
 
 const urlFieldUtils: UrlFieldUtilsType = {
   type: 'URL',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return '';
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return { name: field.template.name, value: field.value };
+  getOutgoingValue(field) {
+    return field.value;
   },
 };
 
 type DateFieldUtilsType = FieldUtils<
-  DateIncomingField,
-  DateFieldTemplate,
+  DateIncomingValue,
+  DateFieldConfig,
   DateField,
-  DateOutgoingField
+  DateOutgoingValue
 >;
 
 const dateFieldUtils: DateFieldUtilsType = {
   type: 'DATE',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return '';
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return { name: field.template.name, value: field.value };
+  getOutgoingValue(field) {
+    return field.value;
   },
 };
 
 type DateTimeFieldUtilsType = FieldUtils<
-  DateTimeIncomingField,
-  DateTimeFieldTemplate,
+  DateTimeIncomingValue,
+  DateTimeFieldConfig,
   DateTimeField,
-  DateTimeOutgoingField
+  DateTimeOutgoingValue
 >;
 
 const dateTimeFieldUtils: DateTimeFieldUtilsType = {
   type: 'DATETIME',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return '';
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return { name: field.template.name, value: field.value };
+  getOutgoingValue(field) {
+    return field.value;
   },
 };
 
 type TextFieldUtilsType = FieldUtils<
-  TextIncomingField,
-  TextFieldTemplate,
+  TextIncomingValue,
+  TextFieldConfig,
   TextField,
-  TextOutgoingField
+  TextOutgoingValue
 >;
 
 const textFieldUtils: TextFieldUtilsType = {
   type: 'TEXT',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return '';
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return { name: field.template.name, value: field.value };
+  getOutgoingValue(field) {
+    return field.value;
   },
 };
 
 type HtmlFieldUtilsType = FieldUtils<
-  HtmlIncomingField,
-  HtmlFieldTemplate,
+  HtmlIncomingValue,
+  HtmlFieldConfig,
   HtmlField,
-  HtmlOutgoingField
+  HtmlOutgoingValue
 >;
 
 const htmlFieldUtils: HtmlFieldUtilsType = {
   type: 'HTML',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return '';
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return { name: field.template.name, value: field.value };
+  getOutgoingValue(field) {
+    return field.value;
   },
 };
 
 type ImageFieldUtilsType = FieldUtils<
-  ImageIncomingField,
-  ImageFieldTemplate,
+  ImageIncomingValue,
+  ImageFieldConfig,
   ImageField,
-  ImageOutgoingField
+  ImageOutgoingValue
 >;
 
 const imageFieldUtils: ImageFieldUtilsType = {
   type: 'IMAGE',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return null;
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return {
-      name: field.template.name,
-      value: field.value ? field.value.id : null,
-    };
+  getOutgoingValue(field) {
+    return field.value ? field.value.id : null;
   },
 };
 
 type FileFieldUtilsType = FieldUtils<
-  FileIncomingField,
-  FileFieldTemplate,
+  FileIncomingValue,
+  FileFieldConfig,
   FileField,
-  FileOutgoingField
+  FileOutgoingValue
 >;
 
 const fileFieldUtils: FileFieldUtilsType = {
   type: 'FILE',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return null;
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return {
-      name: field.template.name,
-      value: field.value ? field.value.id : null,
-    };
+  getOutgoingValue(field) {
+    return field.value ? field.value.id : null;
   },
 };
 
 type GalleryFieldUtilsType = FieldUtils<
-  GalleryIncomingField,
-  GalleryFieldTemplate,
+  GalleryIncomingValue,
+  GalleryFieldConfig,
   GalleryField,
-  GalleryOutgoingField
+  GalleryOutgoingValue
 >;
 
 const galleryFieldUtils: GalleryFieldUtilsType = {
   type: 'GALLERY',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return [];
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField ? incomingField.value : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue ?? this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return {
-      name: field.template.name,
-      value: field.value.map((image) => image.id),
-    };
+  getOutgoingValue(field) {
+    return field.value.map((image) => image.id);
   },
 };
 
 type RepeaterFieldUtilsType = FieldUtils<
-  RepeaterIncomingField,
-  RepeaterFieldTemplate,
+  RepeaterIncomingValue,
+  RepeaterFieldConfig,
   RepeaterField,
-  RepeaterOutgoingField
+  RepeaterOutgoingValue
 >;
 
 const repeaterFieldUtils: RepeaterFieldUtilsType = {
   type: 'REPEATER',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return [];
   },
-  createField(fieldTemplate, incomingField) {
+  createFormField(fieldConfig, incomingValue) {
     function createNestedFieldArray(
-      fieldTemplateList: RepeaterFieldTemplate['fields'],
-      incomingFieldList: RepeaterIncomingField['value']
+      fieldConfigList: RepeaterFieldConfig['fields'],
+      incomingFieldList: RepeaterIncomingValue
     ): RepeaterField['value'] {
       const nestedFieldList: RepeaterField['value'] = [];
 
@@ -317,17 +313,17 @@ const repeaterFieldUtils: RepeaterFieldUtilsType = {
           value: [],
         };
 
-        for (let j = 0; j < fieldTemplateList.length; j++) {
-          const nestedFieldTemplate = fieldTemplateList[j];
+        for (let j = 0; j < fieldConfigList.length; j++) {
+          const nestedFieldConfig = fieldConfigList[j];
 
           const foundNestedIncomingField = nestedIncomingFieldList.find(
-            (field) => field.name === nestedFieldTemplate.name
+            (field) => field.name === nestedFieldConfig.name
           );
 
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          const field = universalFieldUtils.createField(
-            nestedFieldTemplate,
-            foundNestedIncomingField
+          const field = universalFieldUtils.createFormField(
+            nestedFieldConfig,
+            foundNestedIncomingField?.value
           );
 
           nestedField.value.push(field as FieldUnion);
@@ -341,49 +337,46 @@ const repeaterFieldUtils: RepeaterFieldUtilsType = {
 
     return {
       id: uuid(),
-      template: fieldTemplate,
-      value: incomingField
-        ? createNestedFieldArray(fieldTemplate.fields, incomingField.value)
-        : this.getDefaultFieldValue(),
+      config: fieldConfig,
+      value: incomingValue
+        ? createNestedFieldArray(fieldConfig.fields, incomingValue)
+        : this.getDefaultFormFieldValue(),
     };
   },
-  getOutgoingField(field) {
-    return {
-      name: field.template.name,
-      value: field.value.map((entity) =>
-        entity.value.map((entityField) => {
+  getOutgoingValue(field) {
+    return field.value.map((entity) =>
+      entity.value.map((entityField) => {
+        return {
+          name: field.config.name,
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          return universalFieldUtils.getOutgoingField(entityField);
-        })
-      ),
-    };
+          value: universalFieldUtils.getOutgoingValue(entityField),
+        };
+      })
+    );
   },
 };
 
 type DefaultFieldUtilsType = FieldUtils<
-  DefaultIncomingField,
-  DefaultFieldTemplate,
+  DefaultIncomingValue,
+  DefaultFieldConfig,
   DefaultField,
-  DefaultOutgoingField
+  DefaultOutgoingValue
 >;
 
 const defaultFieldUtils: DefaultFieldUtilsType = {
   type: 'DEFAULT',
-  getDefaultFieldValue() {
+  getDefaultFormFieldValue() {
     return null;
   },
-  createField(fieldTemplate) {
+  createFormField(fieldConfig) {
     return {
       id: uuid(),
-      template: fieldTemplate,
+      config: fieldConfig,
       value: null,
     };
   },
-  getOutgoingField(field) {
-    return {
-      name: field.template.name,
-      value: null,
-    };
+  getOutgoingValue() {
+    return null;
   },
 };
 
@@ -410,28 +403,28 @@ function getFieldUtilsByType(type: string): FieldUtilsUnion {
 }
 
 interface UniversalFieldUtils {
-  createField(
-    fieldTemplate: FieldTemplateUnion,
-    incomingField: Nullish<IncomingFieldUnion>
+  createFormField(
+    fieldConfig: FieldConfigUnion,
+    incomingValue: Nullish<IncomingValueUnion>
   ): FieldUnion;
-  getOutgoingField(field: FieldUnion): OutgoingFieldUnion;
+  getOutgoingValue(field: FieldUnion): OutgoingValueUnion;
 }
 
 export const universalFieldUtils: UniversalFieldUtils = {
-  createField(
-    fieldTemplate: FieldTemplateUnion,
-    incomingField: Nullish<IncomingFieldUnion>
+  createFormField(
+    fieldConfig: FieldConfigUnion,
+    incomingValue: Nullish<IncomingValueUnion>
   ): FieldUnion {
-    const foundFieldUtils = getFieldUtilsByType(fieldTemplate.type);
+    const foundFieldUtils = getFieldUtilsByType(fieldConfig.type);
 
-    return (foundFieldUtils.createField as UniversalFieldUtils['createField'])(
-      fieldTemplate,
-      incomingField
+    return (foundFieldUtils.createFormField as UniversalFieldUtils['createFormField'])(
+      fieldConfig,
+      incomingValue
     );
   },
-  getOutgoingField(field: FieldUnion): OutgoingFieldUnion {
-    const foundFieldUtils = getFieldUtilsByType(field.template.type);
-    return (foundFieldUtils.getOutgoingField as UniversalFieldUtils['getOutgoingField'])(
+  getOutgoingValue(field: FieldUnion): OutgoingValueUnion {
+    const foundFieldUtils = getFieldUtilsByType(field.config.type);
+    return (foundFieldUtils.getOutgoingValue as UniversalFieldUtils['getOutgoingValue'])(
       field
     );
   },
