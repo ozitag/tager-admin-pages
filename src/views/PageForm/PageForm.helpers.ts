@@ -1,9 +1,9 @@
 import { FileType, Nullable } from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
+import { FieldUnion, universalFieldUtils } from '@tager/admin-dynamic-field';
 
-import { FieldUnion, PageFull, TemplateShort } from '../../typings/model';
+import { PageFull, TemplateShort } from '../../typings/model';
 import { PageCreatePayload, PageUpdatePayload } from '../../services/requests';
-import { universalFieldUtils } from '../../services/fields';
 
 export type FormValues = {
   title: string;

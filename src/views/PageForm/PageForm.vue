@@ -169,14 +169,16 @@ import {
   useResource,
 } from '@tager/admin-services';
 import { OptionType } from '@tager/admin-ui';
-
 import {
+  DynamicField,
   FieldConfigUnion,
   FieldShortType,
   FieldUnion,
   IncomingValueUnion,
-  TemplateFull,
-} from '../../typings/model';
+  universalFieldUtils,
+} from '@tager/admin-dynamic-field';
+
+import { TemplateFull } from '../../typings/model';
 import {
   createPage,
   getPageById,
@@ -187,9 +189,7 @@ import {
 } from '../../services/requests';
 import { getPageFormUrl, getPageListUrl } from '../../utils/paths';
 import { getNameWithDepth } from '../../utils/common';
-import { universalFieldUtils } from '../../services/fields';
 
-import DynamicField from './components/DynamicField.vue';
 import {
   convertPageFormValuesToCreationPayload,
   convertPageFormValuesToUpdatePayload,

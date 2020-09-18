@@ -1,0 +1,11 @@
+{
+  "framework": "vue",
+  "name": "@tager/admin-pages",
+  "version": "0.3.0",
+  "contributions": {
+    "html": {
+      "description-markup": "markdown",
+      "types-syntax": "typescript"
+    }
+  }
+}

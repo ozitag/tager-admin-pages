@@ -20,9 +20,11 @@ export default {
     'vue',
     '@vue/composition-api',
     '@tager/admin-services',
+    '@tager/admin-dynamic-field',
     '@tager/admin-ui',
     '@tager/admin-layout',
     'path-to-regexp',
+    'lodash.kebabcase',
   ],
   plugins: [
     typescript(),

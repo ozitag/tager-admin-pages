@@ -4,10 +4,9 @@ import {
   request,
   ResponseBody,
 } from '@tager/admin-services';
+import { OutgoingValueUnion, FieldShortType } from '@tager/admin-dynamic-field';
 
 import {
-  FieldShortType,
-  OutgoingValueUnion,
   PageFull,
   PageShort,
   TemplateFull,
