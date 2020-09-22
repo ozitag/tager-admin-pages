@@ -1,5 +1,5 @@
-import { FileType, Nullable } from '@tager/admin-services';
-import { OptionType } from '@tager/admin-ui';
+import { createId, Nullable } from '@tager/admin-services';
+import { OptionType, SingleFileInputValueType } from '@tager/admin-ui';
 import { FieldUnion, universalFieldUtils } from '@tager/admin-dynamic-field';
 
 import { PageFull, TemplateShort } from '../../typings/model';
@@ -9,7 +9,7 @@ export type FormValues = {
   title: string;
   path: string;
   parent: Nullable<OptionType<number>>;
-  image: Nullable<FileType>;
+  image: Nullable<SingleFileInputValueType>;
   excerpt: string;
   body: string;
 
@@ -17,7 +17,7 @@ export type FormValues = {
   pageDescription: Nullable<string>;
   openGraphTitle: Nullable<string>;
   openGraphDescription: Nullable<string>;
-  openGraphImage: Nullable<FileType>;
+  openGraphImage: Nullable<SingleFileInputValueType>;
 
   template: Nullable<OptionType<TemplateShort['id']>>;
 };
@@ -64,14 +64,16 @@ export function getPageFormValues(
     title: page.title,
     path: page.path,
     parent: foundParentOption ?? null,
-    image: page.image,
+    image: page.image ? { id: createId(), file: page.image } : null,
     excerpt: page.excerpt ?? '',
     body: page.body ?? '',
     pageTitle: page.pageTitle,
     pageDescription: page.pageDescription,
     openGraphTitle: page.openGraphTitle,
     openGraphDescription: page.openGraphDescription,
-    openGraphImage: page.openGraphImage,
+    openGraphImage: page.openGraphImage
+      ? { id: createId(), file: page.openGraphImage }
+      : null,
     template: foundTemplate
       ? { value: foundTemplate.id, label: foundTemplate.label }
       : null,
@@ -85,8 +87,8 @@ export function convertPageFormValuesToCreationPayload(
   return {
     ...values,
     parent: values.parent?.value ?? null,
-    image: values.image?.id ?? null,
-    openGraphImage: values.openGraphImage?.id ?? null,
+    image: values.image?.file.id ?? null,
+    openGraphImage: values.openGraphImage?.file.id ?? null,
     template: values.template?.value ?? null,
     templateFields: templateValues.map((field) => ({
       value: universalFieldUtils.getOutgoingValue(field),

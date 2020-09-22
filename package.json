@@ -1,6 +1,6 @@
 {
   "name": "@tager/admin-pages",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "main": "dist/index.umd.js",
   "module": "dist/index.esm.js",
@@ -27,8 +27,8 @@
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@tager/admin-dynamic-field": "^0.1.0",
     "@tager/admin-layout": "^0.4.2",
-    "@tager/admin-services": "^0.2.8",
-    "@tager/admin-ui": "^0.6.14",
+    "@tager/admin-services": "^0.2.11",
+    "@tager/admin-ui": "^0.7.5",
     "@types/lodash.kebabcase": "^4.1.6",
     "@types/node": "12.x",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
@@ -60,8 +60,8 @@
   },
   "peerDependencies": {
     "@tager/admin-layout": ">=0.4.2",
-    "@tager/admin-services": ">=0.2.8",
-    "@tager/admin-ui": ">=0.6.14",
+    "@tager/admin-services": ">=0.2.11",
+    "@tager/admin-ui": ">=0.7.5",
     "@vue/composition-api": ">=1.0.0-beta.14",
     "vue": "2.6.x"
   },
