@@ -84,7 +84,14 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
     id: 3,
     name: 'Title',
     field: 'title',
-    format: ({ row }) => getNameWithDepth(row.title, row.depth),
+    format: ({ row }) => ({
+      url: getPageFormUrl({ pageId: row.id }),
+      text: getNameWithDepth(row.title, row.depth),
+    }),
+    type: 'link',
+    options: {
+      shouldUseRouter: true,
+    },
   },
   {
     id: 4,

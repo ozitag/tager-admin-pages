@@ -2,6 +2,7 @@
   <page
     :title="`Page ${isCreation ? 'creation' : 'update'}`"
     :is-content-loading="isLoading"
+    :header-buttons="headerButtonList"
     :footer="{
       backHref: getPageListUrl(),
       onSubmit: submitForm,
@@ -165,6 +166,7 @@ import { computed, onMounted, ref, watch } from '@vue/composition-api';
 
 import {
   convertRequestErrorToMap,
+  isNotNullish,
   notEmpty,
   useResource,
 } from '@tager/admin-services';
@@ -452,6 +454,20 @@ export default Vue.extend({
         isFullTemplateListLoading.value
     );
 
+    const headerButtonList = computed<
+      Array<{ text: string; href: string; target?: string }>
+    >(() =>
+      [
+        page.value
+          ? {
+              text: 'View Page',
+              href: websiteOrigin + page.value.path,
+              target: '_blank',
+            }
+          : null,
+      ].filter(isNotNullish)
+    );
+
     return {
       submitForm,
       isSubmitting,
@@ -466,6 +482,7 @@ export default Vue.extend({
       selectedTabId,
       parentPageOptions,
       websiteOrigin,
+      headerButtonList,
     };
   },
 });
