@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from '@vue/composition-api';
+import { computed, defineComponent } from '@vue/composition-api';
 
 import { ColumnDefinition, useDataTable } from '@tager/admin-ui';
 import { useResourceDelete, useResourceMove } from '@tager/admin-services';
@@ -126,34 +126,30 @@ export default defineComponent({
   name: 'PageList',
   setup(props, context) {
     const {
-      fetchEntityList,
-      isLoading,
-      rowData,
+      fetchEntityList: fetchPageList,
+      isLoading: isPageListLoading,
+      rowData: pageList,
       errorMessage,
       searchQuery,
       handleChange,
     } = useDataTable<PageShort>({
-      fetchEntityList: getPageList,
+      fetchEntityList: (params) => getPageList({ query: params.searchQuery }),
       initialValue: [],
       context,
       resourceName: 'Page list',
     });
 
-    onMounted(() => {
-      fetchEntityList();
-    });
-
     const { handleResourceDelete, isDeleting } = useResourceDelete({
       deleteResource: deletePage,
       resourceName: 'Page',
-      onSuccess: fetchEntityList,
+      onSuccess: fetchPageList,
       context,
     });
 
     const { isMoving, handleResourceMove } = useResourceMove({
       moveResource: movePage,
       resourceName: 'Page',
-      onSuccess: fetchEntityList,
+      onSuccess: fetchPageList,
       context,
     });
 
@@ -169,10 +165,10 @@ export default defineComponent({
     }
 
     function hasChild(parentId: number): boolean {
-      return rowData.value.some((page) => page.parent?.id === parentId);
+      return pageList.value.some((page) => page.parent?.id === parentId);
     }
 
-    const isRowDataLoading = computed<boolean>(() => isLoading.value);
+    const isRowDataLoading = computed<boolean>(() => isPageListLoading.value);
 
     function isBusy(departmentId: number): boolean {
       return (
@@ -186,8 +182,8 @@ export default defineComponent({
       columnDefs: COLUMN_DEFS,
       getPageFormUrl,
       getChildPageCreationFormUrl,
-      rowData,
-      isRowDataLoading: isLoading,
+      rowData: pageList,
+      isRowDataLoading: isPageListLoading,
       errorMessage: errorMessage,
       handleResourceDelete,
       handleResourceMove,
