@@ -25,8 +25,10 @@ export function getPageTemplateById(
   return request.get({ path: `/admin/pages/templates/${templateId}` });
 }
 
-export function getPageList(): Promise<ResponseBody<Array<PageShort>>> {
-  return request.get({ path: '/admin/pages' });
+export function getPageList(params?: {
+  query?: string;
+}): Promise<ResponseBody<Array<PageShort>>> {
+  return request.get({ path: '/admin/pages', params });
 }
 
 export function getPageCount(): Promise<ResponseBody<{ count: number }>> {
