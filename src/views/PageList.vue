@@ -5,11 +5,13 @@
       { text: 'Create page', href: getPageFormUrl({ pageId: 'create' }) },
     ]"
   >
-    <base-table
+    <data-table
       :column-defs="columnDefs"
       :row-data="rowData"
       :loading="isRowDataLoading"
       :error-message="errorMessage"
+      :search-query="searchQuery"
+      @change="handleChange"
     >
       <template v-slot:cell(actions)="{ row, rowIndex }">
         <base-button
@@ -53,19 +55,15 @@
           <svg-icon name="delete"></svg-icon>
         </base-button>
       </template>
-    </base-table>
+    </data-table>
   </page>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted } from '@vue/composition-api';
 
-import { ColumnDefinition } from '@tager/admin-ui';
-import {
-  useResource,
-  useResourceDelete,
-  useResourceMove,
-} from '@tager/admin-services';
+import { ColumnDefinition, useDataTable } from '@tager/admin-ui';
+import { useResourceDelete, useResourceMove } from '@tager/admin-services';
 
 import { PageShort } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
@@ -127,31 +125,35 @@ const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
 export default defineComponent({
   name: 'PageList',
   setup(props, context) {
-    const [
-      fetchPageList,
-      { data: pageList, loading: isPageListLoading, error },
-    ] = useResource<Array<PageShort>>({
-      fetchResource: getPageList,
+    const {
+      fetchEntityList,
+      isLoading,
+      rowData,
+      errorMessage,
+      searchQuery,
+      handleChange,
+    } = useDataTable<PageShort>({
+      fetchEntityList: getPageList,
       initialValue: [],
       context,
       resourceName: 'Page list',
     });
 
     onMounted(() => {
-      fetchPageList();
+      fetchEntityList();
     });
 
     const { handleResourceDelete, isDeleting } = useResourceDelete({
       deleteResource: deletePage,
       resourceName: 'Page',
-      onSuccess: fetchPageList,
+      onSuccess: fetchEntityList,
       context,
     });
 
     const { isMoving, handleResourceMove } = useResourceMove({
       moveResource: movePage,
       resourceName: 'Page',
-      onSuccess: fetchPageList,
+      onSuccess: fetchEntityList,
       context,
     });
 
@@ -167,10 +169,10 @@ export default defineComponent({
     }
 
     function hasChild(parentId: number): boolean {
-      return pageList.value.some((page) => page.parent?.id === parentId);
+      return rowData.value.some((page) => page.parent?.id === parentId);
     }
 
-    const isRowDataLoading = computed<boolean>(() => isPageListLoading.value);
+    const isRowDataLoading = computed<boolean>(() => isLoading.value);
 
     function isBusy(departmentId: number): boolean {
       return (
@@ -184,13 +186,15 @@ export default defineComponent({
       columnDefs: COLUMN_DEFS,
       getPageFormUrl,
       getChildPageCreationFormUrl,
-      rowData: pageList,
-      isRowDataLoading: isPageListLoading,
-      errorMessage: error,
+      rowData,
+      isRowDataLoading: isLoading,
+      errorMessage: errorMessage,
       handleResourceDelete,
       handleResourceMove,
       hasChild,
       isBusy,
+      searchQuery,
+      handleChange,
     };
   },
 });

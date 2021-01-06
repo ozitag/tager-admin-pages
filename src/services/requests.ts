@@ -5,6 +5,7 @@ import {
   ResponseBody,
 } from '@tager/admin-services';
 import { OutgoingValueUnion, FieldShortType } from '@tager/admin-dynamic-field';
+import { TableDataRequestParams } from '@tager/admin-ui';
 
 import {
   PageFull,
@@ -25,8 +26,15 @@ export function getPageTemplateById(
   return request.get({ path: `/admin/pages/templates/${templateId}` });
 }
 
-export function getPageList(): Promise<ResponseBody<Array<PageShort>>> {
-  return request.get({ path: '/admin/pages' });
+export function getPageList(
+  requestParams?: TableDataRequestParams
+): Promise<ResponseBody<Array<PageShort>>> {
+  const baseUrl = '/admin/pages';
+  const path = requestParams?.searchQuery
+    ? `${baseUrl}?query=${requestParams?.searchQuery}`
+    : baseUrl;
+
+  return request.get({ path });
 }
 
 export function getPageCount(): Promise<ResponseBody<{ count: number }>> {
