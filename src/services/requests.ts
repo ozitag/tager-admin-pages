@@ -27,6 +27,8 @@ export function getPageTemplateById(
 
 export function getPageList(params?: {
   query?: string;
+  pageNumber?: number;
+  pageSize?: number;
 }): Promise<ResponseBody<Array<PageShort>>> {
   return request.get({ path: '/admin/pages', params });
 }
