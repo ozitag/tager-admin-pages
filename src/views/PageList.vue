@@ -11,6 +11,7 @@
       :loading="isRowDataLoading"
       :error-message="errorMessage"
       :search-query="searchQuery"
+      :pagination="{ pageSize, pageCount, pageNumber }"
       @change="handleChange"
     >
       <template v-slot:cell(actions)="{ row, rowIndex }">
@@ -132,8 +133,16 @@ export default defineComponent({
       errorMessage,
       searchQuery,
       handleChange,
+      pageSize,
+      pageCount,
+      pageNumber,
     } = useDataTable<PageShort>({
-      fetchEntityList: (params) => getPageList({ query: params.searchQuery }),
+      fetchEntityList: (params) =>
+        getPageList({
+          query: params.searchQuery,
+          pageNumber: params.pageNumber,
+          pageSize: params.pageSize,
+        }),
       initialValue: [],
       context,
       resourceName: 'Page list',
@@ -191,6 +200,9 @@ export default defineComponent({
       isBusy,
       searchQuery,
       handleChange,
+      pageSize,
+      pageCount,
+      pageNumber,
     };
   },
 });
