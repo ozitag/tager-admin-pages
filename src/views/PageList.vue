@@ -11,7 +11,12 @@
       :loading="isRowDataLoading"
       :error-message="errorMessage"
       :search-query="searchQuery"
-      :pagination="{ pageSize, pageCount, pageNumber }"
+      :pagination="{
+        pageSize,
+        pageCount,
+        pageNumber,
+        disabled: isRowDataLoading,
+      }"
       @change="handleChange"
     >
       <template v-slot:cell(actions)="{ row, rowIndex }">
@@ -146,6 +151,7 @@ export default defineComponent({
       initialValue: [],
       context,
       resourceName: 'Page list',
+      pageSize: 100,
     });
 
     const { handleResourceDelete, isDeleting } = useResourceDelete({
