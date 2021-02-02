@@ -92,7 +92,7 @@
             :error="errors.excerpt"
             label="Excerpt"
             type="textarea"
-            rows="4"
+            :rows="4"
           />
 
           <form-field-select
@@ -115,44 +115,14 @@
         </template>
 
         <template v-if="selectedTabId === 'seo'">
-          <form-field
-            v-model="values.pageTitle"
-            name="pageTitle"
-            :error="errors.pageTitle"
-            label="Page title"
-          />
-
-          <form-field
-            v-model="values.pageDescription"
-            name="pageDescription"
-            :error="errors.pageDescription"
-            label="Page description"
-            type="textarea"
-            rows="4"
-          />
-
-          <form-field
-            v-model="values.openGraphTitle"
-            name="openGraphTitle"
-            :error="errors.openGraphTitle"
-            label="Open Graph Title"
-          />
-
-          <form-field
-            v-model="values.openGraphDescription"
-            name="openGraphDescription"
-            :error="errors.openGraphDescription"
-            label="Open Graph Description"
-            type="textarea"
-            rows="4"
-          />
-
-          <form-field-file-input
-            v-model="values.openGraphImage"
-            name="openGraphImage"
-            :error="errors.openGraphImage"
-            label="Open Graph Image"
-            file-type="image"
+          <seo-field-group
+            :title="values.pageTitle"
+            :title-error-message="errors.pageTitle"
+            :description="values.pageDescription"
+            :description-error-message="errors.pageDescription"
+            :image="values.openGraphImage"
+            :image-error-message="errors.openGraphImage"
+            @change="handleSeoFieldGroupChange"
           />
         </template>
       </template>
@@ -170,7 +140,7 @@ import {
   notEmpty,
   useResource,
 } from '@tager/admin-services';
-import { OptionType } from '@tager/admin-ui';
+import { OptionType, SeoChangeEvent } from '@tager/admin-ui';
 import {
   DynamicField,
   FieldConfigUnion,
@@ -468,6 +438,16 @@ export default Vue.extend({
       ].filter(isNotNullish)
     );
 
+    function handleSeoFieldGroupChange({
+      title,
+      description,
+      image,
+    }: SeoChangeEvent) {
+      values.value.pageTitle = title;
+      values.value.pageDescription = description;
+      values.value.openGraphImage = image;
+    }
+
     return {
       submitForm,
       isSubmitting,
@@ -483,6 +463,7 @@ export default Vue.extend({
       parentPageOptions,
       websiteOrigin,
       headerButtonList,
+      handleSeoFieldGroupChange,
     };
   },
 });

@@ -67,10 +67,10 @@ export function getPageFormValues(
     image: page.image ? { id: createId(), file: page.image } : null,
     excerpt: page.excerpt ?? '',
     body: page.body ?? '',
-    pageTitle: page.pageTitle,
-    pageDescription: page.pageDescription,
-    openGraphTitle: page.openGraphTitle,
-    openGraphDescription: page.openGraphDescription,
+    pageTitle: page.pageTitle ?? '',
+    pageDescription: page.pageDescription ?? '',
+    openGraphTitle: page.openGraphTitle ?? '',
+    openGraphDescription: page.openGraphDescription ?? '',
     openGraphImage: page.openGraphImage
       ? { id: createId(), file: page.openGraphImage }
       : null,
