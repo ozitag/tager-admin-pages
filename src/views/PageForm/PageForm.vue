@@ -369,7 +369,7 @@ export default Vue.extend({
       updateTemplateValues();
     });
 
-    function submitForm() {
+    function submitForm({ shouldExit }: { shouldExit: boolean }) {
       isSubmitting.value = true;
 
       const creationPayload = convertPageFormValuesToCreationPayload(
@@ -390,12 +390,12 @@ export default Vue.extend({
         .then((response) => {
           errors.value = {};
 
-          if (isCreation.value) {
+          if (shouldExit) {
             context.root.$router.push(
-              getPageFormUrl({ pageId: response.data.id })
+              isCreation.value
+                ? getPageFormUrl({ pageId: response.data.id })
+                : getPageListUrl()
             );
-          } else {
-            context.root.$router.push(getPageListUrl());
           }
 
           context.root.$toast({
