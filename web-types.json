@@ -1,7 +1,7 @@
 {
   "framework": "vue",
   "name": "@tager/admin-pages",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "contributions": {
     "html": {
       "description-markup": "markdown",
