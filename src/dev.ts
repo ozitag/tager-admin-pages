@@ -10,6 +10,8 @@ import '@tager/admin-ui/dist/admin-ui.css';
 import config from './config/config.json';
 import App from './views/App.vue';
 import { PAGE_FORM_ROUTE, PAGE_LIST_ROUTE } from './constants/routes';
+import EN from './locales/en';
+import RU from './locales/ru';
 
 configStore.setConfig(config);
 
@@ -19,6 +21,9 @@ const router = createRouter(
   },
   { useTitleSync: false }
 );
+
+i18n.addTranslations('en', 'pages', EN);
+i18n.addTranslations('ru', 'pages', RU);
 
 i18n.init({ debug: false }).then(() => {
   Vue.use(VueCompositionApi);
