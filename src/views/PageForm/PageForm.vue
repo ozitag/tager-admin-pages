@@ -3,11 +3,6 @@
     :title="`Page ${isCreation ? 'creation' : 'update'}`"
     :is-content-loading="isLoading"
     :header-buttons="headerButtonList"
-    :footer="{
-      backHref: getPageListUrl(),
-      onSubmit: submitForm,
-      isSubmitting: isSubmitting,
-    }"
   >
     <form novalidate @submit.prevent>
       <template v-if="isCreation">
@@ -127,6 +122,16 @@
         </template>
       </template>
     </form>
+
+    <template v-slot:footer>
+      <FormFooter
+        :back-href="getPageListUrl()"
+        :on-submit="submitForm"
+        :is-submitting="isSubmitting"
+        :is-creation="isCreation"
+        :can-create-another="isCreation"
+      />
+    </template>
   </page>
 </template>
 
@@ -140,7 +145,12 @@ import {
   notEmpty,
   useResource,
 } from '@tager/admin-services';
-import { OptionType, SeoChangeEvent } from '@tager/admin-ui';
+import {
+  OptionType,
+  SeoChangeEvent,
+  TagerFormSubmitEvent,
+  FormFooter,
+} from '@tager/admin-ui';
 import {
   DynamicField,
   FieldConfigUnion,
@@ -172,7 +182,7 @@ import TabList, { TabType } from './components/TabList';
 
 export default Vue.extend({
   name: 'PageForm',
-  components: { DynamicField, TabList },
+  components: { DynamicField, TabList, FormFooter },
   setup(props, context) {
     const pageId = computed(() => context.root.$route.params.pageId);
 
@@ -339,7 +349,7 @@ export default Vue.extend({
       updateTemplateValues();
     });
 
-    function submitForm({ shouldExit }: { shouldExit: boolean }) {
+    function submitForm(event: TagerFormSubmitEvent) {
       isSubmitting.value = true;
 
       const creationPayload = convertPageFormValuesToCreationPayload(
@@ -360,11 +370,26 @@ export default Vue.extend({
         .then((response) => {
           errors.value = {};
 
-          if (shouldExit) {
+          if (event.type === 'create') {
             context.root.$router.push(
-              isCreation.value
-                ? getPageFormUrl({ pageId: response.data.id })
-                : getPageListUrl()
+              getPageFormUrl({ pageId: response.data.id })
+            );
+          }
+
+          if (event.type === 'create_exit' || event.type === 'save_exit') {
+            if (context.root.$previousRoute) {
+              context.root.$router.back();
+            } else {
+              context.root.$router.push(getPageListUrl());
+            }
+          }
+
+          if (event.type === 'create_create-another') {
+            values.value = getPageFormValues(
+              null,
+              shortTemplateList.value,
+              parentPageOptions.value,
+              initialParentId.value
             );
           }
 
