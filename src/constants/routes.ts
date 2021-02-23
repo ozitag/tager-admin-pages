@@ -5,16 +5,14 @@ import PageForm from '../views/PageForm';
 
 import { PAGES_ROUTE_PATHS } from './paths';
 
-const HOME_BREADCRUMB = { url: '/', text: 'Home' };
-
 export const PAGE_LIST_ROUTE: CustomRouteConfig = {
   path: PAGES_ROUTE_PATHS.PAGE_LIST,
   component: PageList,
   name: 'Page List',
   meta: {
-    getBreadcrumbs: (route) => [
-      HOME_BREADCRUMB,
-      { url: route.path, text: route.name ?? '' },
+    getBreadcrumbs: (route, t) => [
+      { url: '/', text: t('pages:home') },
+      { url: route.path, text: t('pages:pageList') },
     ],
   },
 };
@@ -24,10 +22,10 @@ export const PAGE_FORM_ROUTE: CustomRouteConfig = {
   component: PageForm,
   name: 'Page Form',
   meta: {
-    getBreadcrumbs: (route) => [
-      HOME_BREADCRUMB,
-      { url: PAGE_LIST_ROUTE.path, text: 'Page List' },
-      { url: route.path, text: route.name ?? '' },
+    getBreadcrumbs: (route, t) => [
+      { url: '/', text: t('pages:home') },
+      { url: PAGE_LIST_ROUTE.path, text: t('pages:pageList') },
+      { url: route.path, text: t('pages:pageForm') },
     ],
   },
 };

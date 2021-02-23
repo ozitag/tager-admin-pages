@@ -1,8 +1,11 @@
 <template>
   <page
-    title="Pages"
+    :title="t('pages:pages')"
     :header-buttons="[
-      { text: 'Create page', href: getPageFormUrl({ pageId: 'create' }) },
+      {
+        text: t('pages:createPage'),
+        href: getPageFormUrl({ pageId: 'create' }),
+      },
     ]"
   >
     <data-table
@@ -38,23 +41,25 @@
 
         <base-button
           variant="icon"
-          title="Edit"
+          :title="t('pages:edit')"
           :disabled="isBusy(row.id)"
           :href="getPageFormUrl({ pageId: row.id })"
         >
           <svg-icon name="edit"></svg-icon>
         </base-button>
+
         <base-button
           variant="icon"
-          title="Add child page"
+          :title="t('pages:AddChildPage')"
           :disabled="isBusy(row.id)"
           :href="getChildPageCreationFormUrl({ parentId: row.id })"
         >
           <svg-icon name="addCircle"></svg-icon>
         </base-button>
+
         <base-button
           variant="icon"
-          title="Delete"
+          :title="t('pages:delete')"
           :disabled="hasChild(row.id) || isBusy(row.id)"
           @click="handleResourceDelete(row.id)"
         >
@@ -68,7 +73,11 @@
 <script lang="ts">
 import { computed, defineComponent } from '@vue/composition-api';
 
-import { ColumnDefinition, useDataTable } from '@tager/admin-ui';
+import {
+  ColumnDefinition,
+  useDataTable,
+  useTranslation,
+} from '@tager/admin-ui';
 import { useResourceDelete, useResourceMove } from '@tager/admin-services';
 
 import { PageShort } from '../typings/model';
@@ -76,61 +85,11 @@ import { getPageFormUrl } from '../utils/paths';
 import { deletePage, getPageList, movePage } from '../services/requests';
 import { getNameWithDepth } from '../utils/common';
 
-const COLUMN_DEFS: Array<ColumnDefinition<PageShort>> = [
-  {
-    id: 1,
-    name: 'ID',
-    field: 'id',
-    style: { width: '50px', textAlign: 'center' },
-    headStyle: { width: '50px', textAlign: 'center' },
-  },
-  {
-    id: 3,
-    name: 'Title',
-    field: 'title',
-    format: ({ row }) => ({
-      url: getPageFormUrl({ pageId: row.id }),
-      text: getNameWithDepth(row.title, row.depth),
-    }),
-    type: 'link',
-    options: {
-      shouldUseRouter: true,
-    },
-  },
-  {
-    id: 4,
-    name: 'Path',
-    field: 'path',
-    type: 'link',
-    format: ({ row }) => {
-      const origin = process.env.VUE_APP_WEBSITE_URL || window.location.origin;
-      return {
-        url: origin + row.path,
-        text: row.path,
-      };
-    },
-    options: {
-      shouldOpenNewTab: true,
-    },
-  },
-  {
-    id: 5,
-    name: 'Template',
-    field: 'templateName',
-  },
-
-  {
-    id: 6,
-    name: 'Actions',
-    field: 'actions',
-    style: { width: '140px', textAlign: 'center', whiteSpace: 'nowrap' },
-    headStyle: { width: '140px', textAlign: 'center' },
-  },
-];
-
 export default defineComponent({
   name: 'PageList',
   setup(props, context) {
+    const { t } = useTranslation(context);
+
     const {
       fetchEntityList: fetchPageList,
       isLoading: isPageListLoading,
@@ -193,8 +152,61 @@ export default defineComponent({
       );
     }
 
+    const columnDefs: Array<ColumnDefinition<PageShort>> = [
+      {
+        id: 1,
+        name: 'ID',
+        field: 'id',
+        style: { width: '50px', textAlign: 'center' },
+        headStyle: { width: '50px', textAlign: 'center' },
+      },
+      {
+        id: 3,
+        name: t('pages:title'),
+        field: 'title',
+        format: ({ row }) => ({
+          url: getPageFormUrl({ pageId: row.id }),
+          text: getNameWithDepth(row.title, row.depth),
+        }),
+        type: 'link',
+        options: {
+          shouldUseRouter: true,
+        },
+      },
+      {
+        id: 4,
+        name: t('pages:path'),
+        field: 'path',
+        type: 'link',
+        format: ({ row }) => {
+          const origin =
+            process.env.VUE_APP_WEBSITE_URL || window.location.origin;
+          return {
+            url: origin + row.path,
+            text: row.path,
+          };
+        },
+        options: {
+          shouldOpenNewTab: true,
+        },
+      },
+      {
+        id: 5,
+        name: t('pages:template'),
+        field: 'templateName',
+      },
+
+      {
+        id: 6,
+        name: t('pages:actions'),
+        field: 'actions',
+        style: { width: '140px', textAlign: 'center', whiteSpace: 'nowrap' },
+        headStyle: { width: '140px', textAlign: 'center' },
+      },
+    ];
+
     return {
-      columnDefs: COLUMN_DEFS,
+      columnDefs,
       getPageFormUrl,
       getChildPageCreationFormUrl,
       rowData: pageList,
@@ -209,6 +221,7 @@ export default defineComponent({
       pageSize,
       pageCount,
       pageNumber,
+      t,
     };
   },
 });

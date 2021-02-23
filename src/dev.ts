@@ -7,6 +7,8 @@ import { AdminLayoutPlugin, createRouter } from '@tager/admin-layout';
 
 import '@tager/admin-ui/dist/admin-ui.css';
 
+import EN from './locales/en';
+import RU from './locales/ru';
 import config from './config/config.json';
 import App from './views/App.vue';
 import { PAGE_FORM_ROUTE, PAGE_LIST_ROUTE } from './constants/routes';
@@ -20,7 +22,10 @@ const router = createRouter(
   { useTitleSync: false }
 );
 
-i18n.init({ debug: false }).then(() => {
+i18n.addTranslations('en', 'pages', EN);
+i18n.addTranslations('ru', 'pages', RU);
+
+i18n.init({ debug: false, lng: 'en' }).then(() => {
   Vue.use(VueCompositionApi);
 
   const app = createApp({
