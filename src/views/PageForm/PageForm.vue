@@ -1,6 +1,6 @@
 <template>
   <page
-    :title="`Page ${isCreation ? 'creation' : 'update'}`"
+    :title="isCreation ? t('pages:pageCreation') : t('pages:pageUpdate')"
     :is-content-loading="isLoading"
     :header-buttons="headerButtonList"
   >
@@ -10,16 +10,16 @@
           v-model="values.title"
           name="title"
           :error="errors.title"
-          label="Title"
+          :label="t('pages:title')"
         />
 
         <form-field-select
           v-model="values.template"
           name="template"
           :error="errors.template"
-          label="Template"
-          no-options-message="No Template"
-          placeholder="No Template"
+          :label="t('pages:template')"
+          :no-options-message="t('pages:noTemplate')"
+          :placeholder="t('pages:noTemplate')"
           :options="templateOptions"
         />
 
@@ -27,9 +27,9 @@
           v-model="values.parent"
           name="parent"
           :error="errors.parent"
-          label="Parent page"
-          no-options-message="No Parent"
-          placeholder="No Parent"
+          :label="t('pages:parentPage')"
+          :no-options-message="t('pages:noParent')"
+          :placeholder="t('pages:noParent')"
           :options="parentPageOptions"
         />
       </template>
@@ -45,14 +45,14 @@
             v-model="values.title"
             name="title"
             :error="errors.title"
-            label="Title"
+            :label="t('pages:title')"
           />
 
           <form-field-url-alias-input
             v-model="values.path"
             name="path"
             :error="errors.path"
-            label="Path"
+            :label="t('pages:path')"
             :url-template="websiteOrigin"
           />
 
@@ -60,9 +60,9 @@
             v-model="values.template"
             name="template"
             :error="errors.template"
-            label="Template"
-            no-options-message="No Template"
-            placeholder="No Template"
+            :label="t('pages:template')"
+            :no-options-message="t('pages:noTemplate')"
+            :placeholder="t('pages:noTemplate')"
             :options="templateOptions"
           />
 
@@ -70,14 +70,14 @@
             v-model="values.body"
             name="body"
             :error="errors.body"
-            label="Body"
+            :label="t('pages:body')"
           />
 
           <form-field-file-input
             v-model="values.image"
             name="image"
             :error="errors.image"
-            label="Image"
+            :label="t('pages:image')"
             file-type="image"
           />
 
@@ -85,7 +85,7 @@
             v-model="values.excerpt"
             name="excerpt"
             :error="errors.excerpt"
-            label="Excerpt"
+            :label="t('pages:excerpt')"
             type="textarea"
             :rows="4"
           />
@@ -94,9 +94,9 @@
             v-model="values.parent"
             name="parent"
             :error="errors.parent"
-            label="Parent page"
-            no-options-message="No Parent"
-            placeholder="No Parent"
+            :label="t('pages:parentPage')"
+            :no-options-message="t('pages:noParent')"
+            :placeholder="t('pages:noParent')"
             :options="parentPageOptions"
           />
         </template>
@@ -112,10 +112,13 @@
         <template v-if="selectedTabId === 'seo'">
           <seo-field-group
             :title="values.pageTitle"
+            :title-label="t('pages:pageTitle')"
             :title-error-message="errors.pageTitle"
             :description="values.pageDescription"
+            :description-label="t('pages:pageDescription')"
             :description-error-message="errors.pageDescription"
             :image="values.openGraphImage"
+            :image-label="t('pages:openGraphImage')"
             :image-error-message="errors.openGraphImage"
             @change="handleSeoFieldGroupChange"
           />
@@ -150,6 +153,7 @@ import {
   SeoChangeEvent,
   TagerFormSubmitEvent,
   FormFooter,
+  useTranslation,
 } from '@tager/admin-ui';
 import {
   DynamicField,
@@ -184,6 +188,8 @@ export default Vue.extend({
   name: 'PageForm',
   components: { DynamicField, TabList, FormFooter },
   setup(props, context) {
+    const { t } = useTranslation(context);
+
     const pageId = computed(() => context.root.$route.params.pageId);
 
     const isCreation = computed(() => pageId.value === 'create');
@@ -395,10 +401,10 @@ export default Vue.extend({
 
           context.root.$toast({
             variant: 'success',
-            title: 'Success',
-            body: `Page has been successfully ${
-              isCreation.value ? 'created' : 'updated'
-            }`,
+            title: t('pages:success'),
+            body: isCreation.value
+              ? t('pages:createdSuccessMessage')
+              : t('pages:updatedSuccessMessage'),
           });
         })
         .catch((error) => {
@@ -406,10 +412,10 @@ export default Vue.extend({
           errors.value = convertRequestErrorToMap(error);
           context.root.$toast({
             variant: 'danger',
-            title: 'Error',
-            body: `Page ${
-              isCreation.value ? 'creation' : 'update'
-            } has been failed`,
+            title: t('pages:error'),
+            body: isCreation.value
+              ? t('pages:createdErrorMessage')
+              : t('pages:updatedErrorMessage'),
           });
         })
         .finally(() => {
@@ -427,15 +433,15 @@ export default Vue.extend({
       )
     );
 
-    const tabList = computed<Array<TabType>>(() =>
-      [
-        { id: 'common', label: 'Common' },
+    const tabList = computed<Array<TabType>>(() => {
+      return [
+        { id: 'common', label: t('pages:tabs.common') },
         shouldDisplayTemplateTab.value
-          ? { id: 'template', label: 'Template' }
+          ? { id: 'template', label: t('pages:tabs.template') }
           : null,
-        { id: 'seo', label: 'SEO' },
-      ].filter(notEmpty)
-    );
+        { id: 'seo', label: t('pages:tabs.seo') },
+      ].filter(notEmpty);
+    });
     const selectedTabId = ref<string>(tabList.value[0].id);
 
     const websiteOrigin: string =
@@ -455,7 +461,7 @@ export default Vue.extend({
       [
         page.value
           ? {
-              text: 'View Page',
+              text: t('pages:viewPage'),
               href: websiteOrigin + page.value.path,
               target: '_blank',
             }
@@ -474,6 +480,7 @@ export default Vue.extend({
     }
 
     return {
+      t,
       submitForm,
       isSubmitting,
       isCreation,
