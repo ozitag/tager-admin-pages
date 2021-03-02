@@ -56,14 +56,11 @@
             :url-template="websiteOrigin"
           />
 
-          <form-field-select
-            v-model="values.template"
+          <form-field
+            :value="values.template.label"
             name="template"
-            :error="errors.template"
             :label="t('pages:template')"
-            :no-options-message="t('pages:noTemplate')"
-            :placeholder="t('pages:noTemplate')"
-            :options="templateOptions"
+            :readonly="true"
           />
 
           <form-field-rich-text-input
@@ -139,7 +136,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from '@vue/composition-api';
 import { computed, onMounted, ref, watch } from '@vue/composition-api';
 
 import {
@@ -184,7 +181,7 @@ import {
 } from './PageForm.helpers';
 import TabList, { TabType } from './components/TabList';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'PageForm',
   components: { DynamicField, TabList, FormFooter },
   setup(props, context) {
