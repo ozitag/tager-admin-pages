@@ -2,7 +2,7 @@ import EN from './en';
 
 const RU: typeof EN = {
   home: 'Главная',
-  pages: 'Cтраницы',
+  pages: 'Страницы',
   createPage: 'Создать страницу',
   viewPage: 'Просмотр страницы',
   pageList: 'Список страниц',
@@ -23,9 +23,9 @@ const RU: typeof EN = {
   AddChildPage: 'Добавить дочернюю страницу',
   parentPage: 'Родительская страница',
   noParent: 'Нет родителя',
-  body: 'Тело',
+  body: 'Содержание',
   image: 'Изображение',
-  excerpt: 'Выдержка',
+  excerpt: 'Краткое описание',
 
   tabs: {
     common: 'Общие',
