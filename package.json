@@ -1,6 +1,6 @@
 {
   "name": "@tager/admin-pages",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "license": "MIT",
   "main": "dist/index.umd.js",
   "module": "dist/index.esm.js",
@@ -27,8 +27,8 @@
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@tager/admin-dynamic-field": "^0.1.13",
     "@tager/admin-layout": "^0.4.13",
-    "@tager/admin-services": "^0.2.20",
-    "@tager/admin-ui": "^0.8.42",
+    "@tager/admin-services": "^0.2.22",
+    "@tager/admin-ui": "^0.8.49",
     "@types/lodash.kebabcase": "^4.1.6",
     "@types/node": "12.x",
     "@typescript-eslint/eslint-plugin": "^2.26.0",

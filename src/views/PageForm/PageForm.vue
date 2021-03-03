@@ -56,11 +56,10 @@
             :url-template="websiteOrigin"
           />
 
-          <form-field
-            :value="values.template.label"
-            name="template"
+          <field-value
             :label="t('pages:template')"
-            :readonly="true"
+            type="text"
+            :text="values.template.label"
           />
 
           <form-field-rich-text-input
