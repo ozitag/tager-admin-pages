@@ -57,6 +57,7 @@
           />
 
           <field-value
+            v-if="values.template"
             :label="t('pages:template')"
             type="text"
             :text="values.template.label"

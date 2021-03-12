@@ -7,7 +7,7 @@ const EN = {
   pageForm: 'Page Form',
 
   title: 'Title',
-  pageTitle: 'pageTitle',
+  pageTitle: 'Page title',
   pageDescription: 'Page description',
   pageUpdate: 'Page update',
   pageCreation: 'Page creation',
