@@ -68,6 +68,7 @@
             name="body"
             :error="errors.body"
             :label="t('pages:body')"
+            :get-upload-adapter-options="getUploadAdapterPluginOptions"
           />
 
           <form-field-file-input
@@ -76,6 +77,7 @@
             :error="errors.image"
             :label="t('pages:image')"
             file-type="image"
+            :scenario="info.fileScenarios.image"
           />
 
           <form-field
@@ -109,13 +111,14 @@
         <template v-if="selectedTabId === 'seo'">
           <seo-field-group
             :title="values.pageTitle"
-            :title-label="t('pages:pageTitle')"
             :title-error-message="errors.pageTitle"
             :description="values.pageDescription"
-            :description-label="t('pages:pageDescription')"
             :description-error-message="errors.pageDescription"
+            :should-display-keywords="info.seoKeywordsEnabled"
+            :keywords="values.pageKeywords"
+            :keywords-error-message="errors.pageKeywords"
             :image="values.openGraphImage"
-            :image-label="t('pages:openGraphImage')"
+            :image-scenario="info.fileScenarios.openGraph"
             :image-error-message="errors.openGraphImage"
             @change="handleSeoFieldGroupChange"
           />
@@ -143,6 +146,7 @@ import {
   convertRequestErrorToMap,
   isNotNullish,
   notEmpty,
+  Nullable,
   useResource,
 } from '@tager/admin-services';
 import {
@@ -161,10 +165,11 @@ import {
   universalFieldUtils,
 } from '@tager/admin-dynamic-field';
 
-import { TemplateFull } from '../../typings/model';
+import { InfoModel, TemplateFull } from '../../typings/model';
 import {
   createPage,
   getPageById,
+  getPageInfo,
   getPageList,
   getPageTemplateById,
   getPageTemplateList,
@@ -268,6 +273,34 @@ export default defineComponent({
     onMounted(() => {
       fetchTemplateList();
     });
+
+    /** Fetch page info **/
+
+    const [
+      fetchPageInfo,
+      { data: pageInfo, loading: isPageInfoLoading },
+    ] = useResource<Nullable<InfoModel>>({
+      fetchResource: getPageInfo,
+      initialValue: null,
+      context,
+      resourceName: 'Page info',
+    });
+
+    onMounted(() => {
+      fetchPageInfo();
+    });
+
+    const info = computed<InfoModel>(
+      () =>
+        pageInfo.value || {
+          seoKeywordsEnabled: false,
+          fileScenarios: {
+            image: null,
+            content: 'custom',
+            openGraph: null,
+          },
+        }
+    );
 
     /** Full template list */
 
@@ -439,7 +472,16 @@ export default defineComponent({
         { id: 'seo', label: t('pages:tabs.seo') },
       ].filter(notEmpty);
     });
-    const selectedTabId = ref<string>(tabList.value[0].id);
+
+    const selectedTabId = ref<string>(
+      shouldDisplayTemplateTab.value ? tabList.value[1].id : tabList.value[0].id
+    );
+
+    watch(shouldDisplayTemplateTab, () => {
+      if (shouldDisplayTemplateTab.value) {
+        selectedTabId.value = tabList.value[1].id;
+      }
+    });
 
     const websiteOrigin: string =
       process.env.VUE_APP_WEBSITE_URL || window.location.origin;
@@ -449,7 +491,8 @@ export default defineComponent({
         isPageLoading.value ||
         isPageListLoading.value ||
         isShortTemplateListLoading.value ||
-        isFullTemplateListLoading.value
+        isFullTemplateListLoading.value ||
+        isPageInfoLoading.value
     );
 
     const headerButtonList = computed<
@@ -469,11 +512,17 @@ export default defineComponent({
     function handleSeoFieldGroupChange({
       title,
       description,
+      keywords,
       image,
     }: SeoChangeEvent) {
       values.value.pageTitle = title;
       values.value.pageDescription = description;
+      values.value.pageKeywords = keywords;
       values.value.openGraphImage = image;
+    }
+
+    function getUploadAdapterPluginOptions() {
+      return { uploadScenario: info.value.fileScenarios.content ?? 'custom' };
     }
 
     return {
@@ -483,6 +532,7 @@ export default defineComponent({
       isCreation,
       getPageListUrl,
       isLoading,
+      info,
       values,
       errors,
       templateOptions,
@@ -493,6 +543,7 @@ export default defineComponent({
       websiteOrigin,
       headerButtonList,
       handleSeoFieldGroupChange,
+      getUploadAdapterPluginOptions,
     };
   },
 });

@@ -14,6 +14,7 @@ const EN = {
   openGraphImage: 'Open graph image',
   path: 'Path',
   template: 'Template',
+  templates: 'Templates',
   noTemplate: 'No Template',
   actions: 'Actions',
   edit: 'Edit',

@@ -2,7 +2,7 @@ import { createId, Nullable } from '@tager/admin-services';
 import { OptionType, SingleFileInputValueType } from '@tager/admin-ui';
 import { FieldUnion, universalFieldUtils } from '@tager/admin-dynamic-field';
 
-import { PageFull, TemplateShort } from '../../typings/model';
+import { InfoModel, PageFull, TemplateShort } from '../../typings/model';
 import { PageCreatePayload, PageUpdatePayload } from '../../services/requests';
 
 export type FormValues = {
@@ -15,6 +15,7 @@ export type FormValues = {
 
   pageTitle: Nullable<string>;
   pageDescription: Nullable<string>;
+  pageKeywords: Nullable<string>;
   openGraphTitle: Nullable<string>;
   openGraphDescription: Nullable<string>;
   openGraphImage: Nullable<SingleFileInputValueType>;
@@ -33,6 +34,7 @@ const INITIAL_VALUES: FormValues = {
   pageDescription: '',
   openGraphTitle: '',
   openGraphDescription: '',
+  pageKeywords: '',
   openGraphImage: null,
   template: null,
   // templateFields: [],
@@ -69,6 +71,7 @@ export function getPageFormValues(
     body: page.body ?? '',
     pageTitle: page.pageTitle ?? '',
     pageDescription: page.pageDescription ?? '',
+    pageKeywords: page.pageKeywords ?? '',
     openGraphTitle: page.openGraphTitle ?? '',
     openGraphDescription: page.openGraphDescription ?? '',
     openGraphImage: page.openGraphImage
