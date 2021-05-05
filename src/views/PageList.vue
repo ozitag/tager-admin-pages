@@ -90,7 +90,7 @@ import {
   ref,
   watch,
 } from '@vue/composition-api';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 import {
   ColumnDefinition,
@@ -200,7 +200,7 @@ export default defineComponent({
         query: (context.root.$route.query.query ?? '') as string,
       };
 
-      if (!_.isEqual(context.root.$route.query, newQuery)) {
+      if (!isEqual(context.root.$route.query, newQuery)) {
         context.root.$router.replace({ query: newQuery });
         fetchPageList();
       }

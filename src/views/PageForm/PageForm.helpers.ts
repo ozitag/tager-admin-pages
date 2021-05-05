@@ -109,14 +109,3 @@ export function convertPageFormValuesToUpdatePayload(
     path: values.path,
   };
 }
-
-export function getPageFormInfo(pageInfo: Nullable<InfoModel>): InfoModel {
-  return {
-    seoKeywordsEnabled: pageInfo?.seoKeywordsEnabled ?? false,
-    fileScenarios: {
-      image: pageInfo?.fileScenarios.image ?? null,
-      content: pageInfo?.fileScenarios.content ?? 'custom',
-      openGraph: pageInfo?.fileScenarios.openGraph ?? null,
-    },
-  };
-}

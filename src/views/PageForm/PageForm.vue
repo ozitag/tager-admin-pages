@@ -182,7 +182,6 @@ import {
   convertPageFormValuesToCreationPayload,
   convertPageFormValuesToUpdatePayload,
   FormValues,
-  getPageFormInfo,
   getPageFormValues,
 } from './PageForm.helpers';
 import TabList, { TabType } from './components/TabList';
@@ -291,7 +290,17 @@ export default defineComponent({
       fetchPageInfo();
     });
 
-    const info = ref(getPageFormInfo(pageInfo.value));
+    const info = computed<InfoModel>(
+      () =>
+        pageInfo.value || {
+          seoKeywordsEnabled: false,
+          fileScenarios: {
+            image: null,
+            content: 'custom',
+            openGraph: null,
+          },
+        }
+    );
 
     /** Full template list */
 
