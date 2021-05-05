@@ -7,6 +7,7 @@ import {
 import { OutgoingValueUnion, FieldShortType } from '@tager/admin-dynamic-field';
 
 import {
+  InfoModel,
   PageFull,
   PageShort,
   TemplateFull,
@@ -43,7 +44,11 @@ export function getPageById(
   return request.get({ path: `/admin/pages/${pageId}` });
 }
 
-export type PageCreatePayload = {
+export function getPageInfo(): Promise<ResponseBody<InfoModel>> {
+  return request.get({ path: '/admin/pages/info' });
+}
+
+export interface PageCreatePayload {
   title: string;
   parent: Nullable<PageShort['id']>;
   image: Nullable<FileType['id']>;
@@ -52,13 +57,14 @@ export type PageCreatePayload = {
 
   pageTitle: Nullable<string>;
   pageDescription: Nullable<string>;
+  pageKeywords: Nullable<string>;
   openGraphTitle: Nullable<string>;
   openGraphDescription: Nullable<string>;
   openGraphImage: Nullable<FileType['id']>;
 
   template: Nullable<TemplateShort['id']>;
   templateFields: Array<FieldShortType<OutgoingValueUnion>>;
-};
+}
 
 export function createPage(
   payload: PageCreatePayload
@@ -66,9 +72,9 @@ export function createPage(
   return request.post({ path: '/admin/pages', body: payload });
 }
 
-export type PageUpdatePayload = PageCreatePayload & {
+export interface PageUpdatePayload extends PageCreatePayload {
   path: string;
-};
+}
 
 export function updatePage(
   pageId: number | string,

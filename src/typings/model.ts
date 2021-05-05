@@ -7,27 +7,25 @@ import {
 
 /** Template */
 
-export type TemplateShort = Readonly<{
-  id: string;
-  label: string;
-}>;
+export interface TemplateShort {
+  readonly id: string;
+  readonly label: string;
+}
 
-export type TemplateFull = Readonly<
-  TemplateShort & {
-    fields: Array<FieldConfigUnion>;
-  }
->;
+export interface TemplateFull extends TemplateShort {
+  readonly fields: Array<FieldConfigUnion>;
+}
 
-export type PageShort = {
+export interface PageShort {
   readonly id: number;
   readonly title: string;
   readonly path: string;
   readonly templateName: string;
   readonly parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
   readonly depth: number;
-};
+}
 
-export type PageFull = {
+export interface PageFull {
   readonly id: number;
   readonly title: string;
   readonly image: Nullable<FileType>;
@@ -40,6 +38,7 @@ export type PageFull = {
   /** SEO */
   readonly pageTitle: Nullable<string>;
   readonly pageDescription: Nullable<string>;
+  readonly pageKeywords: Nullable<string>;
   readonly openGraphTitle: Nullable<string>;
   readonly openGraphDescription: Nullable<string>;
   readonly openGraphImage: Nullable<FileType>;
@@ -47,4 +46,20 @@ export type PageFull = {
   /** Template */
   readonly template: TemplateShort['id'];
   readonly templateValues: Array<FieldShortType<IncomingValueUnion>>;
-};
+}
+
+export interface InfoModel {
+  readonly seoKeywordsEnabled: boolean;
+  readonly fileScenarios: {
+    readonly image: Nullable<FileType>;
+    readonly content: Nullable<string>;
+    readonly openGraph: Nullable<string>;
+  };
+}
+
+export interface TagType {
+  value: string;
+  label: string;
+  name: string;
+  title: string;
+}

@@ -22,6 +22,18 @@
       }"
       @change="handleChange"
     >
+      <template v-slot:filters>
+        <advanced-search :tags="tags" @click:tag="handleTagRemove">
+          <div class="filters">
+            <form-field-multi-select
+              v-model="templateFilter"
+              :options="templateOptionList"
+              name="templateFilter"
+              label="Шаблоны"
+            />
+          </div>
+        </advanced-search>
+      </template>
       <template v-slot:cell(actions)="{ row, rowIndex }">
         <base-button
           variant="icon"
@@ -71,24 +83,92 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from '@vue/composition-api';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  ref,
+  watch,
+} from '@vue/composition-api';
+import _ from 'lodash';
 
 import {
   ColumnDefinition,
+  getFilterParamAsStringArray,
+  getFilterParams,
+  OptionType,
   useDataTable,
   useTranslation,
 } from '@tager/admin-ui';
-import { useResourceDelete, useResourceMove } from '@tager/admin-services';
+import {
+  useResource,
+  useResourceDelete,
+  useResourceMove,
+} from '@tager/admin-services';
 
-import { PageShort } from '../typings/model';
+import { PageShort, TagType } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
-import { deletePage, getPageList, movePage } from '../services/requests';
+import {
+  deletePage,
+  getPageList,
+  getPageTemplateList,
+  movePage,
+} from '../services/requests';
 import { getNameWithDepth } from '../utils/common';
 
 export default defineComponent({
   name: 'PageList',
   setup(props, context) {
     const { t } = useTranslation(context);
+
+    /** Short template list */
+
+    const [
+      fetchTemplateList,
+      { data: shortTemplateList, loading: isShortTemplateListLoading },
+    ] = useResource({
+      fetchResource: getPageTemplateList,
+      initialValue: [],
+      context,
+      resourceName: 'Template list',
+    });
+
+    const templateOptionList = computed(() =>
+      shortTemplateList.value.map<OptionType>((template) => ({
+        value: template.id,
+        label: template.label,
+      }))
+    );
+
+    onMounted(() => {
+      fetchTemplateList();
+    });
+
+    /** Category filter **/
+
+    const initialTemplateFilter = computed(() => {
+      const queryValue = getFilterParamAsStringArray(
+        context.root.$route.query,
+        'template'
+      );
+      return templateOptionList.value.filter((option) =>
+        queryValue.some((selected) => option.value === selected)
+      );
+    });
+
+    const templateFilter = ref<Array<OptionType>>(initialTemplateFilter.value);
+
+    watch(initialTemplateFilter, () => {
+      templateFilter.value = initialTemplateFilter.value;
+    });
+
+    /** filter params **/
+
+    const filterParams = computed(() => {
+      return getFilterParams({
+        template: templateFilter.value.map((template) => template.value),
+      });
+    });
 
     const {
       fetchEntityList: fetchPageList,
@@ -106,11 +186,24 @@ export default defineComponent({
           query: params.searchQuery,
           pageNumber: params.pageNumber,
           pageSize: params.pageSize,
+          ...filterParams.value,
         }),
       initialValue: [],
       context,
       resourceName: 'Page list',
       pageSize: 100,
+    });
+
+    watch(filterParams, () => {
+      const newQuery = {
+        ...filterParams.value,
+        query: (context.root.$route.query.query ?? '') as string,
+      };
+
+      if (!_.isEqual(context.root.$route.query, newQuery)) {
+        context.root.$router.replace({ query: newQuery });
+        fetchPageList();
+      }
     });
 
     const { handleResourceDelete, isDeleting } = useResourceDelete({
@@ -142,7 +235,9 @@ export default defineComponent({
       return pageList.value.some((page) => page.parent?.id === parentId);
     }
 
-    const isRowDataLoading = computed<boolean>(() => isPageListLoading.value);
+    const isRowDataLoading = computed<boolean>(
+      () => isPageListLoading.value || isShortTemplateListLoading.value
+    );
 
     function isBusy(departmentId: number): boolean {
       return (
@@ -205,12 +300,29 @@ export default defineComponent({
       },
     ];
 
+    function handleTagRemove(event: TagType) {
+      if (event.name === 'template') {
+        templateFilter.value = templateFilter.value.filter(
+          (template) => template.value !== event.value
+        );
+      }
+    }
+
+    const tags = computed<Array<TagType>>(() => [
+      ...templateFilter.value.map((template) => ({
+        value: template.value,
+        label: template.label,
+        name: 'template',
+        title: 'Шаблоны',
+      })),
+    ]);
+
     return {
       columnDefs,
       getPageFormUrl,
       getChildPageCreationFormUrl,
       rowData: pageList,
-      isRowDataLoading: isPageListLoading,
+      isRowDataLoading,
       errorMessage: errorMessage,
       handleResourceDelete,
       handleResourceMove,
@@ -222,6 +334,10 @@ export default defineComponent({
       pageCount,
       pageNumber,
       t,
+      tags,
+      handleTagRemove,
+      templateFilter,
+      templateOptionList,
     };
   },
 });
