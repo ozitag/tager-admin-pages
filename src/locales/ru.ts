@@ -16,6 +16,7 @@ const RU: typeof EN = {
   openGraphImage: 'Картинка страницы',
   path: 'Путь',
   template: 'Шаблон',
+  templates: 'Шаблоны',
   noTemplate: 'Нет шаблона',
   actions: 'Действия',
   edit: 'Редактировать',

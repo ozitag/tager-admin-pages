@@ -29,7 +29,7 @@
               v-model="templateFilter"
               :options="templateOptionList"
               name="templateFilter"
-              label="Шаблоны"
+              :label="t('pages:templates')"
             />
           </div>
         </advanced-search>
@@ -313,7 +313,7 @@ export default defineComponent({
         value: template.value,
         label: template.label,
         name: 'template',
-        title: 'Шаблоны',
+        title: t('pages:templates'),
       })),
     ]);
 
