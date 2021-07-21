@@ -255,7 +255,7 @@ export default defineComponent({
 
     watch(pageId, fetchPageList);
 
-    const parentPageOptions = computed<Array<OptionType<number>>>(() => {
+    const parentPageOptions = computed<Array<OptionType<Nullable<number>>>>(() => {
       const defaultPageOption = [
         {value: null, label: t('pages:noParent')},
       ];
@@ -287,6 +287,7 @@ export default defineComponent({
       const defaultTemplate = [
         {value: null, label: t('pages:noTemplate')},
       ];
+
       const templates = shortTemplateList.value.map<OptionType>((template) => ({
         value: template.id,
         label: template.label,
