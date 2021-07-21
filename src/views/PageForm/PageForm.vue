@@ -509,8 +509,10 @@ export default defineComponent({
       }
     });
 
-    const websiteOrigin: string =
-        (process.env.VUE_APP_WEBSITE_URL || window.location.origin) + '/';
+    let websiteOrigin: string = (process.env.VUE_APP_WEBSITE_URL || window.location.origin);
+    if (websiteOrigin.substr(-1) === '/') {
+      websiteOrigin = websiteOrigin.substr(0, websiteOrigin.length - 1);
+    }
 
     const isLoading = computed<boolean>(
         () =>
