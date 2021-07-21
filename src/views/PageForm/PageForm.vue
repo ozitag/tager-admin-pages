@@ -287,6 +287,7 @@ export default defineComponent({
       const defaultTemplate = [
         {value: null, label: t('pages:noTemplate')},
       ];
+
       const templates = shortTemplateList.value.map<OptionType>((template) => ({
         value: template.id,
         label: template.label,
