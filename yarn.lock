@@ -985,34 +985,34 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@tager/admin-dynamic-field@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@tager/admin-dynamic-field/-/admin-dynamic-field-0.1.14.tgz#a1a2c36bf253bd8473c5636ed131420ce2fda307"
-  integrity sha512-wuPkN9Pj9velkkM5Lof9L8A+bX6xA6be1m2gZjxf0hq7wz6C/inirpSVgu/4/hh6Iwi0T87gLkgXqUPGeO9ojA==
+"@tager/admin-dynamic-field@^0.1.17":
+  version "0.1.17"
+  resolved "https://registry.yarnpkg.com/@tager/admin-dynamic-field/-/admin-dynamic-field-0.1.17.tgz#a655c0b273cb9f59b74e62b106085a7a8922a9de"
+  integrity sha512-FRX5D7TkSJLZS/nxC+GL8aohN4JOvi18PhyXL3CKXDu6fGoJUt4LmCm3r2nox3CnL60FI1vWA6nB7cbhaS2cMw==
   dependencies:
     "@babel/runtime" "^7.11.2"
     lodash.kebabcase "^4.1.1"
 
-"@tager/admin-layout@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@tager/admin-layout/-/admin-layout-0.5.1.tgz#a4ca222936279a09cdee5cb7a03635803146dc4a"
-  integrity sha512-RxoZ/bjG88wZHI628HX3a/Ou5kDQ1LfQD1nkBPgVkdsjtTy7BcGs02Xct/+Vm0SPwc+O7xUPg1NsFLqOxYg6ew==
+"@tager/admin-layout@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@tager/admin-layout/-/admin-layout-0.5.3.tgz#cef3f490f750803d5bbe292b826c67a4a813ea36"
+  integrity sha512-88SUJ4ky6x/yX8ZnH/f67mBfJdOeLn2DQTiyMjD9ajkiwnJ8JNwu3lpSN+F8xCwW4PzybRoudhR8cpMjxsHzZg==
   dependencies:
     "@babel/runtime" "^7.10.4"
 
-"@tager/admin-services@^0.2.23":
-  version "0.2.23"
-  resolved "https://registry.yarnpkg.com/@tager/admin-services/-/admin-services-0.2.23.tgz#86f10c8a865f975bf2c5bb939a706750ec47d3f2"
-  integrity sha512-9fIWMi5b6wyA/MPDUSag95km5I4Bx6bBmO7lizM56U2ZmCKoPM7zvauDOc2kAH/aT4HikkvZCIxH+rzuli633g==
+"@tager/admin-services@^0.2.24":
+  version "0.2.24"
+  resolved "https://registry.yarnpkg.com/@tager/admin-services/-/admin-services-0.2.24.tgz#6c252b71fce2b501de0df9371411bccadd01b62b"
+  integrity sha512-ZVdX329hTM5F7PUeOt/yavOA9oDCYWm1nZLPWagmnFGNRbDWzPBI/Cp5XJQaSAgnwFGkFONJ9440Hbs0p92iWA==
   dependencies:
     i18next "^19.7.0"
     nanoid "^3.1.12"
     zod "^1.11.9"
 
-"@tager/admin-ui@^0.8.60":
-  version "0.8.60"
-  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-0.8.60.tgz#1e09c52f687ff6477ab30def54a1558ce1a1e522"
-  integrity sha512-dH84dyW2ZviGBL+SeG6fSJA12puh9jyJM6PeIflyOqOMN0RQe8K1bIzXqBecMrQEkPeAAH6ROKzTjAYj4pJ5BA==
+"@tager/admin-ui@^0.8.76":
+  version "0.8.76"
+  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-0.8.76.tgz#caf92b7fe22ce6ec13c86f36c1f3ca75adb723c6"
+  integrity sha512-W3zMKUDw7GHuoHp6LRcVoOGweI340UJCApA6/WAioRwtMGGpy9dMEVCDx8ooU/6kC6UGo+EgK1cSOulJN42YzQ==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@ckeditor/ckeditor5-vue" "^1.0.2"

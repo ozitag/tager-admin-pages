@@ -1,6 +1,6 @@
 {
   "name": "@tager/admin-pages",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "license": "MIT",
   "main": "dist/index.umd.js",
   "module": "dist/index.esm.js",
@@ -15,8 +15,7 @@
     "lint": "vue-cli-service lint",
     "build": "rollup --config",
     "prepare": "vue-docgen-web-types && yarn build",
-    "tager:update": "node scripts/tager-update.js",
-    "yalc:clean": "yalc remove --all"
+    "tager:update": "node scripts/tager-update.js"
   },
   "dependencies": {
     "lodash.kebabcase": "^4.1.1",
@@ -25,10 +24,10 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
-    "@tager/admin-dynamic-field": "^0.1.14",
-    "@tager/admin-layout": "^0.5.1",
-    "@tager/admin-services": "^0.2.23",
-    "@tager/admin-ui": "^0.8.60",
+    "@tager/admin-dynamic-field": "^0.1.17",
+    "@tager/admin-layout": "^0.5.3",
+    "@tager/admin-services": "^0.2.24",
+    "@tager/admin-ui": "^0.8.76",
     "@types/lodash.kebabcase": "^4.1.6",
     "@types/node": "12.x",
     "@typescript-eslint/eslint-plugin": "^2.26.0",

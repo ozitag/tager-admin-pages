@@ -3,6 +3,7 @@ node_modules
 /dist
 .yalc
 yalc.lock
+.env
 
 src/config/app.json
 

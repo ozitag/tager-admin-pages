@@ -17,7 +17,7 @@ const RU: typeof EN = {
   path: 'Путь',
   template: 'Шаблон',
   templates: 'Шаблоны',
-  noTemplate: 'Нет шаблона',
+  noTemplate: 'Без шаблона',
   actions: 'Действия',
   edit: 'Редактировать',
   delete: 'Удалить',
