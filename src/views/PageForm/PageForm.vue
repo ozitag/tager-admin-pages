@@ -255,7 +255,7 @@ export default defineComponent({
 
     watch(pageId, fetchPageList);
 
-    const parentPageOptions = computed<Array<OptionType<number>>>(() => {
+    const parentPageOptions = computed<Array<OptionType<Nullable<number>>>>(() => {
       const defaultPageOption = [
         {value: null, label: t('pages:noParent')},
       ];

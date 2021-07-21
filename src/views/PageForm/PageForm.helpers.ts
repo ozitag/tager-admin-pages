@@ -8,7 +8,7 @@ import { PageCreatePayload, PageUpdatePayload } from '../../services/requests';
 export type FormValues = {
   title: string;
   path: string;
-  parent: Nullable<OptionType<number>>;
+  parent: Nullable<OptionType<Nullable<number>>>;
   image: Nullable<SingleFileInputValueType>;
   excerpt: string;
   body: string;
@@ -43,7 +43,7 @@ const INITIAL_VALUES: FormValues = {
 export function getPageFormValues(
   page: Nullable<PageFull>,
   templateList: Array<TemplateShort>,
-  parentPageOptions: Array<OptionType<number>>,
+  parentPageOptions: Array<OptionType<Nullable<number>>>,
   initialParentId: Nullable<string>
 ): FormValues {
   if (!page) {
