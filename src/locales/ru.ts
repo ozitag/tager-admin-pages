@@ -21,12 +21,13 @@ const RU: typeof EN = {
   actions: 'Действия',
   edit: 'Редактировать',
   delete: 'Удалить',
-  AddChildPage: 'Добавить дочернюю страницу',
+  addChildPage: 'Добавить дочернюю страницу',
   parentPage: 'Родительская страница',
   noParent: 'Нет родителя',
   body: 'Содержание',
   image: 'Изображение',
   excerpt: 'Краткое описание',
+  viewOnWebsite: 'Посмотреть на сайте',
 
   tabs: {
     common: 'Общие',

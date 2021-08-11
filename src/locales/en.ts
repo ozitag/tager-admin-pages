@@ -19,12 +19,13 @@ const EN = {
   actions: 'Actions',
   edit: 'Edit',
   delete: 'Delete',
-  AddChildPage: 'Add child page',
+  addChildPage: 'Add child page',
   parentPage: 'Parent page',
   noParent: 'No parent',
   body: 'Body',
   image: 'Image',
   excerpt: 'Excerpt',
+  viewOnWebsite: 'View on website',
 
   tabs: {
     common: 'Common',

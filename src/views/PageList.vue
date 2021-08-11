@@ -36,6 +36,15 @@
       </template>
       <template v-slot:cell(actions)="{ row, rowIndex }">
         <base-button
+            variant="icon"
+            :title="t('pages:viewOnWebsite')"
+            :href="origin + row.path"
+            target="_blank"
+        >
+          <svg-icon name="openInBrowser"></svg-icon>
+        </base-button>
+
+        <base-button
           variant="icon"
           :disabled="isBusy(row.id) || rowIndex === rowData.length - 1"
           @click="handleResourceMove(row.id, 'down')"
@@ -52,21 +61,21 @@
         </base-button>
 
         <base-button
+            variant="icon"
+            :title="t('pages:addChildPage')"
+            :disabled="isBusy(row.id)"
+            :href="getChildPageCreationFormUrl({ parentId: row.id })"
+        >
+          <svg-icon name="addCircle"></svg-icon>
+        </base-button>
+
+        <base-button
           variant="icon"
           :title="t('pages:edit')"
           :disabled="isBusy(row.id)"
           :href="getPageFormUrl({ pageId: row.id })"
         >
           <svg-icon name="edit"></svg-icon>
-        </base-button>
-
-        <base-button
-          variant="icon"
-          :title="t('pages:AddChildPage')"
-          :disabled="isBusy(row.id)"
-          :href="getChildPageCreationFormUrl({ parentId: row.id })"
-        >
-          <svg-icon name="addCircle"></svg-icon>
         </base-button>
 
         <base-button
@@ -250,13 +259,6 @@ export default defineComponent({
     const columnDefs: Array<ColumnDefinition<PageShort>> = [
       {
         id: 1,
-        name: 'ID',
-        field: 'id',
-        style: { width: '50px', textAlign: 'center' },
-        headStyle: { width: '50px', textAlign: 'center' },
-      },
-      {
-        id: 3,
         name: t('pages:title'),
         field: 'title',
         format: ({ row }) => ({
@@ -269,7 +271,7 @@ export default defineComponent({
         },
       },
       {
-        id: 4,
+        id: 2,
         name: t('pages:path'),
         field: 'path',
         type: 'link',
@@ -286,13 +288,13 @@ export default defineComponent({
         },
       },
       {
-        id: 5,
+        id: 3,
         name: t('pages:template'),
         field: 'templateName',
       },
 
       {
-        id: 6,
+        id: 4,
         name: t('pages:actions'),
         field: 'actions',
         style: { width: '140px', textAlign: 'center', whiteSpace: 'nowrap' },
@@ -317,8 +319,11 @@ export default defineComponent({
       })),
     ]);
 
+    const origin = process.env.VUE_APP_WEBSITE_URL || window.location.origin;
+
     return {
       columnDefs,
+      origin,
       getPageFormUrl,
       getChildPageCreationFormUrl,
       rowData: pageList,
