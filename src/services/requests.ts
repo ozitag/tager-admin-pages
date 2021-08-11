@@ -34,6 +34,10 @@ export function getPageList(params?: {
   return request.get({ path: '/admin/pages', params });
 }
 
+export function getPageListWithChildren(): Promise<ResponseBody<Array<PageShort>>> {
+  return request.get({ path: '/admin/pages?filter[with-children]=1' });
+}
+
 export function getPageCount(): Promise<ResponseBody<{ count: number }>> {
   return request.get({ path: '/admin/pages/count' });
 }
