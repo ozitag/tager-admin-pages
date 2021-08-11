@@ -26,6 +26,7 @@
         <form-field-select
             v-model="values.template"
             name="template"
+            :searchable="true"
             :error="errors.template"
             :label="t('pages:template')"
             :no-options-message="t('pages:noTemplate')"
@@ -36,6 +37,7 @@
         <form-field-select
             v-model="values.parent"
             name="parent"
+            :searchable="true"
             :error="errors.parent"
             :label="t('pages:parentPage')"
             :no-options-message="t('pages:noParent')"
@@ -104,6 +106,7 @@
           <form-field-select
               v-model="values.parent"
               name="parent"
+              :searchable="true"
               :error="errors.parent"
               :label="t('pages:parentPage')"
               :no-options-message="t('pages:noParent')"
