@@ -75,14 +75,6 @@
               :text="values.template.label"
           />
 
-          <form-field-rich-text-input
-              v-model="values.body"
-              name="body"
-              :error="errors.body"
-              :label="t('pages:body')"
-              :get-upload-adapter-options="getUploadAdapterPluginOptions"
-          />
-
           <form-field-file-input
               v-model="values.image"
               name="image"
@@ -99,6 +91,14 @@
               :label="t('pages:excerpt')"
               type="textarea"
               :rows="4"
+          />
+
+          <form-field-rich-text-input
+              v-model="values.body"
+              name="body"
+              :error="errors.body"
+              :label="t('pages:body')"
+              :get-upload-adapter-options="getUploadAdapterPluginOptions"
           />
 
           <form-field-select
