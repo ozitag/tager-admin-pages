@@ -14,12 +14,23 @@
             @input="handleTitleChange"
         />
 
+        <form-field-select
+            v-model="values.parent"
+            name="parent"
+            :searchable="true"
+            :error="errors.parent"
+            :label="t('pages:parentPage')"
+            :no-options-message="t('pages:noParent')"
+            :placeholder="t('pages:noParent')"
+            :options="parentPageOptions"
+        />
+
         <form-field-url-alias-input
             v-model="values.path"
             name="path"
             :error="errors.path"
             :label="t('pages:path')"
-            :url-template="websiteOrigin"
+            :url-template="websiteOrigin + pathPrefix"
             @change="handleAliasChange"
         />
 
@@ -32,17 +43,6 @@
             :no-options-message="t('pages:noTemplate')"
             :placeholder="t('pages:noTemplate')"
             :options="templateOptions"
-        />
-
-        <form-field-select
-            v-model="values.parent"
-            name="parent"
-            :searchable="true"
-            :error="errors.parent"
-            :label="t('pages:parentPage')"
-            :no-options-message="t('pages:noParent')"
-            :placeholder="t('pages:noParent')"
-            :options="parentPageOptions"
         />
       </template>
       <template v-else>
@@ -256,6 +256,12 @@ export default defineComponent({
       fetchPageList();
     });
 
+
+    let websiteOrigin: string = (process.env.VUE_APP_WEBSITE_URL || window.location.origin);
+    if (websiteOrigin.substr(-1) === '/') {
+      websiteOrigin = websiteOrigin.substr(0, websiteOrigin.length - 1);
+    }
+
     watch(pageId, fetchPageList);
 
     const parentPageOptions = computed<Array<OptionType<Nullable<number>>>>(() => {
@@ -414,6 +420,24 @@ export default defineComponent({
       updateTemplateValues();
     });
 
+
+    const pathPrefix = computed<string>(() => {
+      if (!isCreation.value) {
+        return '';
+      }
+
+      if (!values.value?.parent?.value) {
+        return '/';
+      }
+
+      const parent = pageList.value.find((shortPage) => shortPage.id === values.value?.parent?.value);
+      if (parent?.path === '/') {
+        return '/';
+      } else {
+        return parent?.path + '/';
+      }
+    });
+
     function submitForm(event: TagerFormSubmitEvent) {
       isSubmitting.value = true;
 
@@ -421,6 +445,15 @@ export default defineComponent({
           values.value,
           templateValues.value
       );
+
+      if (isCreation.value) {
+        if (creationPayload.path.trim().length > 0 && pathPrefix.value !== '/') {
+          creationPayload.path = pathPrefix.value + creationPayload.path;
+        } else if (creationPayload.path.trim().length === 0) {
+          creationPayload.path = '/';
+        }
+      }
+
 
       const updatePayload = convertPageFormValuesToUpdatePayload(
           values.value,
@@ -512,11 +545,6 @@ export default defineComponent({
       }
     });
 
-    let websiteOrigin: string = (process.env.VUE_APP_WEBSITE_URL || window.location.origin);
-    if (websiteOrigin.substr(-1) === '/') {
-      websiteOrigin = websiteOrigin.substr(0, websiteOrigin.length - 1);
-    }
-
     const isLoading = computed<boolean>(
         () =>
             isPageLoading.value ||
@@ -587,6 +615,7 @@ export default defineComponent({
       getUploadAdapterPluginOptions,
       handleTitleChange,
       handleAliasChange,
+      pathPrefix
     };
   },
 });

@@ -54,6 +54,7 @@ export interface PageCreatePayload {
   image: Nullable<FileType['id']>;
   excerpt: string;
   body: string;
+  path: string;
 
   pageTitle: Nullable<string>;
   pageDescription: Nullable<string>;
