@@ -29,7 +29,7 @@
                 v-model="templateFilter"
                 :options="templateOptionList"
                 name="templateFilter"
-                :filterable="true"
+                :searchable="true"
                 :label="t('pages:templates')"
                 class="filter"
             />
@@ -37,7 +37,7 @@
                 v-model="parentFilter"
                 :options="parentOptionList"
                 name="parentPage"
-                :filterable="true"
+                :searchable="true"
                 :label="t('pages:parentPage')"
                 class="filter"
             />
