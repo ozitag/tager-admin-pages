@@ -34,6 +34,7 @@ export interface PageFull {
 
   readonly excerpt: Nullable<string>;
   readonly body: Nullable<string>;
+  readonly datetime: Nullable<string>;
 
   /** SEO */
   readonly pageTitle: Nullable<string>;

@@ -28,6 +28,7 @@ const RU: typeof EN = {
   image: 'Изображение',
   excerpt: 'Краткое описание',
   viewOnWebsite: 'Посмотреть на сайте',
+  publishedDate: 'Дата публикации',
 
   tabs: {
     common: 'Общие',

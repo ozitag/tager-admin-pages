@@ -113,6 +113,14 @@
               :placeholder="t('pages:noParent')"
               :options="parentPageOptions"
           />
+
+          <form-field
+              v-model="values.datetime"
+              name="title"
+              type="date"
+              :error="errors.datetime"
+              :label="t('pages:publishedDate')"
+          />
         </template>
 
         <template v-if="selectedTabId === 'template'">
@@ -374,6 +382,7 @@ export default defineComponent({
             initialParentId.value
         )
     );
+
     const isSubmitting = ref<boolean>(false);
     const templateValues = ref<Array<FieldUnion>>([]);
 

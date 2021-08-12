@@ -26,6 +26,7 @@ const EN = {
   image: 'Image',
   excerpt: 'Excerpt',
   viewOnWebsite: 'View on website',
+  publishedDate: 'Published date',
 
   tabs: {
     common: 'Common',
