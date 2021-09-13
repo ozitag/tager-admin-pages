@@ -194,7 +194,7 @@ import {
   createPage,
   getPageById,
   getPageInfo,
-  getPageList,
+  getPageListAll,
   getPageTemplateById,
   getPageTemplateList,
   updatePage,
@@ -254,7 +254,7 @@ export default defineComponent({
       fetchPageList,
       {data: pageList, loading: isPageListLoading},
     ] = useResource({
-      fetchResource: () => getPageList(),
+      fetchResource: () => getPageListAll(),
       initialValue: [],
       context,
       resourceName: 'Page list',
