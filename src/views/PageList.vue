@@ -263,10 +263,6 @@ export default defineComponent({
     );
 
     watch(filterParams, () => {
-      if (!isRowDataLoading) {
-        return;
-      }
-
       const newQuery = {
         ...pick(context.root.$route.query, ['query', 'pageNumber']),
         ...filterParams.value,
