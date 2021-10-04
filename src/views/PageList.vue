@@ -136,6 +136,7 @@ import {
   useResourceClone
 } from '@tager/admin-services';
 
+import { PageFull } from '../typings/model';
 import { PageShort, TagType } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
 import {
