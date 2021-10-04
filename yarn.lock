@@ -1000,8 +1000,10 @@
   dependencies:
     "@babel/runtime" "^7.10.4"
 
-"@tager/admin-services@file:.yalc/@tager/admin-services":
-  version "0.2.25"
+"@tager/admin-services@^0.2.24":
+  version "0.2.26"
+  resolved "https://registry.yarnpkg.com/@tager/admin-services/-/admin-services-0.2.26.tgz#5208180f523f28b9f3618dd42479a12396487832"
+  integrity sha512-oo7Gucp1RButzzb28mJ+FS8CXBdmN24dFbNKCc/rtCeI2DyPooKX/lBeqDKKVnhDHm+JHcxQpaoNM2SOm5Yq3w==
   dependencies:
     i18next "^19.7.0"
     nanoid "^3.1.12"
@@ -9878,9 +9880,9 @@ write@1.0.3:
     mkdirp "^0.5.1"
 
 ws@^6.0.0, ws@^6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
-  integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.2.tgz#dd5cdbd57a9979916097652d78f1cc5faea0c32e"
+  integrity sha512-zmhltoSR8u1cnDsD43TX59mzoMZsLKqUweyYBAIvTngR3shc0W6aOZylZmq/7hqyVxPdi+5Ud2QInblgyE72fw==
   dependencies:
     async-limiter "~1.0.0"
 
