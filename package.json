@@ -1,6 +1,6 @@
 {
   "name": "@tager/admin-pages",
-  "version": "0.3.28",
+  "version": "0.3.29",
   "license": "MIT",
   "main": "dist/index.umd.js",
   "module": "dist/index.esm.js",
@@ -54,7 +54,7 @@
     "typescript": "~3.9.6",
     "vue": "2.6.x",
     "vue-docgen-web-types": "^0.1.6",
-    "vue-router": "^3.5.1",
+    "vue-router": "^3.5.2",
     "vue-template-compiler": "^2.6.11"
   },
   "peerDependencies": {

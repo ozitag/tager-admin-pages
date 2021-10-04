@@ -30,6 +30,11 @@ const RU: typeof EN = {
   viewOnWebsite: 'Посмотреть на сайте',
   publishedDate: 'Дата публикации',
 
+  clone: 'Клонировать',
+  cloneConfirm: 'Вы уверены, что хотите создать копию страницы?',
+  cloneSuccess: 'Копия страницы успешно создана',
+  cloneFailure: 'Ошибка копирования страницы',
+
   tabs: {
     common: 'Общие',
     template: 'Шаблон',

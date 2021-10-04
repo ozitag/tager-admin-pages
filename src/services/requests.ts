@@ -102,8 +102,14 @@ export function deletePage(
 }
 
 export function movePage(
-    pageId: number | string,
-    direction: 'up' | 'down'
+  pageId: number | string,
+  direction: 'up' | 'down'
 ): Promise<{ success: boolean }> {
     return request.post({path: `/admin/pages/${pageId}/move/${direction}`});
+}
+
+export function clonePage(
+  pageId: number | string,
+): Promise<ResponseBody<PageFull>> {
+    return request.post({path: `/admin/pages/${pageId}/clone`});
 }

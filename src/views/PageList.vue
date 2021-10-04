@@ -9,105 +9,114 @@
     ]"
   >
     <data-table
-      :column-defs="columnDefs"
-      :row-data="rowData"
-      :loading="isRowDataLoading"
-      :error-message="errorMessage"
-      :search-query="searchQuery"
-      :pagination="{
+      :column-defs='columnDefs'
+      :row-data='rowData'
+      :loading='isRowDataLoading'
+      :error-message='errorMessage'
+      :search-query='searchQuery'
+      :pagination='{
         pageSize,
         pageCount,
         pageNumber,
         disabled: isRowDataLoading,
-      }"
-      @change="handleChange"
+      }'
+      @change='handleChange'
     >
       <template v-slot:filters>
-        <advanced-search :tags="tags" @click:tag="handleTagRemove">
-          <div class="filters">
+        <advanced-search :tags='tags' @click:tag='handleTagRemove'>
+          <div class='filters'>
             <form-field-multi-select
-              v-model="templateFilter"
-              :options="templateOptionList"
-              name="templateFilter"
-              :searchable="true"
+              v-model='templateFilter'
+              :options='templateOptionList'
+              name='templateFilter'
+              :searchable='true'
               :label="t('pages:templates')"
-              class="filter"
+              class='filter'
             />
             <form-field-multi-select
-              v-model="parentFilter"
-              :options="parentOptionList"
-              name="parentPage"
-              :searchable="true"
+              v-model='parentFilter'
+              :options='parentOptionList'
+              name='parentPage'
+              :searchable='true'
               :label="t('pages:parentPage')"
-              class="filter"
+              class='filter'
             />
           </div>
         </advanced-search>
       </template>
-      <template v-slot:cell(actions)="{ row, rowIndex }">
+      <template v-slot:cell(actions)='{ row, rowIndex }'>
         <base-button
-          variant="icon"
+          variant='icon'
           :title="t('pages:viewOnWebsite')"
-          :href="origin + row.path"
-          target="_blank"
+          :href='origin + row.path'
+          target='_blank'
         >
-          <svg-icon name="openInBrowser"></svg-icon>
+          <svg-icon name='openInBrowser'></svg-icon>
         </base-button>
 
         <base-button
-          variant="icon"
-          :disabled="isBusy(row.id) || rowIndex === rowData.length - 1"
+          variant='icon'
+          :title="t('pages:edit')"
+          :disabled='isBusy(row.id)'
+          :href='getPageFormUrl({ pageId: row.id })'
+        >
+          <svg-icon name='edit'></svg-icon>
+        </base-button>
+
+        <base-button
+          variant='icon'
+          :disabled='isBusy(row.id) || rowIndex === rowData.length - 1'
           @click="handleResourceMove(row.id, 'down')"
         >
-          <svg-icon name="south" />
+          <svg-icon name='south' />
         </base-button>
 
         <base-button
-          variant="icon"
-          :disabled="isBusy(row.id) || rowIndex === 0"
+          variant='icon'
+          :disabled='isBusy(row.id) || rowIndex === 0'
           @click="handleResourceMove(row.id, 'up')"
         >
-          <svg-icon name="north" />
+          <svg-icon name='north' />
         </base-button>
 
         <base-button
-          variant="icon"
+          variant='icon'
           :title="t('pages:addChildPage')"
-          :disabled="isBusy(row.id)"
-          :href="getChildPageCreationFormUrl({ parentId: row.id })"
+          :disabled='isBusy(row.id)'
+          :href='getChildPageCreationFormUrl({ parentId: row.id })'
         >
-          <svg-icon name="addCircle"></svg-icon>
+          <svg-icon name='addCircle'></svg-icon>
         </base-button>
 
         <base-button
-          variant="icon"
-          :title="t('pages:edit')"
-          :disabled="isBusy(row.id)"
-          :href="getPageFormUrl({ pageId: row.id })"
+          variant='icon'
+          :title="t('pages:clone')"
+          :disabled='isBusy(row.id)'
+          @click='handleResourceClone(row.id)'
         >
-          <svg-icon name="edit"></svg-icon>
+          <svg-icon name='contentCopy'></svg-icon>
         </base-button>
 
         <base-button
-          variant="icon"
+          variant='icon'
           :title="t('pages:delete')"
-          :disabled="hasChild(row.id) || isBusy(row.id)"
-          @click="handleResourceDelete(row.id)"
+          :disabled='hasChild(row.id) || isBusy(row.id)'
+          @click='handleResourceDelete(row.id)'
         >
-          <svg-icon name="delete"></svg-icon>
+          <svg-icon name='delete'></svg-icon>
         </base-button>
       </template>
     </data-table>
   </page>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import {
   computed,
   defineComponent,
   onMounted,
   ref,
-  watch,
+  watch
 } from '@vue/composition-api';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
@@ -118,22 +127,24 @@ import {
   getFilterParams,
   OptionType,
   useDataTable,
-  useTranslation,
+  useTranslation
 } from '@tager/admin-ui';
 import {
   useResource,
   useResourceDelete,
   useResourceMove,
+  useResourceClone
 } from '@tager/admin-services';
 
 import { PageShort, TagType } from '../typings/model';
 import { getPageFormUrl } from '../utils/paths';
 import {
+  clonePage,
   deletePage,
   getPageList,
   getPageListWithChildren,
   getPageTemplateList,
-  movePage,
+  movePage
 } from '../services/requests';
 import { getNameWithDepth } from '../utils/common';
 
@@ -145,18 +156,18 @@ export default defineComponent({
     /** Short template list */
     const [
       fetchTemplateList,
-      { data: shortTemplateList, loading: isShortTemplateListLoading },
+      { data: shortTemplateList, loading: isShortTemplateListLoading }
     ] = useResource({
       fetchResource: getPageTemplateList,
       initialValue: [],
       context,
-      resourceName: 'Template list',
+      resourceName: 'Template list'
     });
 
     const templateOptionList = computed(() =>
       shortTemplateList.value.map<OptionType>((template) => ({
         value: template.id,
-        label: template.label,
+        label: template.label
       }))
     );
 
@@ -167,18 +178,18 @@ export default defineComponent({
     /** Parent page list */
     const [
       fetchParentList,
-      { data: shortParentList, loading: isShortParentListLoading },
+      { data: shortParentList, loading: isShortParentListLoading }
     ] = useResource({
       fetchResource: getPageListWithChildren,
       initialValue: [],
       context,
-      resourceName: 'Template list',
+      resourceName: 'Template list'
     });
 
     const parentOptionList = computed(() =>
       shortParentList.value.map<OptionType>((parent) => ({
         value: parent.id.toString(),
-        label: getNameWithDepth(parent.title, parent.depth),
+        label: getNameWithDepth(parent.title, parent.depth)
       }))
     );
 
@@ -227,7 +238,7 @@ export default defineComponent({
     const filterParams = computed(() => {
       return getFilterParams({
         template: templateFilter.value.map((template) => template.value),
-        parent: parentFilter.value.map((parent) => parent.value),
+        parent: parentFilter.value.map((parent) => parent.value)
       });
     });
 
@@ -240,19 +251,19 @@ export default defineComponent({
       handleChange,
       pageSize,
       pageCount,
-      pageNumber,
+      pageNumber
     } = useDataTable<PageShort>({
       fetchEntityList: (params) =>
         getPageList({
           query: params.searchQuery,
           pageNumber: params.pageNumber,
           pageSize: params.pageSize,
-          ...filterParams.value,
+          ...filterParams.value
         }),
       initialValue: [],
       context,
       resourceName: 'Page list',
-      pageSize: 100,
+      pageSize: 100
     });
 
     const isRowDataLoading = computed<boolean>(
@@ -265,7 +276,7 @@ export default defineComponent({
     watch(filterParams, () => {
       const newQuery = {
         ...pick(context.root.$route.query, ['query', 'pageNumber']),
-        ...filterParams.value,
+        ...filterParams.value
       };
 
       if (!isEqual(context.root.$route.query, newQuery)) {
@@ -274,23 +285,34 @@ export default defineComponent({
       }
     });
 
-    const { handleResourceDelete, isDeleting } = useResourceDelete({
+    const { isDeleting, handleResourceDelete } = useResourceDelete({
       deleteResource: deletePage,
       resourceName: 'Page',
       onSuccess: fetchPageList,
-      context,
+      context
     });
 
     const { isMoving, handleResourceMove } = useResourceMove({
       moveResource: movePage,
       resourceName: 'Page',
       onSuccess: fetchPageList,
-      context,
+      context
+    });
+
+    const { isCloning, handleResourceClone } = useResourceClone({
+      cloneResource: clonePage,
+      confirmMessage: t('pages:cloneConfirm'),
+      successMessage: t('pages:cloneSuccess'),
+      failureMessage: t('pages:cloneFailure'),
+      onSuccessRedirectTo: (data: PageFull) => {
+        return '/pages/' + data.id;
+      },
+      context
     });
 
     function getChildPageCreationFormUrl(params: { parentId: number }) {
       const searchParams = new URLSearchParams({
-        parentId: String(params.parentId),
+        parentId: String(params.parentId)
       });
       const searchString = '?' + searchParams.toString();
 
@@ -303,10 +325,11 @@ export default defineComponent({
       return pageList.value.some((page) => page.parent?.id === parentId);
     }
 
-    function isBusy(departmentId: number): boolean {
+    function isBusy(pageId: number): boolean {
       return (
-        isDeleting(departmentId) ||
-        isMoving(departmentId) ||
+        isDeleting(pageId) ||
+        isMoving(pageId) ||
+        isCloning(pageId) ||
         isRowDataLoading.value
       );
     }
@@ -318,12 +341,12 @@ export default defineComponent({
         field: 'title',
         format: ({ row }) => ({
           url: getPageFormUrl({ pageId: row.id }),
-          text: getNameWithDepth(row.title, row.depth),
+          text: getNameWithDepth(row.title, row.depth)
         }),
         type: 'link',
         options: {
-          shouldUseRouter: true,
-        },
+          shouldUseRouter: true
+        }
       },
       {
         id: 2,
@@ -335,17 +358,17 @@ export default defineComponent({
             process.env.VUE_APP_WEBSITE_URL || window.location.origin;
           return {
             url: origin + row.path,
-            text: row.path,
+            text: row.path
           };
         },
         options: {
-          shouldOpenNewTab: true,
-        },
+          shouldOpenNewTab: true
+        }
       },
       {
         id: 3,
         name: t('pages:template'),
-        field: 'templateName',
+        field: 'templateName'
       },
 
       {
@@ -353,8 +376,8 @@ export default defineComponent({
         name: t('pages:actions'),
         field: 'actions',
         style: { width: '140px', textAlign: 'center', whiteSpace: 'nowrap' },
-        headStyle: { width: '140px', textAlign: 'center' },
-      },
+        headStyle: { width: '140px', textAlign: 'center' }
+      }
     ];
 
     function handleTagRemove(event: TagType) {
@@ -375,14 +398,14 @@ export default defineComponent({
         value: template.value,
         label: template.label,
         name: 'template',
-        title: t('pages:templates'),
+        title: t('pages:templates')
       })),
       ...parentFilter.value.map((parent) => ({
         value: parent.value,
         label: parent.label,
         name: 'parent',
-        title: t('pages:parentPage'),
-      })),
+        title: t('pages:parentPage')
+      }))
     ]);
 
     const origin = process.env.VUE_APP_WEBSITE_URL || window.location.origin;
@@ -393,10 +416,11 @@ export default defineComponent({
       getPageFormUrl,
       getChildPageCreationFormUrl,
       rowData: pageList,
-      isRowDataLoading,
+      isRowDataLoading: isRowDataLoading,
       errorMessage: errorMessage,
       handleResourceDelete,
       handleResourceMove,
+      handleResourceClone,
       hasChild,
       isBusy,
       searchQuery,
@@ -410,13 +434,13 @@ export default defineComponent({
       templateFilter,
       parentFilter,
       templateOptionList,
-      parentOptionList,
+      parentOptionList
     };
-  },
+  }
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped lang='scss'>
 .filters {
   display: flex;
   margin: 0 -10px;

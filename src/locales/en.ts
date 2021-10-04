@@ -28,6 +28,11 @@ const EN = {
   viewOnWebsite: 'View on website',
   publishedDate: 'Published date',
 
+  clone: 'Clone',
+  cloneConfirm: 'Are you sure you want to clone the page?',
+  cloneSuccess: 'Page have copied successfully',
+  cloneFailure: 'Page copy failure',
+
   tabs: {
     common: 'Common',
     template: 'Template',
