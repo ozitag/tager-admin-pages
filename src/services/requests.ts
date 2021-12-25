@@ -61,6 +61,7 @@ export function getPageInfo(): Promise<ResponseBody<InfoModel>> {
 
 export interface PageCreatePayload {
     title: string;
+    status: string;
     parent: Nullable<PageShort['id']>;
     image: Nullable<FileType['id']>;
     excerpt: string;

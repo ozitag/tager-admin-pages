@@ -48,6 +48,10 @@ const RU: typeof EN = {
   createdErrorMessage: 'Создание страницы не удалось',
   updatedSuccessMessage: 'Страница успешно обновлена',
   updatedErrorMessage: 'Обновление страницы не удалось',
+
+  status: 'Статус',
+  statusPublished: 'Опубликована',
+  statusDraft: 'Черновик'
 };
 
 export default RU;

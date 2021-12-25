@@ -1,7 +1,7 @@
 <template>
   <page
-    :title="t('pages:pages')"
-    :header-buttons="[
+      :title="t('pages:pages')"
+      :header-buttons="[
       {
         text: t('pages:createPage'),
         href: getPageFormUrl({ pageId: 'create' }),
@@ -9,99 +9,113 @@
     ]"
   >
     <data-table
-      :column-defs='columnDefs'
-      :row-data='rowData'
-      :loading='isRowDataLoading'
-      :error-message='errorMessage'
-      :search-query='searchQuery'
-      :pagination='{
+        :column-defs='columnDefs'
+        :row-data='rowData'
+        :loading='isRowDataLoading'
+        :error-message='errorMessage'
+        :search-query='searchQuery'
+        :pagination='{
         pageSize,
         pageCount,
         pageNumber,
         disabled: isRowDataLoading,
       }'
-      @change='handleChange'
+        @change='handleChange'
     >
       <template v-slot:filters>
         <advanced-search :tags='tags' @click:tag='handleTagRemove'>
           <div class='filters'>
             <form-field-multi-select
-              v-model='templateFilter'
-              :options='templateOptionList'
-              name='templateFilter'
-              :searchable='true'
-              :label="t('pages:templates')"
-              class='filter'
+                v-model='templateFilter'
+                :options='templateOptionList'
+                name='templateFilter'
+                :searchable='true'
+                :label="t('pages:templates')"
+                class='filter'
             />
             <form-field-multi-select
-              v-model='parentFilter'
-              :options='parentOptionList'
-              name='parentPage'
-              :searchable='true'
-              :label="t('pages:parentPage')"
-              class='filter'
+                v-model='parentFilter'
+                :options='parentOptionList'
+                name='parentPage'
+                :searchable='true'
+                :label="t('pages:parentPage')"
+                class='filter'
+            />
+            <form-field-multi-select
+                v-model='statusFilter'
+                :options='statusOptionList'
+                name='statusFilter'
+                :label="t('pages:status')"
+                class='filter'
             />
           </div>
         </advanced-search>
       </template>
+
+      <template v-slot:cell(status)='{ row }'>
+        <div class='status'>
+          <span>{{ getStatusLabel(t)[row.status] }}</span>
+        </div>
+      </template>
+
       <template v-slot:cell(actions)='{ row, rowIndex }'>
         <base-button
-          variant='icon'
-          :title="t('pages:viewOnWebsite')"
-          :href='origin + row.path'
-          target='_blank'
+            variant='icon'
+            :title="t('pages:viewOnWebsite')"
+            :href='origin + row.path'
+            target='_blank'
         >
           <svg-icon name='openInBrowser'></svg-icon>
         </base-button>
 
         <base-button
-          variant='icon'
-          :title="t('pages:edit')"
-          :disabled='isBusy(row.id)'
-          :href='getPageFormUrl({ pageId: row.id })'
+            variant='icon'
+            :title="t('pages:edit')"
+            :disabled='isBusy(row.id)'
+            :href='getPageFormUrl({ pageId: row.id })'
         >
           <svg-icon name='edit'></svg-icon>
         </base-button>
 
         <base-button
-          variant='icon'
-          :disabled='isBusy(row.id) || rowIndex === rowData.length - 1'
-          @click="handleResourceMove(row.id, 'down')"
+            variant='icon'
+            :disabled='isBusy(row.id) || rowIndex === rowData.length - 1'
+            @click="handleResourceMove(row.id, 'down')"
         >
-          <svg-icon name='south' />
+          <svg-icon name='south'/>
         </base-button>
 
         <base-button
-          variant='icon'
-          :disabled='isBusy(row.id) || rowIndex === 0'
-          @click="handleResourceMove(row.id, 'up')"
+            variant='icon'
+            :disabled='isBusy(row.id) || rowIndex === 0'
+            @click="handleResourceMove(row.id, 'up')"
         >
-          <svg-icon name='north' />
+          <svg-icon name='north'/>
         </base-button>
 
         <base-button
-          variant='icon'
-          :title="t('pages:addChildPage')"
-          :disabled='isBusy(row.id)'
-          :href='getChildPageCreationFormUrl({ parentId: row.id })'
+            variant='icon'
+            :title="t('pages:addChildPage')"
+            :disabled='isBusy(row.id)'
+            :href='getChildPageCreationFormUrl({ parentId: row.id })'
         >
           <svg-icon name='addCircle'></svg-icon>
         </base-button>
 
         <base-button
-          variant='icon'
-          :title="t('pages:clone')"
-          :disabled='isBusy(row.id)'
-          @click='handleResourceClone(row.id)'
+            variant='icon'
+            :title="t('pages:clone')"
+            :disabled='isBusy(row.id)'
+            @click='handleResourceClone(row.id)'
         >
           <svg-icon name='contentCopy'></svg-icon>
         </base-button>
 
         <base-button
-          variant='icon'
-          :title="t('pages:delete')"
-          :disabled='hasChild(row.id) || isBusy(row.id)'
-          @click='handleResourceDelete(row.id)'
+            variant='icon'
+            :title="t('pages:delete')"
+            :disabled='hasChild(row.id) || isBusy(row.id)'
+            @click='handleResourceDelete(row.id)'
         >
           <svg-icon name='delete'></svg-icon>
         </base-button>
@@ -120,6 +134,7 @@ import {
 } from '@vue/composition-api';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
+import {TFunction} from 'i18next';
 
 import {
   ColumnDefinition,
@@ -136,9 +151,9 @@ import {
   useResourceClone
 } from '@tager/admin-services';
 
-import { PageFull } from '../typings/model';
-import { PageShort, TagType } from '../typings/model';
-import { getPageFormUrl } from '../utils/paths';
+import {PageFull} from '../typings/model';
+import {PageShort, TagType} from '../typings/model';
+import {getPageFormUrl} from '../utils/paths';
 import {
   clonePage,
   deletePage,
@@ -147,17 +162,28 @@ import {
   getPageTemplateList,
   movePage
 } from '../services/requests';
-import { getNameWithDepth } from '../utils/common';
+import {getNameWithDepth} from '../utils/common';
+
+import {getStatusOptions} from "./PageForm/PageForm.helpers";
+
+function getStatusLabel(t: TFunction): Record<string, string> {
+  return {
+    PUBLISHED: t('pages:statusPublished'),
+    DRAFT: t('pages:statusDraft'),
+  };
+}
 
 export default defineComponent({
   name: 'PageList',
   setup(props, context) {
-    const { t } = useTranslation(context);
+    const {t} = useTranslation(context);
+
+    const statusOptionList = computed<OptionType[]>(() => getStatusOptions(t));
 
     /** Short template list */
     const [
       fetchTemplateList,
-      { data: shortTemplateList, loading: isShortTemplateListLoading }
+      {data: shortTemplateList, loading: isShortTemplateListLoading}
     ] = useResource({
       fetchResource: getPageTemplateList,
       initialValue: [],
@@ -166,10 +192,10 @@ export default defineComponent({
     });
 
     const templateOptionList = computed(() =>
-      shortTemplateList.value.map<OptionType>((template) => ({
-        value: template.id,
-        label: template.label
-      }))
+        shortTemplateList.value.map<OptionType>((template) => ({
+          value: template.id,
+          label: template.label
+        }))
     );
 
     onMounted(() => {
@@ -179,7 +205,7 @@ export default defineComponent({
     /** Parent page list */
     const [
       fetchParentList,
-      { data: shortParentList, loading: isShortParentListLoading }
+      {data: shortParentList, loading: isShortParentListLoading}
     ] = useResource({
       fetchResource: getPageListWithChildren,
       initialValue: [],
@@ -188,10 +214,10 @@ export default defineComponent({
     });
 
     const parentOptionList = computed(() =>
-      shortParentList.value.map<OptionType>((parent) => ({
-        value: parent.id.toString(),
-        label: getNameWithDepth(parent.title, parent.depth)
-      }))
+        shortParentList.value.map<OptionType>((parent) => ({
+          value: parent.id.toString(),
+          label: getNameWithDepth(parent.title, parent.depth)
+        }))
     );
 
     onMounted(() => {
@@ -202,11 +228,11 @@ export default defineComponent({
 
     const initialTemplateFilter = computed(() => {
       const queryValue = getFilterParamAsStringArray(
-        context.root.$route.query,
-        'template'
+          context.root.$route.query,
+          'template'
       );
       return templateOptionList.value.filter((option) =>
-        queryValue.some((selected) => option.value === selected)
+          queryValue.some((selected) => option.value === selected)
       );
     });
 
@@ -220,11 +246,11 @@ export default defineComponent({
 
     const initialParentFilter = computed(() => {
       const queryValue = getFilterParamAsStringArray(
-        context.root.$route.query,
-        'parent'
+          context.root.$route.query,
+          'parent'
       );
       return parentOptionList.value.filter((option) =>
-        queryValue.some((selected) => option.value === selected)
+          queryValue.some((selected) => option.value === selected)
       );
     });
 
@@ -234,12 +260,31 @@ export default defineComponent({
       parentFilter.value = initialParentFilter.value;
     });
 
+    /** Status filter **/
+
+    const initialStatusFilter = computed(() => {
+      const queryValue = getFilterParamAsStringArray(
+          context.root.$route.query,
+          'status'
+      );
+      return statusOptionList.value.filter((option) =>
+          queryValue.some((selected) => option.value === selected)
+      );
+    });
+
+    const statusFilter = ref<Array<OptionType>>(initialStatusFilter.value);
+
+    watch(initialStatusFilter, () => {
+      statusFilter.value = initialStatusFilter.value;
+    });
+
     /** filter params **/
 
     const filterParams = computed(() => {
       return getFilterParams({
         template: templateFilter.value.map((template) => template.value),
-        parent: parentFilter.value.map((parent) => parent.value)
+        parent: parentFilter.value.map((parent) => parent.value),
+        status: statusFilter.value.map((status) => status.value),
       });
     });
 
@@ -255,12 +300,12 @@ export default defineComponent({
       pageNumber
     } = useDataTable<PageShort>({
       fetchEntityList: (params) =>
-        getPageList({
-          query: params.searchQuery,
-          pageNumber: params.pageNumber,
-          pageSize: params.pageSize,
-          ...filterParams.value
-        }),
+          getPageList({
+            query: params.searchQuery,
+            pageNumber: params.pageNumber,
+            pageSize: params.pageSize,
+            ...filterParams.value
+          }),
       initialValue: [],
       context,
       resourceName: 'Page list',
@@ -268,10 +313,10 @@ export default defineComponent({
     });
 
     const isRowDataLoading = computed<boolean>(
-      () =>
-        isPageListLoading.value ||
-        isShortTemplateListLoading.value ||
-        isShortParentListLoading.value
+        () =>
+            isPageListLoading.value ||
+            isShortTemplateListLoading.value ||
+            isShortParentListLoading.value
     );
 
     watch(filterParams, () => {
@@ -281,26 +326,26 @@ export default defineComponent({
       };
 
       if (!isEqual(context.root.$route.query, newQuery)) {
-        context.root.$router.replace({ query: newQuery });
+        context.root.$router.replace({query: newQuery});
         fetchPageList();
       }
     });
 
-    const { isDeleting, handleResourceDelete } = useResourceDelete({
+    const {isDeleting, handleResourceDelete} = useResourceDelete({
       deleteResource: deletePage,
       resourceName: 'Page',
       onSuccess: fetchPageList,
       context
     });
 
-    const { isMoving, handleResourceMove } = useResourceMove({
+    const {isMoving, handleResourceMove} = useResourceMove({
       moveResource: movePage,
       resourceName: 'Page',
       onSuccess: fetchPageList,
       context
     });
 
-    const { isCloning, handleResourceClone } = useResourceClone({
+    const {isCloning, handleResourceClone} = useResourceClone({
       cloneResource: clonePage,
       confirmMessage: t('pages:cloneConfirm'),
       successMessage: t('pages:cloneSuccess'),
@@ -317,7 +362,7 @@ export default defineComponent({
       });
       const searchString = '?' + searchParams.toString();
 
-      const path = getPageFormUrl({ pageId: 'create' });
+      const path = getPageFormUrl({pageId: 'create'});
 
       return path + searchString;
     }
@@ -328,10 +373,10 @@ export default defineComponent({
 
     function isBusy(pageId: number): boolean {
       return (
-        isDeleting(pageId) ||
-        isMoving(pageId) ||
-        isCloning(pageId) ||
-        isRowDataLoading.value
+          isDeleting(pageId) ||
+          isMoving(pageId) ||
+          isCloning(pageId) ||
+          isRowDataLoading.value
       );
     }
 
@@ -340,8 +385,8 @@ export default defineComponent({
         id: 1,
         name: t('pages:title'),
         field: 'title',
-        format: ({ row }) => ({
-          url: getPageFormUrl({ pageId: row.id }),
+        format: ({row}) => ({
+          url: getPageFormUrl({pageId: row.id}),
           text: getNameWithDepth(row.title, row.depth)
         }),
         type: 'link',
@@ -354,9 +399,9 @@ export default defineComponent({
         name: t('pages:path'),
         field: 'path',
         type: 'link',
-        format: ({ row }) => {
+        format: ({row}) => {
           const origin =
-            process.env.VUE_APP_WEBSITE_URL || window.location.origin;
+              process.env.VUE_APP_WEBSITE_URL || window.location.origin;
           return {
             url: origin + row.path,
             text: row.path
@@ -368,28 +413,37 @@ export default defineComponent({
       },
       {
         id: 3,
+        name: t('pages:status'),
+        field: 'status'
+      },
+      {
+        id: 4,
         name: t('pages:template'),
         field: 'templateName'
       },
-
       {
-        id: 4,
+        id: 5,
         name: t('pages:actions'),
         field: 'actions',
-        style: { width: '140px', textAlign: 'center', whiteSpace: 'nowrap' },
-        headStyle: { width: '140px', textAlign: 'center' }
+        style: {width: '140px', textAlign: 'center', whiteSpace: 'nowrap'},
+        headStyle: {width: '140px', textAlign: 'center'}
       }
     ];
 
     function handleTagRemove(event: TagType) {
       if (event.name === 'template') {
         templateFilter.value = templateFilter.value.filter(
-          (template) => template.value !== event.value
+            (template) => template.value !== event.value
         );
       }
       if (event.name === 'parent') {
         parentFilter.value = parentFilter.value.filter(
-          (parent) => parent.value !== event.value
+            (parent) => parent.value !== event.value
+        );
+      }
+      if (event.name === 'status') {
+        statusFilter.value = statusFilter.value.filter(
+            (status) => status.value !== event.value
         );
       }
     }
@@ -406,6 +460,12 @@ export default defineComponent({
         label: parent.label,
         name: 'parent',
         title: t('pages:parentPage')
+      })),
+      ...statusFilter.value.map((status) => ({
+        value: status.value,
+        label: status.label,
+        name: 'status',
+        title: t('pages:status')
       }))
     ]);
 
@@ -434,8 +494,12 @@ export default defineComponent({
       handleTagRemove,
       templateFilter,
       parentFilter,
+      statusFilter,
       templateOptionList,
-      parentOptionList
+      parentOptionList,
+      getStatusOptions,
+      statusOptionList,
+      getStatusLabel
     };
   }
 });

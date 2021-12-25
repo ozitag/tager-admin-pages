@@ -5,6 +5,8 @@ import {
   IncomingValueUnion,
 } from '@tager/admin-dynamic-field';
 
+export type PageStatus = 'PUBLISHED' | 'DRAFT';
+
 /** Template */
 
 export interface TemplateShort {
@@ -18,6 +20,7 @@ export interface TemplateFull extends TemplateShort {
 
 export interface PageShort {
   readonly id: number;
+  readonly status: string;
   readonly title: string;
   readonly path: string;
   readonly templateName: string;
@@ -27,6 +30,7 @@ export interface PageShort {
 
 export interface PageFull {
   readonly id: number;
+  readonly status: string;
   readonly title: string;
   readonly image: Nullable<FileType>;
   readonly path: string;

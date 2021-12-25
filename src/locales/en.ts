@@ -46,6 +46,10 @@ const EN = {
   createdErrorMessage: 'Page creation has been failed',
   updatedSuccessMessage: 'Page has been successfully updated',
   updatedErrorMessage: 'Page update has been failed',
+
+  status: 'Status',
+  statusPublished: 'Published',
+  statusDraft: 'Draft'
 };
 
 export default EN;
