@@ -45,8 +45,8 @@ export function getPageListWithChildren(): Promise<ResponseBody<Array<PageShort>
     return request.get({path: '/admin/pages?filter[with-children]=1'});
 }
 
-export function getPageCount(): Promise<ResponseBody<{ count: number }>> {
-    return request.get({path: '/admin/pages/count'});
+export function getPageCount(params?: { template: string }): Promise<ResponseBody<{ count: number }>> {
+    return request.get({path: '/admin/pages/count', params});
 }
 
 export function getPageById(
@@ -103,14 +103,14 @@ export function deletePage(
 }
 
 export function movePage(
-  pageId: number | string,
-  direction: 'up' | 'down'
+    pageId: number | string,
+    direction: 'up' | 'down'
 ): Promise<{ success: boolean }> {
     return request.post({path: `/admin/pages/${pageId}/move/${direction}`});
 }
 
 export function clonePage(
-  pageId: number | string,
+    pageId: number | string,
 ): Promise<ResponseBody<PageFull>> {
     return request.post({path: `/admin/pages/${pageId}/clone`});
 }
