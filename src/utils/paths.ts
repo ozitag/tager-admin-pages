@@ -1,6 +1,6 @@
-import { compile } from 'path-to-regexp';
+import { compile } from "path-to-regexp";
 
-import { PAGES_ROUTE_PATHS } from '../constants/paths';
+import { PAGES_ROUTE_PATHS } from "../constants/paths";
 
 export function getPageListUrl(filter?: { template: string }): string {
   const result = compile(PAGES_ROUTE_PATHS.PAGE_LIST)();
@@ -9,10 +9,10 @@ export function getPageListUrl(filter?: { template: string }): string {
     const query = new URLSearchParams();
 
     Object.entries(filter).forEach(([key, value]) => {
-      query.append('filter[' + key + ']', value);
+      query.append("filter[" + key + "]", value);
     });
 
-    return result + '?' + query;
+    return result + "?" + query;
   } else {
     return result;
   }

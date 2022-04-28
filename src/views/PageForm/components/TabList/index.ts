@@ -1,2 +1,2 @@
-export { default } from './TabList.vue';
-export * from './TabList.types';
+export { default } from "./TabList.vue";
+export * from "./TabList.types";

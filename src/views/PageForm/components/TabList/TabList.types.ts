@@ -1,4 +1,4 @@
-export type TabType = {
+export interface TabType {
   id: string;
   label: string;
-};
+}

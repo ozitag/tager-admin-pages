@@ -3,9 +3,9 @@
     <li
       v-for="tab of tabList"
       :key="tab.id"
-      :class="['tab', { active: selectedTabId === tab.id }]"
+      :class="['tab', { active: tabId === tab.id }]"
     >
-      <button class="tab-button" type="button" @click="handleTabClick(tab.id)">
+      <button class="tab-button" type="button" @click="handleTabClick(tab)">
         {{ tab.label }}
       </button>
     </li>
@@ -13,27 +13,33 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from "vue";
 
-import { TabType } from './TabList.types';
+import type { TabType } from "./TabList.types";
 
-export default Vue.extend({
-  name: 'TabList',
+interface Props {
+  tabList: Array<TabType>;
+  tabId: string;
+}
+
+export default defineComponent({
+  name: "TabList",
   props: {
     tabList: {
       type: Array as () => Array<TabType>,
       required: true,
     },
-    selectedTabId: {
+    tabId: {
       type: String,
       required: true,
     },
   },
-  setup(props, context) {
-    function handleTabClick(tabId: TabType['id']) {
-      if (props.selectedTabId === tabId) return;
+  emits: ["update:tab-id"],
+  setup(props: Props, context) {
+    function handleTabClick(tab: TabType) {
+      if (props.tabId === tab.id) return;
 
-      context.emit('tab:update', { tabId });
+      context.emit("update:tab-id", tab.id);
     }
 
     return {

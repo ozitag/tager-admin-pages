@@ -1,201 +1,224 @@
 <template>
-  <page
-      :title="t('pages:pages')"
-      :header-buttons="[
+  <Page
+    :title="$i18n.t('pages:pages')"
+    :header-buttons="[
       {
-        text: t('pages:createPage'),
+        text: $i18n.t('pages:createPage'),
         href: getPageFormUrl({ pageId: 'create' }),
       },
     ]"
   >
-    <data-table
-        :column-defs='columnDefs'
-        :row-data='rowData'
-        :loading='isRowDataLoading'
-        :error-message='errorMessage'
-        :search-query='searchQuery'
-        :pagination='{
+    <DataTable
+      :column-defs="columnDefs"
+      :row-data="rowData"
+      :loading="isRowDataLoading"
+      :error-message="errorMessage"
+      :search-query="searchQuery"
+      :pagination="{
         pageSize,
         pageCount,
         pageNumber,
         disabled: isRowDataLoading,
-      }'
-        @change='handleChange'
+      }"
+      @change="handleChange"
     >
-      <template v-slot:filters>
-        <advanced-search :tags='tags' @click:tag='handleTagRemove'>
-          <div class='filters'>
-            <form-field-multi-select
-                v-model='templateFilter'
-                :options='templateOptionList'
-                name='templateFilter'
-                :searchable='true'
-                :label="t('pages:templates')"
-                class='filter'
+      <template #filters>
+        <AdvancedSearch :tags="tags" @click:tag="handleTagRemove">
+          <div class="filters">
+            <FormFieldMultiSelect
+              v-model:selected-options="templateFilter"
+              :options="templateOptionList"
+              name="templateFilter"
+              :searchable="true"
+              :label="$i18n.t('pages:templates')"
+              container-class="filter"
             />
-            <form-field-multi-select
-                v-model='parentFilter'
-                :options='parentOptionList'
-                name='parentPage'
-                :searchable='true'
-                :label="t('pages:parentPage')"
-                class='filter'
+            <FormFieldMultiSelect
+              v-model:selected-options="parentFilter"
+              :options="parentOptionList"
+              name="parentPage"
+              :searchable="true"
+              :label="$i18n.t('pages:parentPage')"
+              container-class="filter"
             />
-            <form-field-multi-select
-                v-model='statusFilter'
-                :options='statusOptionList'
-                name='statusFilter'
-                :label="t('pages:status')"
-                class='filter'
+            <FormFieldMultiSelect
+              v-model:selected-options="statusFilter"
+              :options="statusOptionList"
+              name="statusFilter"
+              :label="$i18n.t('pages:status')"
+              container-class="filter"
             />
           </div>
-        </advanced-search>
+        </AdvancedSearch>
       </template>
 
-      <template v-slot:cell(status)='{ row }'>
-        <div class='status'>
-          <span>{{ getStatusLabel(t)[row.status] }}</span>
+      <template #cell(status)="{ row }">
+        <div class="status">
+          <span>{{ statusLabels[row.status] }}</span>
         </div>
       </template>
 
-      <template v-slot:cell(actions)='{ row, rowIndex }'>
-        <base-button
-            variant='icon'
-            :title="t('pages:viewOnWebsite')"
-            :href='origin + row.path'
-            target='_blank'
+      <template #cell(actions)="{ row, rowIndex }">
+        <div>{{ log({ row, rowIndex }) }}</div>
+        <BaseButton
+          variant="icon"
+          :title="$i18n.t('pages:viewOnWebsite')"
+          :href="origin + row.path"
+          target="_blank"
         >
-          <svg-icon name='openInBrowser'></svg-icon>
-        </base-button>
+          <OpenInBrowserIcon />
+        </BaseButton>
 
-        <base-button
-            variant='icon'
-            :title="t('pages:edit')"
-            :disabled='isBusy(row.id)'
-            :href='getPageFormUrl({ pageId: row.id })'
+        <BaseButton
+          variant="icon"
+          :title="$i18n.t('pages:edit')"
+          :disabled="isBusy(row.id)"
+          :href="getPageFormUrl({ pageId: row.id })"
         >
-          <svg-icon name='edit'></svg-icon>
-        </base-button>
+          <EditIcon />
+        </BaseButton>
 
-        <base-button
-            variant='icon'
-            :disabled='isBusy(row.id) || rowIndex === rowData.length - 1'
-            @click="handleResourceMove(row.id, 'down')"
+        <BaseButton
+          variant="icon"
+          :disabled="isBusy(row.id) || rowIndex === rowData.length - 1"
+          @click="handleResourceMove(row.id, 'down')"
         >
-          <svg-icon name='south'/>
-        </base-button>
+          <SouthIcon />
+        </BaseButton>
 
-        <base-button
-            variant='icon'
-            :disabled='isBusy(row.id) || rowIndex === 0'
-            @click="handleResourceMove(row.id, 'up')"
+        <BaseButton
+          variant="icon"
+          :disabled="isBusy(row.id) || rowIndex === 0"
+          @click="handleResourceMove(row.id, 'up')"
         >
-          <svg-icon name='north'/>
-        </base-button>
+          <NorthIcon />
+        </BaseButton>
 
-        <base-button
-            variant='icon'
-            :title="t('pages:addChildPage')"
-            :disabled='isBusy(row.id)'
-            :href='getChildPageCreationFormUrl({ parentId: row.id })'
+        <BaseButton
+          variant="icon"
+          :title="$i18n.t('pages:addChildPage')"
+          :disabled="isBusy(row.id)"
+          :href="getChildPageCreationFormUrl({ parentId: row.id })"
         >
-          <svg-icon name='addCircle'></svg-icon>
-        </base-button>
+          <AddCircleIcon />
+        </BaseButton>
 
-        <base-button
-            variant='icon'
-            :title="t('pages:clone')"
-            :disabled='isBusy(row.id)'
-            @click='handleResourceClone(row.id)'
+        <BaseButton
+          variant="icon"
+          :title="$i18n.t('pages:clone')"
+          :disabled="isBusy(row.id)"
+          @click="handleResourceClone(row.id)"
         >
-          <svg-icon name='contentCopy'></svg-icon>
-        </base-button>
+          <ContentCopyIcon />
+        </BaseButton>
 
-        <base-button
-            variant='icon'
-            :title="t('pages:delete')"
-            :disabled='hasChild(row.id) || isBusy(row.id)'
-            @click='handleResourceDelete(row.id)'
+        <BaseButton
+          variant="icon"
+          :title="$i18n.t('pages:delete')"
+          :disabled="hasChild(row.id) || isBusy(row.id)"
+          @click="handleResourceDelete(row.id)"
         >
-          <svg-icon name='delete'></svg-icon>
-        </base-button>
+          <DeleteIcon />
+        </BaseButton>
       </template>
-    </data-table>
-  </page>
+    </DataTable>
+  </Page>
 </template>
 
-<script lang='ts'>
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  ref,
-  watch
-} from '@vue/composition-api';
-import isEqual from 'lodash/isEqual';
-import pick from 'lodash/pick';
-import {TFunction} from 'i18next';
+<script lang="ts">
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import isEqual from "lodash.isequal";
+import pick from "lodash.pick";
+import { useRoute, useRouter } from "vue-router";
 
 import {
-  ColumnDefinition,
+  AddCircleIcon,
+  AdvancedSearch,
+  BaseButton,
+  type ColumnDefinition,
+  ContentCopyIcon,
+  DataTable,
+  DeleteIcon,
+  EditIcon,
+  FormFieldMultiSelect,
   getFilterParamAsStringArray,
   getFilterParams,
-  OptionType,
+  NorthIcon,
+  OpenInBrowserIcon,
+  type OptionType,
+  SouthIcon,
   useDataTable,
-  useTranslation
-} from '@tager/admin-ui';
+} from "@tager/admin-ui";
 import {
   useResource,
   useResourceDelete,
   useResourceMove,
-  useResourceClone
-} from '@tager/admin-services';
+  useResourceClone,
+  useI18n,
+  getWebsiteOrigin,
+} from "@tager/admin-services";
+import { Page } from "@tager/admin-layout";
 
-import {PageFull} from '../typings/model';
-import {PageShort, TagType} from '../typings/model';
-import {getPageFormUrl} from '../utils/paths';
+import type { PageFull } from "../typings/model";
+import type { PageShort, TagType } from "../typings/model";
+import { getPageFormUrl } from "../utils/paths";
 import {
   clonePage,
   deletePage,
   getPageList,
   getPageListWithChildren,
   getPageTemplateList,
-  movePage
-} from '../services/requests';
-import {getNameWithDepth} from '../utils/common';
+  movePage,
+} from "../services/requests";
+import { getNameWithDepth } from "../utils/common";
 
-import {getStatusOptions} from "./PageForm/PageForm.helpers";
-
-function getStatusLabel(t: TFunction): Record<string, string> {
-  return {
-    PUBLISHED: t('pages:statusPublished'),
-    DRAFT: t('pages:statusDraft'),
-  };
-}
+import { getStatusOptions } from "./PageForm/PageForm.helpers";
 
 export default defineComponent({
-  name: 'PageList',
-  setup(props, context) {
-    const {t} = useTranslation(context);
+  name: "PageList",
+  components: {
+    Page,
+    DeleteIcon,
+    ContentCopyIcon,
+    AddCircleIcon,
+    NorthIcon,
+    SouthIcon,
+    EditIcon,
+    OpenInBrowserIcon,
+    FormFieldMultiSelect,
+    AdvancedSearch,
+    DataTable,
+    BaseButton,
+  },
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const i18n = useI18n();
 
-    const statusOptionList = computed<OptionType[]>(() => getStatusOptions(t));
+    const statusLabels = computed(() => ({
+      PUBLISHED: i18n.t("pages:statusPublished"),
+      DRAFT: i18n.t("pages:statusDraft"),
+    }));
+
+    const statusOptionList = computed<OptionType[]>(() =>
+      getStatusOptions(i18n)
+    );
 
     /** Short template list */
     const [
       fetchTemplateList,
-      {data: shortTemplateList, loading: isShortTemplateListLoading}
+      { data: shortTemplateList, loading: isShortTemplateListLoading },
     ] = useResource({
       fetchResource: getPageTemplateList,
       initialValue: [],
-      context,
-      resourceName: 'Template list'
+      resourceName: "Template list",
     });
 
     const templateOptionList = computed(() =>
-        shortTemplateList.value.map<OptionType>((template) => ({
-          value: template.id,
-          label: template.label
-        }))
+      shortTemplateList.value.map<OptionType>((template) => ({
+        value: template.id,
+        label: template.label,
+      }))
     );
 
     onMounted(() => {
@@ -205,19 +228,18 @@ export default defineComponent({
     /** Parent page list */
     const [
       fetchParentList,
-      {data: shortParentList, loading: isShortParentListLoading}
+      { data: shortParentList, loading: isShortParentListLoading },
     ] = useResource({
       fetchResource: getPageListWithChildren,
       initialValue: [],
-      context,
-      resourceName: 'Template list'
+      resourceName: "Template list",
     });
 
     const parentOptionList = computed(() =>
-        shortParentList.value.map<OptionType>((parent) => ({
-          value: parent.id.toString(),
-          label: getNameWithDepth(parent.title, parent.depth)
-        }))
+      shortParentList.value.map<OptionType>((parent) => ({
+        value: parent.id.toString(),
+        label: getNameWithDepth(parent.title, parent.depth),
+      }))
     );
 
     onMounted(() => {
@@ -227,12 +249,9 @@ export default defineComponent({
     /** Template filter **/
 
     const initialTemplateFilter = computed(() => {
-      const queryValue = getFilterParamAsStringArray(
-          context.root.$route.query,
-          'template'
-      );
+      const queryValue = getFilterParamAsStringArray(route.query, "template");
       return templateOptionList.value.filter((option) =>
-          queryValue.some((selected) => option.value === selected)
+        queryValue.some((selected) => option.value === selected)
       );
     });
 
@@ -245,12 +264,9 @@ export default defineComponent({
     /** Parent filter **/
 
     const initialParentFilter = computed(() => {
-      const queryValue = getFilterParamAsStringArray(
-          context.root.$route.query,
-          'parent'
-      );
+      const queryValue = getFilterParamAsStringArray(route.query, "parent");
       return parentOptionList.value.filter((option) =>
-          queryValue.some((selected) => option.value === selected)
+        queryValue.some((selected) => option.value === selected)
       );
     });
 
@@ -263,12 +279,9 @@ export default defineComponent({
     /** Status filter **/
 
     const initialStatusFilter = computed(() => {
-      const queryValue = getFilterParamAsStringArray(
-          context.root.$route.query,
-          'status'
-      );
+      const queryValue = getFilterParamAsStringArray(route.query, "status");
       return statusOptionList.value.filter((option) =>
-          queryValue.some((selected) => option.value === selected)
+        queryValue.some((selected) => option.value === selected)
       );
     });
 
@@ -297,72 +310,66 @@ export default defineComponent({
       handleChange,
       pageSize,
       pageCount,
-      pageNumber
+      pageNumber,
     } = useDataTable<PageShort>({
       fetchEntityList: (params) =>
-          getPageList({
-            query: params.searchQuery,
-            pageNumber: params.pageNumber,
-            pageSize: params.pageSize,
-            ...filterParams.value
-          }),
+        getPageList({
+          query: params.searchQuery,
+          pageNumber: params.pageNumber,
+          pageSize: params.pageSize,
+          ...filterParams.value,
+        }),
       initialValue: [],
-      context,
-      resourceName: 'Page list',
-      pageSize: 100
+      resourceName: "Page list",
+      pageSize: 100,
     });
 
     const isRowDataLoading = computed<boolean>(
-        () =>
-            isPageListLoading.value ||
-            isShortTemplateListLoading.value ||
-            isShortParentListLoading.value
+      () =>
+        isPageListLoading.value ||
+        isShortTemplateListLoading.value ||
+        isShortParentListLoading.value
     );
 
     watch(filterParams, () => {
       const newQuery = {
-        ...pick(context.root.$route.query, ['query', 'pageNumber']),
-        ...filterParams.value
+        ...pick(route.query, ["query", "pageNumber"]),
+        ...filterParams.value,
       };
 
-      if (!isEqual(context.root.$route.query, newQuery)) {
-        context.root.$router.replace({query: newQuery});
+      if (!isEqual(route.query, newQuery)) {
+        router.replace({ query: newQuery });
         fetchPageList();
       }
     });
 
-    const {isDeleting, handleResourceDelete} = useResourceDelete({
+    const { isDeleting, handleResourceDelete } = useResourceDelete({
       deleteResource: deletePage,
-      resourceName: 'Page',
+      resourceName: "Page",
       onSuccess: fetchPageList,
-      context
     });
 
-    const {isMoving, handleResourceMove} = useResourceMove({
+    const { isMoving, handleResourceMove } = useResourceMove({
       moveResource: movePage,
-      resourceName: 'Page',
+      resourceName: "Page",
       onSuccess: fetchPageList,
-      context
     });
 
-    const {isCloning, handleResourceClone} = useResourceClone({
+    const { isCloning, handleResourceClone } = useResourceClone({
       cloneResource: clonePage,
-      confirmMessage: t('pages:cloneConfirm'),
-      successMessage: t('pages:cloneSuccess'),
-      failureMessage: t('pages:cloneFailure'),
-      onSuccessRedirectTo: (data: PageFull) => {
-        return '/pages/' + data.id;
-      },
-      context
+      confirmMessage: i18n.t("pages:cloneConfirm"),
+      successMessage: i18n.t("pages:cloneSuccess"),
+      failureMessage: i18n.t("pages:cloneFailure"),
+      onSuccessRedirectTo: (data: PageFull) => "/pages/" + data.id,
     });
 
     function getChildPageCreationFormUrl(params: { parentId: number }) {
       const searchParams = new URLSearchParams({
-        parentId: String(params.parentId)
+        parentId: String(params.parentId),
       });
-      const searchString = '?' + searchParams.toString();
+      const searchString = "?" + searchParams.toString();
 
-      const path = getPageFormUrl({pageId: 'create'});
+      const path = getPageFormUrl({ pageId: "create" });
 
       return path + searchString;
     }
@@ -373,77 +380,77 @@ export default defineComponent({
 
     function isBusy(pageId: number): boolean {
       return (
-          isDeleting(pageId) ||
-          isMoving(pageId) ||
-          isCloning(pageId) ||
-          isRowDataLoading.value
+        isDeleting(pageId) ||
+        isMoving(pageId) ||
+        isCloning(pageId) ||
+        isRowDataLoading.value
       );
     }
+
+    const origin = getWebsiteOrigin();
 
     const columnDefs: Array<ColumnDefinition<PageShort>> = [
       {
         id: 1,
-        name: t('pages:title'),
-        field: 'title',
-        format: ({row}) => ({
-          url: getPageFormUrl({pageId: row.id}),
-          text: getNameWithDepth(row.title, row.depth)
+        name: i18n.t("pages:title"),
+        field: "title",
+        format: ({ row }) => ({
+          url: getPageFormUrl({ pageId: row.id }),
+          text: getNameWithDepth(row.title, row.depth),
         }),
-        type: 'link',
+        type: "link",
         options: {
-          shouldUseRouter: true
-        }
+          shouldUseRouter: true,
+        },
       },
       {
         id: 2,
-        name: t('pages:path'),
-        field: 'path',
-        type: 'link',
-        format: ({row}) => {
-          const origin =
-              process.env.VUE_APP_WEBSITE_URL || window.location.origin;
+        name: i18n.t("pages:path"),
+        field: "path",
+        type: "link",
+        format: ({ row }) => {
           return {
             url: origin + row.path,
-            text: row.path
+            text: row.path,
           };
         },
         options: {
-          shouldOpenNewTab: true
-        }
+          shouldOpenNewTab: true,
+        },
       },
       {
         id: 3,
-        name: t('pages:status'),
-        field: 'status'
+        name: i18n.t("pages:status"),
+        field: "status",
       },
       {
         id: 4,
-        name: t('pages:template'),
-        field: 'templateName'
+        name: i18n.t("pages:template"),
+        field: "templateName",
       },
       {
         id: 5,
-        name: t('pages:actions'),
-        field: 'actions',
-        style: {width: '140px', textAlign: 'center', whiteSpace: 'nowrap'},
-        headStyle: {width: '140px', textAlign: 'center'}
-      }
+        name: i18n.t("pages:actions"),
+        field: "actions",
+        style: { width: "140px", textAlign: "center", whiteSpace: "nowrap" },
+        headStyle: { width: "140px", textAlign: "center" },
+      },
     ];
 
     function handleTagRemove(event: TagType) {
-      if (event.name === 'template') {
+      if (event.name === "template") {
         templateFilter.value = templateFilter.value.filter(
-            (template) => template.value !== event.value
+          (template) => template.value !== event.value
         );
       }
-      if (event.name === 'parent') {
+      if (event.name === "parent") {
         parentFilter.value = parentFilter.value.filter(
-            (parent) => parent.value !== event.value
+          (parent) => parent.value !== event.value
         );
       }
-      if (event.name === 'status') {
+      if (event.name === "status") {
         statusFilter.value = statusFilter.value.filter(
-            (status) => status.value !== event.value
+          (status) => status.value !== event.value
         );
       }
     }
@@ -452,24 +459,22 @@ export default defineComponent({
       ...templateFilter.value.map((template) => ({
         value: template.value,
         label: template.label,
-        name: 'template',
-        title: t('pages:templates')
+        name: "template",
+        title: i18n.t("pages:templates"),
       })),
       ...parentFilter.value.map((parent) => ({
         value: parent.value,
         label: parent.label,
-        name: 'parent',
-        title: t('pages:parentPage')
+        name: "parent",
+        title: i18n.t("pages:parentPage"),
       })),
       ...statusFilter.value.map((status) => ({
         value: status.value,
         label: status.label,
-        name: 'status',
-        title: t('pages:status')
-      }))
+        name: "status",
+        title: i18n.t("pages:status"),
+      })),
     ]);
-
-    const origin = process.env.VUE_APP_WEBSITE_URL || window.location.origin;
 
     return {
       columnDefs,
@@ -489,7 +494,6 @@ export default defineComponent({
       pageSize,
       pageCount,
       pageNumber,
-      t,
       tags,
       handleTagRemove,
       templateFilter,
@@ -499,13 +503,14 @@ export default defineComponent({
       parentOptionList,
       getStatusOptions,
       statusOptionList,
-      getStatusLabel
+      statusLabels,
+      log: console.log.bind(console),
     };
-  }
+  },
 });
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .filters {
   display: flex;
   margin: 0 -10px;

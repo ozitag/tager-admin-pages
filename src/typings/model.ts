@@ -1,11 +1,11 @@
-import { FileType, Nullable } from '@tager/admin-services';
-import {
+import type { FileType, Nullable } from "@tager/admin-services";
+import type {
   FieldConfigUnion,
   FieldShortType,
   IncomingValueUnion,
-} from '@tager/admin-dynamic-field';
+} from "@tager/admin-dynamic-field";
 
-export type PageStatus = 'PUBLISHED' | 'DRAFT';
+export type PageStatus = "PUBLISHED" | "DRAFT";
 
 /** Template */
 
@@ -24,7 +24,7 @@ export interface PageShort {
   readonly title: string;
   readonly path: string;
   readonly templateName: string;
-  readonly parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
+  readonly parent: Nullable<Pick<PageShort, "id" | "title">>;
   readonly depth: number;
 }
 
@@ -34,7 +34,7 @@ export interface PageFull {
   readonly title: string;
   readonly image: Nullable<FileType>;
   readonly path: string;
-  readonly parent: Nullable<Pick<PageShort, 'id' | 'title'>>;
+  readonly parent: Nullable<Pick<PageShort, "id" | "title">>;
 
   readonly excerpt: Nullable<string>;
   readonly body: Nullable<string>;
@@ -49,7 +49,7 @@ export interface PageFull {
   readonly openGraphImage: Nullable<FileType>;
 
   /** Template */
-  readonly template: TemplateShort['id'];
+  readonly template: TemplateShort["id"];
   readonly templateValues: Array<FieldShortType<IncomingValueUnion>>;
 }
 
