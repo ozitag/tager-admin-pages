@@ -59,7 +59,6 @@
       </template>
 
       <template #cell(actions)="{ row, rowIndex }">
-        <div>{{ log({ row, rowIndex }) }}</div>
         <BaseButton
           variant="icon"
           :title="$i18n.t('pages:viewOnWebsite')"
@@ -504,7 +503,6 @@ export default defineComponent({
       getStatusOptions,
       statusOptionList,
       statusLabels,
-      log: console.log.bind(console),
     };
   },
 });

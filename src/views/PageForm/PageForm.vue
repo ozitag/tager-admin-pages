@@ -591,17 +591,14 @@ export default defineComponent({
       }
     });
 
-    const isLoading = computed<boolean>(() => {
-      const isLoadingTemp =
+    const isLoading = computed<boolean>(
+      () =>
         isPageLoading.value ||
         isPageListLoading.value ||
         isShortTemplateListLoading.value ||
         isFullTemplateListLoading.value ||
-        isPageInfoLoading.value;
-
-      console.log("isLoadingTemp", isLoadingTemp);
-      return isLoadingTemp;
-    });
+        isPageInfoLoading.value
+    );
 
     const headerButtonList = computed<Array<TopButtonConfigType>>(() =>
       [
