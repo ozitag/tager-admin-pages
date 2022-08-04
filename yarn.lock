@@ -1106,24 +1106,24 @@
   dependencies:
     lodash.kebabcase "^4.1.1"
 
-"@tager/admin-layout@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@tager/admin-layout/-/admin-layout-1.0.0.tgz#d8c29bbe3f0f5ae4e4f6e53dd8a3815f9a58512f"
-  integrity sha512-x3YGPVstsxKnKNe82i6VSVReIJTeE6V5UuZu19Q8aGOLgbOxCbK7vI4cAIXvwGdhRxTsgx6cEVzvC0u+bBVnLQ==
+"@tager/admin-layout@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@tager/admin-layout/-/admin-layout-1.0.2.tgz#70f2c19971a5d893c4eb3e2f23e5dc67d032cfa0"
+  integrity sha512-Hvuf/5NIfkG6OTej9SrXZasN7fj8h1+QdBcWOb0uGEdjGxxTfTe8UZWZPG58MqvD+YYeJHpZHMS6DBoHJcO+vQ==
 
-"@tager/admin-services@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@tager/admin-services/-/admin-services-1.0.0.tgz#b9b170234689737ef972e56b4ded45c216c7c723"
-  integrity sha512-4YxFBLoA42ia1lDjDcq0qujXYrlkf0ilP4++I/zpSqLu5rRnMql467gmlb+E+Dm603c+s4JX3RDxCfP4g51+xQ==
+"@tager/admin-services@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@tager/admin-services/-/admin-services-1.0.3.tgz#23ced61804dcdf55b08388c6142271e74310fd9c"
+  integrity sha512-5Jk4Yc2i0K5TIkxpSHROXBU4mforUbeti1g36yU3JjY2DCM90O0LyEFSSXaiL8bOtxHaFaFDOzLkr4u1MJhKkg==
   dependencies:
     i18next "^21.6.16"
     nanoid "^3.3.3"
     zod "^3.14.4"
 
-"@tager/admin-ui@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-1.0.1.tgz#e0568add22f66f1a9bdaa529743f53767eb70992"
-  integrity sha512-XD6H3DOZ6hUs4J3ovXAlM1S7kHJ4wfbeWfft9vt1j/DhqWp7JmILXxfpEHPsTFIgewJgOO0VX+sPgUQsSkVrzw==
+"@tager/admin-ui@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@tager/admin-ui/-/admin-ui-1.0.5.tgz#7993e464899da89641c42a29f06f3511675e83e2"
+  integrity sha512-7lHsswP4p4rH6+UF3RDhQAXIZtqVg657+9HswcE5ym+8LJ52Y0/gdk1ESdmL8OILSaPuLrffDf+c0Szfl2fe3Q==
   dependencies:
     "@ckeditor/ckeditor5-vue" "^4.0.0"
     "@floating-ui/dom" "^0.4.5"

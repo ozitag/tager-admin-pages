@@ -187,12 +187,12 @@ import {
   urlTranslit,
   useI18n,
   navigateBack,
-  useToast,
+  useToast
 } from "@tager/admin-services";
 import {
   type OptionType,
   type SeoChangeEvent,
-  type TagerFormSubmitEvent,
+  type TabType,
   FormFooter,
   SeoFieldGroup,
   FormField,
@@ -201,6 +201,7 @@ import {
   FormFieldUrlAliasInput,
   FieldValue,
   FormFieldFileInput,
+  TabList
 } from "@tager/admin-ui";
 import {
   DynamicField,
@@ -208,7 +209,7 @@ import {
   type FieldShortType,
   type FieldUnion,
   type IncomingValueUnion,
-  universalFieldUtils,
+  universalFieldUtils
 } from "@tager/admin-dynamic-field";
 import { Page, type TopButtonConfigType } from "@tager/admin-layout";
 
@@ -220,7 +221,7 @@ import {
   getPageListAll,
   getPageTemplateById,
   getPageTemplateList,
-  updatePage,
+  updatePage
 } from "../../services/requests";
 import { getPageFormUrl, getPageListUrl } from "../../utils/paths";
 import { getNameWithDepth } from "../../utils/common";
@@ -230,9 +231,8 @@ import {
   convertPageFormValuesToUpdatePayload,
   type FormValues,
   getPageFormValues,
-  getStatusOptions,
+  getStatusOptions
 } from "./PageForm.helpers";
-import TabList, { type TabType } from "./components/TabList";
 
 export default defineComponent({
   name: "PageForm",
@@ -247,7 +247,7 @@ export default defineComponent({
     FormFieldRichTextInput,
     FormFieldFileInput,
     FieldValue,
-    FormFieldUrlAliasInput,
+    FormFieldUrlAliasInput
   },
   setup() {
     const i18n = useI18n();
@@ -281,7 +281,7 @@ export default defineComponent({
         return Promise.resolve({ data: null });
       },
       initialValue: null,
-      resourceName: "Page",
+      resourceName: "Page"
     });
 
     onMounted(fetchPage);
@@ -296,7 +296,7 @@ export default defineComponent({
       useResource({
         fetchResource: () => getPageListAll(),
         initialValue: [],
-        resourceName: "Page list",
+        resourceName: "Page list"
       });
 
     onMounted(() => {
@@ -314,7 +314,7 @@ export default defineComponent({
     const parentPageOptions = computed<Array<OptionType<Nullable<number>>>>(
       () => {
         const defaultPageOption = [
-          { value: null, label: i18n.t("pages:noParent") },
+          { value: null, label: i18n.t("pages:noParent") }
         ];
 
         const pageLists = pageList.value
@@ -322,7 +322,7 @@ export default defineComponent({
           .filter((shortPage) => shortPage.id !== page.value?.id)
           .map((shortPage) => ({
             value: shortPage.id,
-            label: getNameWithDepth(shortPage.title, shortPage.depth),
+            label: getNameWithDepth(shortPage.title, shortPage.depth)
           }));
 
         return [...defaultPageOption, ...pageLists];
@@ -333,21 +333,21 @@ export default defineComponent({
 
     const [
       fetchTemplateList,
-      { data: shortTemplateList, loading: isShortTemplateListLoading },
+      { data: shortTemplateList, loading: isShortTemplateListLoading }
     ] = useResource({
       fetchResource: getPageTemplateList,
       initialValue: [],
-      resourceName: "Template list",
+      resourceName: "Template list"
     });
 
     const templateOptions = computed(() => {
       const defaultTemplate = [
-        { value: null, label: i18n.t("pages:noTemplate") },
+        { value: null, label: i18n.t("pages:noTemplate") }
       ];
 
       const templates = shortTemplateList.value.map<OptionType>((template) => ({
         value: template.id,
-        label: template.label,
+        label: template.label
       }));
 
       return [...defaultTemplate, ...templates];
@@ -363,7 +363,7 @@ export default defineComponent({
       useResource<Nullable<InfoModel>>({
         fetchResource: getPageInfo,
         initialValue: null,
-        resourceName: "Page info",
+        resourceName: "Page info"
       });
 
     onMounted(() => {
@@ -377,8 +377,8 @@ export default defineComponent({
           fileScenarios: {
             image: null,
             content: "custom",
-            openGraph: null,
-          },
+            openGraph: null
+          }
         }
     );
 
@@ -542,7 +542,7 @@ export default defineComponent({
             title: i18n.t("pages:success"),
             body: isCreation.value
               ? i18n.t("pages:createdSuccessMessage")
-              : i18n.t("pages:updatedSuccessMessage"),
+              : i18n.t("pages:updatedSuccessMessage")
           });
         })
         .catch((error) => {
@@ -553,7 +553,7 @@ export default defineComponent({
             title: i18n.t("pages:error"),
             body: isCreation.value
               ? i18n.t("pages:createdErrorMessage")
-              : i18n.t("pages:updatedErrorMessage"),
+              : i18n.t("pages:updatedErrorMessage")
           });
         })
         .finally(() => {
@@ -577,7 +577,7 @@ export default defineComponent({
         shouldDisplayTemplateTab.value
           ? { id: "template", label: i18n.t("pages:tabs.template") }
           : null,
-        { id: "seo", label: i18n.t("pages:tabs.seo") },
+        { id: "seo", label: i18n.t("pages:tabs.seo") }
       ].filter(notEmpty);
     });
 
@@ -604,20 +604,20 @@ export default defineComponent({
       [
         page.value
           ? {
-              text: i18n.t("pages:viewPage"),
-              href: websiteOrigin + page.value.path,
-              target: "_blank",
-            }
-          : null,
+            text: i18n.t("pages:viewPage"),
+            href: websiteOrigin + page.value.path,
+            target: "_blank"
+          }
+          : null
       ].filter(isNotNullish)
     );
 
     function handleSeoFieldGroupChange({
-      title,
-      description,
-      keywords,
-      image,
-    }: SeoChangeEvent) {
+                                         title,
+                                         description,
+                                         keywords,
+                                         image
+                                       }: SeoChangeEvent) {
       values.value.pageTitle = title;
       values.value.pageDescription = description;
       values.value.pageKeywords = keywords;
@@ -661,9 +661,9 @@ export default defineComponent({
       handleTitleChange,
       handleAliasChange,
       pathPrefix,
-      statusOptions,
+      statusOptions
     };
-  },
+  }
 });
 </script>
 

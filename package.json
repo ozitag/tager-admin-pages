@@ -1,6 +1,6 @@
 {
   "name": "@tager/admin-pages",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "exports": {
     "./css": "./dist/style.css",
@@ -29,9 +29,9 @@
     "@babel/eslint-parser": "^7.17.0",
     "@rushstack/eslint-patch": "^1.1.2",
     "@tager/admin-dynamic-field": "^1.0.0",
-    "@tager/admin-layout": "^1.0.0",
-    "@tager/admin-services": "^1.0.0",
-    "@tager/admin-ui": "^1.0.1",
+    "@tager/admin-layout": "^1.0.2",
+    "@tager/admin-services": "^1.0.3",
+    "@tager/admin-ui": "^1.0.5",
     "@types/lodash.isequal": "^4.5.6",
     "@types/lodash.pick": "^4.4.7",
     "@types/node": "16.x",
