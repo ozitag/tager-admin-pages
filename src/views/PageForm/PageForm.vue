@@ -201,7 +201,7 @@ import {
   FormFieldUrlAliasInput,
   FieldValue,
   FormFieldFileInput,
-  TabList
+  TabList, type TagerFormSubmitEvent
 } from "@tager/admin-ui";
 import {
   DynamicField,
