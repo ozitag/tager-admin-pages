@@ -158,6 +158,13 @@
             :image-error-message="errors.openGraphImage"
             @change="handleSeoFieldGroupChange"
           />
+
+          <FormFieldCheckbox
+            v-model:checked="values.hiddenFromSeoIndexation"
+            name="hiddenFromSeoIndexation"
+            :error="errors.hiddenFromSeoIndexation"
+            :label="$i18n.t('pages:hiddenFromSeoIndexation')"
+          />
         </template>
       </template>
     </form>
@@ -197,6 +204,7 @@ import {
   SeoFieldGroup,
   FormField,
   FormFieldSelect,
+  FormFieldCheckbox,
   FormFieldRichTextInput,
   FormFieldUrlAliasInput,
   FieldValue,
@@ -247,7 +255,8 @@ export default defineComponent({
     FormFieldRichTextInput,
     FormFieldFileInput,
     FieldValue,
-    FormFieldUrlAliasInput
+    FormFieldUrlAliasInput,
+    FormFieldCheckbox
   },
   setup() {
     const i18n = useI18n();
@@ -491,8 +500,7 @@ export default defineComponent({
       isSubmitting.value = true;
 
       const creationPayload = convertPageFormValuesToCreationPayload(
-        values.value,
-        templateValues.value
+        values.value
       );
 
       if (isCreation.value) {

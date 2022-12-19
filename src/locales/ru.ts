@@ -52,4 +52,6 @@ export const RU: typeof EN = {
   status: "Статус",
   statusPublished: "Опубликована",
   statusDraft: "Черновик",
+
+  hiddenFromSeoIndexation: "Скрыть от SEO индексации",
 };

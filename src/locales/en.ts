@@ -50,4 +50,6 @@ export const EN = {
   status: "Status",
   statusPublished: "Published",
   statusDraft: "Draft",
+
+  hiddenFromSeoIndexation: "Hidden from SEO Indexation"
 };

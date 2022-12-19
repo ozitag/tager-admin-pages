@@ -47,6 +47,7 @@ export interface PageFull {
   readonly openGraphTitle: Nullable<string>;
   readonly openGraphDescription: Nullable<string>;
   readonly openGraphImage: Nullable<FileType>;
+  readonly hiddenFromSeoIndexation: boolean;
 
   /** Template */
   readonly template: TemplateShort["id"];

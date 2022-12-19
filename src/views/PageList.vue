@@ -146,7 +146,7 @@ import {
   OpenInBrowserIcon,
   type OptionType,
   SouthIcon,
-  useDataTable,
+  useDataTable
 } from "@tager/admin-ui";
 import {
   useResource,
@@ -154,7 +154,7 @@ import {
   useResourceMove,
   useResourceClone,
   useI18n,
-  getWebsiteOrigin,
+  getWebsiteOrigin
 } from "@tager/admin-services";
 import { Page } from "@tager/admin-layout";
 
@@ -167,7 +167,7 @@ import {
   getPageList,
   getPageListWithChildren,
   getPageTemplateList,
-  movePage,
+  movePage
 } from "../services/requests";
 import { getNameWithDepth } from "../utils/common";
 
@@ -187,7 +187,7 @@ export default defineComponent({
     FormFieldMultiSelect,
     AdvancedSearch,
     DataTable,
-    BaseButton,
+    BaseButton
   },
   setup() {
     const router = useRouter();
@@ -196,7 +196,7 @@ export default defineComponent({
 
     const statusLabels = computed(() => ({
       PUBLISHED: i18n.t("pages:statusPublished"),
-      DRAFT: i18n.t("pages:statusDraft"),
+      DRAFT: i18n.t("pages:statusDraft")
     }));
 
     const statusOptionList = computed<OptionType[]>(() =>
@@ -206,17 +206,17 @@ export default defineComponent({
     /** Short template list */
     const [
       fetchTemplateList,
-      { data: shortTemplateList, loading: isShortTemplateListLoading },
+      { data: shortTemplateList, loading: isShortTemplateListLoading }
     ] = useResource({
       fetchResource: getPageTemplateList,
       initialValue: [],
-      resourceName: "Template list",
+      resourceName: "Template list"
     });
 
     const templateOptionList = computed(() =>
       shortTemplateList.value.map<OptionType>((template) => ({
         value: template.id,
-        label: template.label,
+        label: template.label
       }))
     );
 
@@ -227,17 +227,17 @@ export default defineComponent({
     /** Parent page list */
     const [
       fetchParentList,
-      { data: shortParentList, loading: isShortParentListLoading },
+      { data: shortParentList, loading: isShortParentListLoading }
     ] = useResource({
       fetchResource: getPageListWithChildren,
       initialValue: [],
-      resourceName: "Template list",
+      resourceName: "Parent pages"
     });
 
     const parentOptionList = computed(() =>
       shortParentList.value.map<OptionType>((parent) => ({
         value: parent.id.toString(),
-        label: getNameWithDepth(parent.title, parent.depth),
+        label: getNameWithDepth(parent.title, parent.depth)
       }))
     );
 
@@ -296,7 +296,7 @@ export default defineComponent({
       return getFilterParams({
         template: templateFilter.value.map((template) => template.value),
         parent: parentFilter.value.map((parent) => parent.value),
-        status: statusFilter.value.map((status) => status.value),
+        status: statusFilter.value.map((status) => status.value)
       });
     });
 
@@ -309,18 +309,18 @@ export default defineComponent({
       handleChange,
       pageSize,
       pageCount,
-      pageNumber,
+      pageNumber
     } = useDataTable<PageShort>({
       fetchEntityList: (params) =>
         getPageList({
           query: params.searchQuery,
           pageNumber: params.pageNumber,
           pageSize: params.pageSize,
-          ...filterParams.value,
+          ...filterParams.value
         }),
       initialValue: [],
       resourceName: "Page list",
-      pageSize: 100,
+      pageSize: 100
     });
 
     const isRowDataLoading = computed<boolean>(
@@ -333,7 +333,7 @@ export default defineComponent({
     watch(filterParams, () => {
       const newQuery = {
         ...pick(route.query, ["query", "pageNumber"]),
-        ...filterParams.value,
+        ...filterParams.value
       };
 
       if (!isEqual(route.query, newQuery)) {
@@ -345,13 +345,13 @@ export default defineComponent({
     const { isDeleting, handleResourceDelete } = useResourceDelete({
       deleteResource: deletePage,
       resourceName: "Page",
-      onSuccess: fetchPageList,
+      onSuccess: fetchPageList
     });
 
     const { isMoving, handleResourceMove } = useResourceMove({
       moveResource: movePage,
       resourceName: "Page",
-      onSuccess: fetchPageList,
+      onSuccess: fetchPageList
     });
 
     const { isCloning, handleResourceClone } = useResourceClone({
@@ -359,12 +359,12 @@ export default defineComponent({
       confirmMessage: i18n.t("pages:cloneConfirm"),
       successMessage: i18n.t("pages:cloneSuccess"),
       failureMessage: i18n.t("pages:cloneFailure"),
-      onSuccessRedirectTo: (data: PageFull) => "/pages/" + data.id,
+      onSuccessRedirectTo: (data: PageFull) => "/pages/" + data.id
     });
 
     function getChildPageCreationFormUrl(params: { parentId: number }) {
       const searchParams = new URLSearchParams({
-        parentId: String(params.parentId),
+        parentId: String(params.parentId)
       });
       const searchString = "?" + searchParams.toString();
 
@@ -395,12 +395,12 @@ export default defineComponent({
         field: "title",
         format: ({ row }) => ({
           url: getPageFormUrl({ pageId: row.id }),
-          text: getNameWithDepth(row.title, row.depth),
+          text: getNameWithDepth(row.title, row.depth)
         }),
         type: "link",
         options: {
-          shouldUseRouter: true,
-        },
+          shouldUseRouter: true
+        }
       },
       {
         id: 2,
@@ -410,30 +410,30 @@ export default defineComponent({
         format: ({ row }) => {
           return {
             url: origin + row.path,
-            text: row.path,
+            text: row.path
           };
         },
         options: {
-          shouldOpenNewTab: true,
-        },
+          shouldOpenNewTab: true
+        }
       },
       {
         id: 3,
         name: i18n.t("pages:status"),
-        field: "status",
+        field: "status"
       },
       {
         id: 4,
         name: i18n.t("pages:template"),
-        field: "templateName",
+        field: "templateName"
       },
       {
         id: 5,
         name: i18n.t("pages:actions"),
         field: "actions",
         style: { width: "140px", textAlign: "center", whiteSpace: "nowrap" },
-        headStyle: { width: "140px", textAlign: "center" },
-      },
+        headStyle: { width: "140px", textAlign: "center" }
+      }
     ];
 
     function handleTagRemove(event: TagType) {
@@ -459,20 +459,20 @@ export default defineComponent({
         value: template.value,
         label: template.label,
         name: "template",
-        title: i18n.t("pages:templates"),
+        title: i18n.t("pages:templates")
       })),
       ...parentFilter.value.map((parent) => ({
         value: parent.value,
         label: parent.label,
         name: "parent",
-        title: i18n.t("pages:parentPage"),
+        title: i18n.t("pages:parentPage")
       })),
       ...statusFilter.value.map((status) => ({
         value: status.value,
         label: status.label,
         name: "status",
-        title: i18n.t("pages:status"),
-      })),
+        title: i18n.t("pages:status")
+      }))
     ]);
 
     return {
@@ -502,9 +502,9 @@ export default defineComponent({
       parentOptionList,
       getStatusOptions,
       statusOptionList,
-      statusLabels,
+      statusLabels
     };
-  },
+  }
 });
 </script>
 

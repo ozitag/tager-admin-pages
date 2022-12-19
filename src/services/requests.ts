@@ -73,6 +73,20 @@ export interface PageCreatePayload {
   title: string;
   status: string;
   parent: Nullable<PageShort["id"]>;
+  path: string;
+  template: Nullable<TemplateShort["id"]>;
+}
+
+export function createPage(
+  payload: PageCreatePayload
+): Promise<ResponseBody<PageFull>> {
+  return request.post({ path: "/admin/pages", body: payload });
+}
+
+export interface PageUpdatePayload extends PageCreatePayload {
+  title: string;
+  status: string;
+  parent: Nullable<PageShort["id"]>;
   image: Nullable<FileType["id"]>;
   excerpt: string;
   body: string;
@@ -87,16 +101,6 @@ export interface PageCreatePayload {
 
   template: Nullable<TemplateShort["id"]>;
   templateFields: Array<FieldShortType<OutgoingValueUnion>>;
-}
-
-export function createPage(
-  payload: PageCreatePayload
-): Promise<ResponseBody<PageFull>> {
-  return request.post({ path: "/admin/pages", body: payload });
-}
-
-export interface PageUpdatePayload extends PageCreatePayload {
-  path: string;
 }
 
 export function updatePage(
