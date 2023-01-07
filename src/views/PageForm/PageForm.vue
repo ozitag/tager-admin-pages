@@ -5,6 +5,7 @@
     "
     :is-content-loading="isLoading"
     :header-buttons="headerButtonList"
+    v-model:tab-id="selectedTabId" :tabs="isCreation ? null : tabList"
   >
     <form novalidate @submit.prevent>
       <template v-if="isCreation">
@@ -56,8 +57,6 @@
         />
       </template>
       <template v-else>
-        <TabList v-model:tab-id="selectedTabId" :tab-list="tabList" />
-
         <template v-if="selectedTabId === 'common'">
           <FormFieldSelect
             v-model:value="values.status"
@@ -209,7 +208,7 @@ import {
   FormFieldUrlAliasInput,
   FieldValue,
   FormFieldFileInput,
-  TabList, type TagerFormSubmitEvent
+  type TagerFormSubmitEvent
 } from "@tager/admin-ui";
 import {
   DynamicField,
@@ -247,7 +246,6 @@ export default defineComponent({
   components: {
     Page,
     DynamicField,
-    TabList,
     FormFooter,
     SeoFieldGroup,
     FormField,
