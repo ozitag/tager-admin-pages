@@ -386,7 +386,7 @@ export default defineComponent({
       );
     }
 
-    const origin = getWebsiteOrigin();
+    const origin = "";
 
     const columnDefs: Array<ColumnDefinition<PageShort>> = [
       {
@@ -414,7 +414,8 @@ export default defineComponent({
           };
         },
         options: {
-          shouldOpenNewTab: true
+          shouldOpenNewTab: true,
+          shouldUseRouter: false
         }
       },
       {
