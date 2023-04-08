@@ -33,6 +33,7 @@ export function getPageList(params?: {
   query?: string;
   pageNumber?: number;
   pageSize?: number;
+  sort?: string;
 }): Promise<ResponseBody<Array<PageShort>>> {
   return request.get({ path: "/admin/pages", params });
 }
@@ -98,6 +99,10 @@ export interface PageUpdatePayload extends PageCreatePayload {
   openGraphTitle: Nullable<string>;
   openGraphDescription: Nullable<string>;
   openGraphImage: Nullable<FileType["id"]>;
+
+  hiddenFromSeoIndexation: boolean;
+  sitemapFrequency: string | null;
+  sitemapPriority: number | null;
 
   template: Nullable<TemplateShort["id"]>;
   templateFields: Array<FieldShortType<OutgoingValueUnion>>;

@@ -20,11 +20,12 @@
         pageNumber,
         disabled: isRowDataLoading,
       }"
+      :sort="{ options: sortOptions, value: sortValue }"
       @change="handleChange"
     >
       <template #filters>
         <AdvancedSearch :tags="tags" @click:tag="handleTagRemove">
-          <div class="filters">
+          <div class="row-cols-3">
             <FormFieldMultiSelect
               v-model:selected-options="templateFilter"
               :options="templateOptionList"
@@ -54,7 +55,10 @@
 
       <template #cell(status)="{ row }">
         <div class="status">
-          <span>{{ statusLabels[row.status] }}</span>
+          <span :class="{status: true, 'status-draft' : row.status === 'DRAFT'}">{{ statusLabels[row.status] }}</span>
+          <span v-if="row.hiddenFromSeoIndexation" class="status-hidden-seo">
+            {{ $i18n.t('pages:hiddenFromSeoIndexation') }}
+          </span>
         </div>
       </template>
 
@@ -78,6 +82,7 @@
         </BaseButton>
 
         <BaseButton
+          v-if="sortValue === 'default'"
           variant="icon"
           :disabled="isBusy(row.id) || rowIndex === rowData.length - 1"
           @click="handleResourceMove(row.id, 'down')"
@@ -86,6 +91,7 @@
         </BaseButton>
 
         <BaseButton
+          v-if="sortValue === 'default'"
           variant="icon"
           :disabled="isBusy(row.id) || rowIndex === 0"
           @click="handleResourceMove(row.id, 'up')"
@@ -134,7 +140,6 @@ import {
   AddCircleIcon,
   AdvancedSearch,
   BaseButton,
-  type ColumnDefinition,
   ContentCopyIcon,
   DataTable,
   DeleteIcon,
@@ -153,14 +158,13 @@ import {
   useResourceDelete,
   useResourceMove,
   useResourceClone,
-  useI18n,
-  getWebsiteOrigin
+  useI18n, getNameWithDepth
 } from "@tager/admin-services";
 import { Page } from "@tager/admin-layout";
 
-import type { PageFull } from "../typings/model";
-import type { PageShort, TagType } from "../typings/model";
-import { getPageFormUrl } from "../utils/paths";
+import type { PageFull } from "../../typings/model";
+import type { PageShort, TagType } from "../../typings/model";
+import { getPageFormUrl } from "../../utils/paths";
 import {
   clonePage,
   deletePage,
@@ -168,10 +172,10 @@ import {
   getPageListWithChildren,
   getPageTemplateList,
   movePage
-} from "../services/requests";
-import { getNameWithDepth } from "../utils/common";
+} from "../../services/requests";
 
-import { getStatusOptions } from "./PageForm/PageForm.helpers";
+import { getStatusOptions } from "../PageForm/PageForm.helpers";
+import { getColumnDefs, getSortOptions } from "./PageList.helpers";
 
 export default defineComponent({
   name: "PageList",
@@ -309,18 +313,21 @@ export default defineComponent({
       handleChange,
       pageSize,
       pageCount,
-      pageNumber
+      pageNumber,
+      sort,
     } = useDataTable<PageShort>({
       fetchEntityList: (params) =>
         getPageList({
           query: params.searchQuery,
           pageNumber: params.pageNumber,
           pageSize: params.pageSize,
+          sort: params.sort || '',
           ...filterParams.value
         }),
       initialValue: [],
       resourceName: "Page list",
-      pageSize: 100
+      pageSize: 100,
+      defaultSort: getSortOptions(i18n.t)[0].value
     });
 
     const isRowDataLoading = computed<boolean>(
@@ -388,54 +395,6 @@ export default defineComponent({
 
     const origin = "";
 
-    const columnDefs: Array<ColumnDefinition<PageShort>> = [
-      {
-        id: 1,
-        name: i18n.t("pages:title"),
-        field: "title",
-        format: ({ row }) => ({
-          url: getPageFormUrl({ pageId: row.id }),
-          text: getNameWithDepth(row.title, row.depth)
-        }),
-        type: "link",
-        options: {
-          shouldUseRouter: true
-        }
-      },
-      {
-        id: 2,
-        name: i18n.t("pages:path"),
-        field: "path",
-        type: "link",
-        format: ({ row }) => {
-          return {
-            url: origin + row.path,
-            text: row.path
-          };
-        },
-        options: {
-          shouldOpenNewTab: true,
-          shouldUseRouter: false
-        }
-      },
-      {
-        id: 3,
-        name: i18n.t("pages:status"),
-        field: "status"
-      },
-      {
-        id: 4,
-        name: i18n.t("pages:template"),
-        field: "templateName"
-      },
-      {
-        id: 5,
-        name: i18n.t("pages:actions"),
-        field: "actions",
-        style: { width: "140px", textAlign: "center", whiteSpace: "nowrap" },
-        headStyle: { width: "140px", textAlign: "center" }
-      }
-    ];
 
     function handleTagRemove(event: TagType) {
       if (event.name === "template") {
@@ -477,7 +436,10 @@ export default defineComponent({
     ]);
 
     return {
-      columnDefs,
+      columnDefs: getColumnDefs(i18n.t),
+      sortOptions: getSortOptions(i18n.t),
+      sortValue: sort,
+
       origin,
       getPageFormUrl,
       getChildPageCreationFormUrl,
@@ -509,19 +471,22 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
-.filters {
-  display: flex;
-  margin: 0 -10px;
+<style lang="scss">
+.status-draft{
+}
 
-  &:not(:first-child) {
-    margin-top: 10px;
+.status{
+  .status-name{
+    &.draft{
+      color: var(--red-dark);
+    }
   }
 
-  .filter {
-    padding: 10px 10px 0;
-    width: 50%;
-    margin: 0;
+  .status-hidden-seo{
+    display: block;
+    font-size: 12px;
+    color: var(--red-dark);
+    margin-top: 5px;
   }
 }
 </style>

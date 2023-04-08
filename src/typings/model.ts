@@ -26,6 +26,10 @@ export interface PageShort {
   readonly templateName: string;
   readonly parent: Nullable<Pick<PageShort, "id" | "title">>;
   readonly depth: number;
+  readonly datetime: string;
+  readonly sitemapPriority: number;
+  readonly sitemapFrequency: string;
+  readonly hiddenFromSeoIndexation: boolean;
 }
 
 export interface PageFull {
@@ -47,6 +51,8 @@ export interface PageFull {
   readonly openGraphTitle: Nullable<string>;
   readonly openGraphDescription: Nullable<string>;
   readonly openGraphImage: Nullable<FileType>;
+  readonly sitemapPriority: number;
+  readonly sitemapFrequency: string;
   readonly hiddenFromSeoIndexation: boolean;
 
   /** Template */

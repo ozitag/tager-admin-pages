@@ -1,23 +1,53 @@
 import {
   createId,
   type I18nContext,
-  type Nullable
+  type Nullable,
 } from "@tager/admin-services";
 import type { OptionType, SingleFileInputValueType } from "@tager/admin-ui";
 import {
   type FieldUnion,
-  universalFieldUtils
+  universalFieldUtils,
 } from "@tager/admin-dynamic-field";
 
 import type { PageFull, TemplateShort } from "../../typings/model";
 import type {
   PageCreatePayload,
-  PageUpdatePayload
+  PageUpdatePayload,
 } from "../../services/requests";
 
 export const getStatusOptions = (i18n: I18nContext): OptionType[] => [
   { label: i18n.t("pages:statusPublished"), value: "PUBLISHED" },
-  { label: i18n.t("pages:statusDraft"), value: "DRAFT" }
+  { label: i18n.t("pages:statusDraft"), value: "DRAFT" },
+];
+
+export const getSitemapPriorityOptions = (
+  i18n: I18nContext
+): Array<OptionType<number | null>> => [
+  { label: i18n.t("pages:notSetValue"), value: null },
+  { label: "1.0", value: 1.0 },
+  { label: "0.9", value: 0.9 },
+  { label: "0.8", value: 0.8 },
+  { label: "0.7", value: 0.7 },
+  { label: "0.6", value: 0.6 },
+  { label: "0.5", value: 0.5 },
+  { label: "0.4", value: 0.4 },
+  { label: "0.3", value: 0.3 },
+  { label: "0.2", value: 0.2 },
+  { label: "0.1", value: 0.1 },
+  { label: "0.0", value: 0.0 },
+];
+
+export const getSitemapFrequencyOptions = (
+  i18n: I18nContext
+): Array<OptionType<string | null>> => [
+  { label: i18n.t("pages:notSetValue"), value: null },
+  { label: "Always", value: "always" },
+  { label: "Hourly", value: "hourly" },
+  { label: "Daily", value: "daily" },
+  { label: "Weekly", value: "weekly" },
+  { label: "Monthly", value: "monthly" },
+  { label: "Yearly", value: "yearly" },
+  { label: "Never", value: "never" },
 ];
 
 export type FormValues = {
@@ -36,12 +66,16 @@ export type FormValues = {
   openGraphTitle: Nullable<string>;
   openGraphDescription: Nullable<string>;
   openGraphImage: Nullable<SingleFileInputValueType>;
+
+  sitemapFrequency: Nullable<OptionType<string | null>>;
+  sitemapPriority: Nullable<OptionType<number | null>>;
   hiddenFromSeoIndexation: boolean;
 
   template: Nullable<OptionType<TemplateShort["id"]>>;
 };
 
 export function getPageFormValues(
+  i18n: I18nContext,
   page: Nullable<PageFull>,
   templateList: Array<TemplateShort>,
   parentPageOptions: Array<OptionType<Nullable<number>>>,
@@ -69,11 +103,12 @@ export function getPageFormValues(
         pageKeywords: "",
         openGraphImage: null,
         template: null,
-        hiddenFromSeoIndexation: false
-        // templateFields: [],
+        hiddenFromSeoIndexation: false,
+        sitemapFrequency: null,
+        sitemapPriority: null,
       },
       parent: initialParentOption ?? null,
-      status: statusOptions[0]
+      status: statusOptions[0],
     };
   }
 
@@ -107,9 +142,17 @@ export function getPageFormValues(
       ? { id: createId(), file: page.openGraphImage }
       : null,
     hiddenFromSeoIndexation: page.hiddenFromSeoIndexation,
+    sitemapPriority:
+      getSitemapPriorityOptions(i18n).find(
+        (item) => item.value === page.sitemapPriority
+      ) || null,
+    sitemapFrequency:
+      getSitemapFrequencyOptions(i18n).find(
+        (item) => item.value === page.sitemapFrequency
+      ) || null,
     template: foundTemplate
       ? { value: foundTemplate.id, label: foundTemplate.label }
-      : null
+      : null,
   };
 }
 
@@ -121,7 +164,7 @@ export function convertPageFormValuesToCreationPayload(
     title: values.title ?? null,
     parent: values.parent?.value ?? null,
     path: values.path ?? null,
-    template: values.template?.value ?? null
+    template: values.template?.value ?? null,
   };
 }
 
@@ -138,8 +181,11 @@ export function convertPageFormValuesToUpdatePayload(
     template: values.template?.value ?? null,
     templateFields: templateValues.map((field) => ({
       value: universalFieldUtils.getOutgoingValue(field),
-      name: field.config.name
+      name: field.config.name,
     })),
-    path: values.path
+    path: values.path,
+
+    sitemapPriority: values.sitemapPriority?.value ?? null,
+    sitemapFrequency: values.sitemapFrequency?.value ?? null,
   };
 }

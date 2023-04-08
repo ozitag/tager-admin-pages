@@ -1,6 +1,8 @@
 import { EN } from "./en";
 
 export const RU: typeof EN = {
+  Yes: 'Да',
+  No: 'Нет',
   home: "Главная",
   pages: "Страницы",
   createPage: "Создать страницу",
@@ -53,5 +55,12 @@ export const RU: typeof EN = {
   statusPublished: "Опубликована",
   statusDraft: "Черновик",
 
-  hiddenFromSeoIndexation: "Скрыть от SEO индексации",
+  hiddenFromSeoIndexation: "Недоступна для индексации",
+  notSetValue: "Не указано",
+
+  sort: {
+    priority: 'По-умолчанию',
+    published_date_desc: 'Дата публикация: От новых к старым',
+    published_date_asc: 'Дата публикация: От старых к новым',
+  }
 };

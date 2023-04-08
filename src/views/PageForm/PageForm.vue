@@ -1,11 +1,12 @@
 <template>
   <Page
+    v-model:tab-id="selectedTabId"
     :title="
       isCreation ? $i18n.t('pages:pageCreation') : $i18n.t('pages:pageUpdate')
     "
     :is-content-loading="isLoading"
     :header-buttons="headerButtonList"
-    v-model:tab-id="selectedTabId" :tabs="isCreation ? null : tabList"
+    :tabs="isCreation ? [] : tabList"
   >
     <form novalidate @submit.prevent>
       <template v-if="isCreation">
@@ -164,6 +165,25 @@
             :error="errors.hiddenFromSeoIndexation"
             :label="$i18n.t('pages:hiddenFromSeoIndexation')"
           />
+
+          <div class="row-cols-2">
+            <FormFieldSelect
+              v-model:value="values.sitemapPriority"
+              name="sitemapPriority"
+              :searchable="false"
+              :error="errors.sitemapPriority"
+              label="sitemap.xml - Priority"
+              :options="sitemapPriorityOptions"
+            />
+            <FormFieldSelect
+              v-model:value="values.sitemapFrequency"
+              name="sitemapFrequency"
+              :searchable="false"
+              :error="errors.sitemapFrequency"
+              label="sitemap.xml - Frequency"
+              :options="sitemapFrequencyOptions"
+            />
+          </div>
         </template>
       </template>
     </form>
@@ -193,7 +213,8 @@ import {
   urlTranslit,
   useI18n,
   navigateBack,
-  useToast
+  useToast,
+  getNameWithDepth,
 } from "@tager/admin-services";
 import {
   type OptionType,
@@ -208,7 +229,7 @@ import {
   FormFieldUrlAliasInput,
   FieldValue,
   FormFieldFileInput,
-  type TagerFormSubmitEvent
+  type TagerFormSubmitEvent,
 } from "@tager/admin-ui";
 import {
   DynamicField,
@@ -216,7 +237,7 @@ import {
   type FieldShortType,
   type FieldUnion,
   type IncomingValueUnion,
-  universalFieldUtils
+  universalFieldUtils,
 } from "@tager/admin-dynamic-field";
 import { Page, type TopButtonConfigType } from "@tager/admin-layout";
 
@@ -228,17 +249,16 @@ import {
   getPageListAll,
   getPageTemplateById,
   getPageTemplateList,
-  updatePage
+  updatePage,
 } from "../../services/requests";
 import { getPageFormUrl, getPageListUrl } from "../../utils/paths";
-import { getNameWithDepth } from "../../utils/common";
 
 import {
   convertPageFormValuesToCreationPayload,
   convertPageFormValuesToUpdatePayload,
   type FormValues,
   getPageFormValues,
-  getStatusOptions
+  getSitemapPriorityOptions, getSitemapFrequencyOptions, getStatusOptions,
 } from "./PageForm.helpers";
 
 export default defineComponent({
@@ -254,7 +274,7 @@ export default defineComponent({
     FormFieldFileInput,
     FieldValue,
     FormFieldUrlAliasInput,
-    FormFieldCheckbox
+    FormFieldCheckbox,
   },
   setup() {
     const i18n = useI18n();
@@ -288,7 +308,7 @@ export default defineComponent({
         return Promise.resolve({ data: null });
       },
       initialValue: null,
-      resourceName: "Page"
+      resourceName: "Page",
     });
 
     onMounted(fetchPage);
@@ -303,7 +323,7 @@ export default defineComponent({
       useResource({
         fetchResource: () => getPageListAll(),
         initialValue: [],
-        resourceName: "Page list"
+        resourceName: "Page list",
       });
 
     onMounted(() => {
@@ -321,7 +341,7 @@ export default defineComponent({
     const parentPageOptions = computed<Array<OptionType<Nullable<number>>>>(
       () => {
         const defaultPageOption = [
-          { value: null, label: i18n.t("pages:noParent") }
+          { value: null, label: i18n.t("pages:noParent") },
         ];
 
         const pageLists = pageList.value
@@ -329,7 +349,7 @@ export default defineComponent({
           .filter((shortPage) => shortPage.id !== page.value?.id)
           .map((shortPage) => ({
             value: shortPage.id,
-            label: getNameWithDepth(shortPage.title, shortPage.depth)
+            label: getNameWithDepth(shortPage.title, shortPage.depth),
           }));
 
         return [...defaultPageOption, ...pageLists];
@@ -340,21 +360,21 @@ export default defineComponent({
 
     const [
       fetchTemplateList,
-      { data: shortTemplateList, loading: isShortTemplateListLoading }
+      { data: shortTemplateList, loading: isShortTemplateListLoading },
     ] = useResource({
       fetchResource: getPageTemplateList,
       initialValue: [],
-      resourceName: "Template list"
+      resourceName: "Template list",
     });
 
     const templateOptions = computed(() => {
       const defaultTemplate = [
-        { value: null, label: i18n.t("pages:noTemplate") }
+        { value: null, label: i18n.t("pages:noTemplate") },
       ];
 
       const templates = shortTemplateList.value.map<OptionType>((template) => ({
         value: template.id,
-        label: template.label
+        label: template.label,
       }));
 
       return [...defaultTemplate, ...templates];
@@ -370,7 +390,7 @@ export default defineComponent({
       useResource<Nullable<InfoModel>>({
         fetchResource: getPageInfo,
         initialValue: null,
-        resourceName: "Page info"
+        resourceName: "Page info",
       });
 
     onMounted(() => {
@@ -384,8 +404,8 @@ export default defineComponent({
           fileScenarios: {
             image: null,
             content: "custom",
-            openGraph: null
-          }
+            openGraph: null,
+          },
         }
     );
 
@@ -420,6 +440,7 @@ export default defineComponent({
     const errors = ref<Record<string, string>>({});
     const values = ref<FormValues>(
       getPageFormValues(
+        i18n,
         page.value,
         shortTemplateList.value,
         parentPageOptions.value,
@@ -454,6 +475,7 @@ export default defineComponent({
 
     function updateFormValues() {
       values.value = getPageFormValues(
+        i18n,
         page.value,
         shortTemplateList.value,
         parentPageOptions.value,
@@ -535,6 +557,7 @@ export default defineComponent({
 
           if (event.type === "create_create-another") {
             values.value = getPageFormValues(
+              i18n,
               null,
               shortTemplateList.value,
               parentPageOptions.value,
@@ -548,7 +571,7 @@ export default defineComponent({
             title: i18n.t("pages:success"),
             body: isCreation.value
               ? i18n.t("pages:createdSuccessMessage")
-              : i18n.t("pages:updatedSuccessMessage")
+              : i18n.t("pages:updatedSuccessMessage"),
           });
         })
         .catch((error) => {
@@ -559,7 +582,7 @@ export default defineComponent({
             title: i18n.t("pages:error"),
             body: isCreation.value
               ? i18n.t("pages:createdErrorMessage")
-              : i18n.t("pages:updatedErrorMessage")
+              : i18n.t("pages:updatedErrorMessage"),
           });
         })
         .finally(() => {
@@ -583,7 +606,7 @@ export default defineComponent({
         shouldDisplayTemplateTab.value
           ? { id: "template", label: i18n.t("pages:tabs.template") }
           : null,
-        { id: "seo", label: i18n.t("pages:tabs.seo") }
+        { id: "seo", label: i18n.t("pages:tabs.seo") },
       ].filter(notEmpty);
     });
 
@@ -610,20 +633,20 @@ export default defineComponent({
       [
         page.value
           ? {
-            text: i18n.t("pages:viewPage"),
-            href: websiteOrigin + page.value.path,
-            target: "_blank"
-          }
-          : null
+              text: i18n.t("pages:viewPage"),
+              href: websiteOrigin + page.value.path,
+              target: "_blank",
+            }
+          : null,
       ].filter(isNotNullish)
     );
 
     function handleSeoFieldGroupChange({
-                                         title,
-                                         description,
-                                         keywords,
-                                         image
-                                       }: SeoChangeEvent) {
+      title,
+      description,
+      keywords,
+      image,
+    }: SeoChangeEvent) {
       values.value.pageTitle = title;
       values.value.pageDescription = description;
       values.value.pageKeywords = keywords;
@@ -667,9 +690,12 @@ export default defineComponent({
       handleTitleChange,
       handleAliasChange,
       pathPrefix,
-      statusOptions
+      statusOptions,
+
+      sitemapFrequencyOptions: getSitemapFrequencyOptions(i18n),
+      sitemapPriorityOptions: getSitemapPriorityOptions(i18n),
     };
-  }
+  },
 });
 </script>
 

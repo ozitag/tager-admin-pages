@@ -1,4 +1,6 @@
 export const EN = {
+  Yes: 'Yes',
+  No: 'No',
   home: "Home",
   pages: "Pages",
   createPage: "Create page",
@@ -51,5 +53,12 @@ export const EN = {
   statusPublished: "Published",
   statusDraft: "Draft",
 
-  hiddenFromSeoIndexation: "Hidden from SEO Indexation"
+  hiddenFromSeoIndexation: "Hidden from SEO",
+  notSetValue: "Not set",
+
+  sort: {
+    priority: 'Priority',
+    published_date_desc: 'Pubished Date: From newest to oldest',
+    published_date_asc: 'Pubished Date: From oldest to newest',
+  }
 };
