@@ -173,8 +173,8 @@ import {
   getPageTemplateList,
   movePage
 } from "../../services/requests";
-
 import { getStatusOptions } from "../PageForm/PageForm.helpers";
+
 import { getColumnDefs, getSortOptions } from "./PageList.helpers";
 
 export default defineComponent({
