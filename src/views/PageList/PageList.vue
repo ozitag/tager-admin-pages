@@ -55,7 +55,7 @@
 
       <template #cell(status)="{ row }">
         <div class="status">
-          <span :class="{status: true, 'status-draft' : row.status === 'DRAFT'}">{{ statusLabels[row.status] }}</span>
+          <span :class="{status: true, 'status-draft' : row.status === 'DRAFT'}">{{ statusLabels[row.status as keyof typeof statusLabels] }}</span>
           <span v-if="row.hiddenFromSeoIndexation" class="status-hidden-seo">
             {{ $i18n.t('pages:hiddenFromSeoIndexation') }}
           </span>

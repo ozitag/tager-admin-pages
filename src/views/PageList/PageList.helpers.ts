@@ -1,8 +1,8 @@
-import { ColumnDefinition, formatDate, OptionType } from "@tager/admin-ui";
-import { PageShort } from "../../typings/model";
+import { type ColumnDefinition, formatDate, type OptionType } from "@tager/admin-ui";
+import { type PageShort } from "../../typings/model";
 import { getPageFormUrl } from "../../utils/paths";
 import { getNameWithDepth, isNotNullish } from "@tager/admin-services";
-import { TFunction } from "i18next";
+import { type TFunction } from "i18next";
 
 export function getColumnDefs(t: TFunction): Array<ColumnDefinition<PageShort>> {
   return [
