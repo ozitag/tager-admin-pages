@@ -133,7 +133,6 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import isEqual from "lodash.isequal";
-import pick from "lodash.pick";
 import { useRoute, useRouter } from "vue-router";
 
 import {
@@ -176,6 +175,21 @@ import {
 import { getStatusOptions } from "../PageForm/PageForm.helpers";
 
 import { getColumnDefs, getSortOptions } from "./PageList.helpers";
+
+/**
+ * Выбрать заданные ключи из объекта.
+ *
+ * Заменяет lodash.pick: у него открытая уязвимость prototype pollution,
+ * и патча к ней нет — пакет не поддерживается.
+ */
+function pickKeys<T extends Record<string, unknown>, K extends keyof T>(
+  source: T,
+  keys: ReadonlyArray<K>
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(source).filter(([key]) => keys.includes(key as K))
+  ) as Partial<T>;
+}
 
 export default defineComponent({
   name: "PageList",
@@ -339,7 +353,7 @@ export default defineComponent({
 
     watch(filterParams, () => {
       const newQuery = {
-        ...pick(route.query, ["query", "pageNumber"]),
+        ...pickKeys(route.query, ["query", "pageNumber"]),
         ...filterParams.value
       };
 
