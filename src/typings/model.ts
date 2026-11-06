@@ -18,7 +18,7 @@ export interface TemplateFull extends TemplateShort {
   readonly fields: Array<FieldConfigUnion>;
 }
 
-export interface PageShort {
+export type PageShort = {
   readonly id: number;
   readonly status: string;
   readonly title: string;
@@ -63,7 +63,7 @@ export interface PageFull {
 export interface InfoModel {
   readonly seoKeywordsEnabled: boolean;
   readonly fileScenarios: {
-    readonly image: Nullable<FileType>;
+    readonly image: Nullable<string>;
     readonly content: Nullable<string>;
     readonly openGraph: Nullable<string>;
   };

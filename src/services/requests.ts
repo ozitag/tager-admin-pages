@@ -1,5 +1,6 @@
 import {
   type FileType,
+  type MoveDirection,
   type Nullable,
   request,
   type ResponseBody,
@@ -123,7 +124,7 @@ export function deletePage(
 
 export function movePage(
   pageId: number | string,
-  direction: "up" | "down"
+  direction: MoveDirection
 ): Promise<{ success: boolean }> {
   return request.post({ path: `/admin/pages/${pageId}/move/${direction}` });
 }

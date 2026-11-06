@@ -96,7 +96,7 @@
             :error="errors.image"
             :label="$i18n.t('pages:image')"
             file-type="image"
-            :scenario="info.fileScenarios.image"
+            :scenario="info.fileScenarios.image ?? undefined"
           />
 
           <FormField
@@ -146,15 +146,15 @@
 
         <template v-if="selectedTabId === 'seo'">
           <SeoFieldGroup
-            :title="values.pageTitle"
+            :title="values.pageTitle ?? ''"
             :title-error-message="errors.pageTitle"
-            :description="values.pageDescription"
+            :description="values.pageDescription ?? ''"
             :description-error-message="errors.pageDescription"
             :should-display-keywords="info.seoKeywordsEnabled"
-            :keywords="values.pageKeywords"
+            :keywords="values.pageKeywords ?? ''"
             :keywords-error-message="errors.pageKeywords"
             :image="values.openGraphImage"
-            :image-scenario="info.fileScenarios.openGraph"
+            :image-scenario="info.fileScenarios.openGraph ?? undefined"
             :image-error-message="errors.openGraphImage"
             @change="handleSeoFieldGroupChange"
           />
